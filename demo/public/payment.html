@@ -1,0 +1,1193 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>WorkConnect - Payment</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        :root {
+            --primary: #38bdf8;
+            --primary-dark: #0ea5e9;
+            --success: #10b981;
+            --warning: #f59e0b;
+            --danger: #ef4444;
+            --dark-bg: #0f172a;
+            --darker-bg: #020617;
+            --card-bg: rgba(15, 23, 42, 0.85);
+            --border-color: rgba(148, 163, 184, 0.2);
+            --text-primary: #f1f5f9;
+            --text-secondary: #94a3b8;
+        }
+        
+        body {
+            min-height: 100vh;
+            background: linear-gradient(135deg, var(--darker-bg) 0%, var(--dark-bg) 40%, #1e293b 100%);
+            color: var(--text-primary);
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            line-height: 1.6;
+        }
+
+        .navbar {
+            background: rgba(15, 23, 42, 0.95);
+            backdrop-filter: blur(20px);
+            border-bottom: 1px solid var(--border-color);
+            padding: 1rem 0;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+        }
+
+        .navbar-brand {
+            font-size: 1.5rem;
+            font-weight: 700;
+            background: linear-gradient(135deg, var(--primary) 0%, #60a5fa 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .payment-container {
+            max-width: 1400px;
+            margin: 2rem auto;
+            padding: 0 1.5rem;
+        }
+
+        .glass-card {
+            background: rgba(15, 23, 42, 0.7);
+            backdrop-filter: blur(20px);
+            border: 1px solid var(--border-color);
+            border-radius: 1.5rem;
+            box-shadow: 
+                0 8px 32px rgba(0, 0, 0, 0.3),
+                inset 0 1px 0 rgba(255, 255, 255, 0.1);
+            overflow: hidden;
+            position: relative;
+        }
+
+        .section-title {
+            font-size: 0.85rem;
+            font-weight: 600;
+            letter-spacing: 0.05em;
+            text-transform: uppercase;
+            color: var(--text-secondary);
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .section-title::before {
+            content: '';
+            width: 4px;
+            height: 14px;
+            background: var(--primary);
+            border-radius: 2px;
+        }
+
+        .amount-display {
+            font-size: 3.5rem;
+            font-weight: 800;
+            background: linear-gradient(135deg, var(--text-primary) 0%, var(--text-secondary) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            line-height: 1.2;
+            margin: 0.5rem 0;
+        }
+
+        .badge-upi {
+            background: rgba(16, 185, 129, 0.15);
+            color: var(--success);
+            border: 1px solid rgba(16, 185, 129, 0.3);
+            padding: 0.4rem 1rem;
+            border-radius: 50px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .method-pill {
+            background: rgba(30, 41, 59, 0.5);
+            border: 2px solid var(--border-color);
+            border-radius: 1rem;
+            padding: 1.25rem 1.5rem;
+            margin-bottom: 0.75rem;
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .method-pill:hover {
+            border-color: var(--primary);
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(56, 189, 248, 0.15);
+        }
+
+        .method-pill.active {
+            border-color: var(--primary);
+            background: rgba(56, 189, 248, 0.1);
+            box-shadow: 0 8px 25px rgba(56, 189, 248, 0.2);
+        }
+
+        .method-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 1rem;
+            flex-shrink: 0;
+        }
+
+        .method-pill:nth-child(1) .method-icon {
+            background: rgba(16, 185, 129, 0.15);
+            color: var(--success);
+        }
+
+        .method-pill:nth-child(2) .method-icon {
+            background: rgba(59, 130, 246, 0.15);
+            color: #3b82f6;
+        }
+
+        .method-pill:nth-child(3) .method-icon {
+            background: rgba(245, 158, 11, 0.15);
+            color: var(--warning);
+        }
+
+        .checkmark {
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            background: var(--success);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            flex-shrink: 0;
+            opacity: 0;
+            transform: scale(0.8);
+            transition: all 0.3s ease;
+        }
+
+        .method-pill.active .checkmark {
+            opacity: 1;
+            transform: scale(1);
+        }
+
+        .order-summary {
+            background: linear-gradient(135deg, rgba(30, 41, 59, 0.5), rgba(15, 23, 42, 0.7));
+            border: 1px solid var(--border-color);
+            border-radius: 1rem;
+            padding: 1.5rem;
+            margin: 1.5rem 0;
+        }
+
+        .upi-display {
+            background: rgba(30, 41, 59, 0.5);
+            border: 1px solid var(--border-color);
+            border-radius: 1rem;
+            padding: 1.25rem;
+            margin: 1rem 0;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+            border: none;
+            border-radius: 12px;
+            padding: 1rem 2rem;
+            font-weight: 600;
+            font-size: 1.1rem;
+            letter-spacing: 0.5px;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(56, 189, 248, 0.3);
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(56, 189, 248, 0.4);
+        }
+
+        .btn-outline-light {
+            border: 2px solid var(--border-color);
+            border-radius: 12px;
+            padding: 0.75rem 1.5rem;
+            font-weight: 500;
+            transition: all 0.3s ease;
+        }
+
+        .btn-outline-light:hover {
+            border-color: var(--primary);
+            background: rgba(56, 189, 248, 0.1);
+            transform: translateY(-1px);
+        }
+
+        .history-row {
+            background: rgba(30, 41, 59, 0.3);
+            border-radius: 0.75rem;
+            padding: 1rem;
+            margin-bottom: 0.75rem;
+            border: 1px solid transparent;
+            transition: all 0.3s ease;
+        }
+
+        .history-row:hover {
+            border-color: var(--primary);
+            background: rgba(56, 189, 248, 0.05);
+            transform: translateX(4px);
+        }
+
+        .pill-status {
+            padding: 0.35rem 0.75rem;
+            border-radius: 50px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            letter-spacing: 0.5px;
+            text-transform: uppercase;
+        }
+
+        .pill-success {
+            background: rgba(16, 185, 129, 0.15);
+            color: var(--success);
+            border: 1px solid rgba(16, 185, 129, 0.3);
+        }
+
+        .help-item {
+            background: rgba(30, 41, 59, 0.3);
+            border-radius: 1rem;
+            padding: 1.25rem;
+            margin-bottom: 0.75rem;
+            border: 1px solid var(--border-color);
+            transition: all 0.3s ease;
+        }
+
+        .help-item:hover {
+            border-color: var(--primary);
+            transform: translateX(4px);
+        }
+
+        .screenshot-upload {
+            background: linear-gradient(135deg, rgba(30, 41, 59, 0.5), rgba(15, 23, 42, 0.7));
+            border: 2px dashed var(--border-color);
+            border-radius: 1rem;
+            padding: 1.5rem;
+            margin: 1.5rem 0;
+            text-align: center;
+            transition: all 0.3s ease;
+        }
+
+        .screenshot-upload:hover {
+            border-color: var(--primary);
+            background: rgba(56, 189, 248, 0.05);
+        }
+
+        .screenshot-preview {
+            max-width: 200px;
+            max-height: 150px;
+            border-radius: 0.75rem;
+            border: 2px solid var(--border-color);
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+        }
+
+        .error-state {
+            text-align: center;
+            padding: 3rem 1rem;
+        }
+
+        .error-icon {
+            font-size: 4rem;
+            color: var(--danger);
+            margin-bottom: 1rem;
+            opacity: 0.7;
+        }
+
+        .loading-spinner {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 3px solid rgba(56, 189, 248, 0.3);
+            border-radius: 50%;
+            border-top-color: var(--primary);
+            animation: spin 1s ease-in-out infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        @media (max-width: 768px) {
+            .payment-container {
+                padding: 0 1rem;
+                margin: 1rem auto;
+            }
+            
+            .amount-display {
+                font-size: 2.5rem;
+            }
+            
+            .method-pill {
+                padding: 1rem;
+            }
+            
+            .glass-card {
+                padding: 1.5rem !important;
+            }
+        }
+
+        .fade-in {
+            animation: fadeIn 0.5s ease-out;
+        }
+
+        .slide-up {
+            animation: slideUp 0.4s ease-out;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        @keyframes slideUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar navbar-expand-lg navbar-dark">
+        <div class="container-fluid px-4">
+            <a class="navbar-brand" href="customer-dashboard.html">
+                <i class="fas fa-tools me-2"></i>WorkConnect
+            </a>
+            <div class="ms-auto d-flex align-items-center gap-3">
+                <div class="d-none d-md-flex align-items-center gap-2">
+                    <div class="rounded-circle bg-primary bg-opacity-25 p-2">
+                        <i class="fas fa-user text-primary"></i>
+                    </div>
+                    <div>
+                        <div id="navUser" class="small fw-medium"></div>
+                        <div class="text-xs text-secondary">Customer</div>
+                    </div>
+                </div>
+                <button class="btn btn-outline-light" onclick="goBackToDashboard()">
+                    <i class="fas fa-arrow-left me-2"></i>Dashboard
+                </button>
+            </div>
+        </div>
+    </nav>
+
+    <main class="payment-container fade-in">
+        <div id="mainContent">
+            <!-- Loading state will be shown initially -->
+            <div class="row">
+                <div class="col-12">
+                    <div class="glass-card p-5 text-center">
+                        <div class="loading-spinner mx-auto mb-3" style="width: 40px; height: 40px;"></div>
+                        <h4 class="mb-2">Loading Payment Details</h4>
+                        <p class="text-muted">Please wait while we fetch your order information...</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <script>
+        // Mock API Database (for testing when real APIs are not available)
+        const mockDatabase = {
+            users: [
+                {
+                    id: 'cus_001',
+                    username: 'john_doe',
+                    name: 'John Doe',
+                    email: 'john@example.com',
+                    phone: '+919876543210',
+                    role: 'customer'
+                }
+            ],
+            workers: [
+                {
+                    id: 'wrk_001',
+                    username: 'raj_kumar',
+                    name: 'Raj Kumar',
+                    email: 'raj@example.com',
+                    phone: '+919512345678',
+                    upiId: 'rajkumar.9876543210@okhdfcbank',
+                    services: ['Plumbing', 'Electrical']
+                }
+            ],
+            orders: [
+                {
+                    id: 'ord_001',
+                    customerId: 'cus_001',
+                    workerId: 'wrk_001',
+                    serviceType: 'Plumbing - Pipe Repair',
+                    description: 'Kitchen sink pipe leakage repair',
+                    totalAmount: 1500,
+                    status: 'accepted',
+                    paymentStatus: 'pending',
+                    createdAt: '2024-01-15T10:30:00Z',
+                    acceptedAt: '2024-01-15T11:00:00Z',
+                    worker: {
+                        id: 'wrk_001',
+                        name: 'Raj Kumar',
+                        upiId: 'rajkumar.9876543210@okhdfcbank'
+                    }
+                }
+            ],
+            payments: []
+        };
+
+        // Global variables
+        let currentUser = null;
+        let currentOrder = null;
+        let selectedMethod = 'upi';
+        let screenshotFile = null;
+
+        // Initialize application
+        document.addEventListener('DOMContentLoaded', async () => {
+            console.log('DOM loaded, initializing...');
+            
+            // Check authentication
+            const user = await checkAuthentication();
+            if (!user) {
+                console.log('No user found, redirecting to login...');
+                window.location.href = 'login.html';
+                return;
+            }
+            
+            currentUser = user;
+            document.getElementById('navUser').textContent = user.name || user.username;
+            
+            // Get order ID from URL
+            const params = new URLSearchParams(window.location.search);
+            const orderId = params.get('orderId');
+            
+            console.log('Order ID from URL:', orderId);
+            
+            if (!orderId) {
+                console.log('No order ID found in URL');
+                showErrorState('Order ID is missing. Please access this page from your dashboard.');
+                return;
+            }
+            
+            // Load order data
+            await loadOrderData(orderId);
+        });
+
+        // Authentication check
+        async function checkAuthentication() {
+            try {
+                // Try to get user from localStorage first
+                const userStr = localStorage.getItem('user');
+                if (userStr) {
+                    const user = JSON.parse(userStr);
+                    console.log('User from localStorage:', user);
+                    return user;
+                }
+                
+                // Fallback to mock user for demo
+                console.log('Using mock user');
+                return mockDatabase.users[0];
+            } catch (e) {
+                console.error('Auth error:', e);
+                return null;
+            }
+        }
+
+        // Show error state
+        function showErrorState(message) {
+            const mainContent = document.getElementById('mainContent');
+            mainContent.innerHTML = `
+                <div class="row">
+                    <div class="col-12">
+                        <div class="glass-card p-5 error-state">
+                            <div class="error-icon">
+                                <i class="fas fa-exclamation-triangle"></i>
+                            </div>
+                            <h3 class="mb-3">Order Not Found</h3>
+                            <p class="text-muted mb-4">${message}</p>
+                            <div class="d-flex gap-3 justify-content-center">
+                                <button class="btn btn-primary" onclick="goBackToDashboard()">
+                                    <i class="fas fa-arrow-left me-2"></i>Back to Dashboard
+                                </button>
+                                <button class="btn btn-outline-light" onclick="retryLoad()">
+                                    <i class="fas fa-redo me-2"></i>Try Again
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        // Load order data
+        async function loadOrderData(orderId) {
+            try {
+                console.log('Loading order data for ID:', orderId);
+                
+                // Try real API first, fallback to mock data if fails
+                let order;
+                try {
+                    const res = await fetch(`/api/order/${orderId}`);
+                    if (!res.ok) throw new Error('API request failed');
+                    order = await res.json();
+                    console.log('Order from API:', order);
+                } catch (apiError) {
+                    console.log('API failed, using mock data:', apiError);
+                    // Fallback to mock data
+                    await new Promise(resolve => setTimeout(resolve, 1000));
+                    order = mockDatabase.orders.find(o => o.id === orderId);
+                    
+                    if (!order) {
+                        throw new Error(`Order with ID "${orderId}" not found`);
+                    }
+                }
+                
+                // Security check
+                if (order.customerId !== currentUser.id) {
+                    showErrorState('Access denied: This order does not belong to you.');
+                    return;
+                }
+                
+                currentOrder = order;
+                
+                // Check if payment can be made
+                if (order.status !== 'accepted' && order.status !== 'completed') {
+                    showErrorState('This order is not yet accepted by the worker. Payment can only be made after the worker accepts the order.');
+                    return;
+                }
+                
+                if (order.paymentStatus === 'paid') {
+                    showErrorState(`This order has already been paid. Transaction ID: ${order.transactionId || 'N/A'}`);
+                    return;
+                }
+                
+                // Show payment interface
+                showPaymentInterface(order);
+                
+            } catch (error) {
+                console.error('Error loading order:', error);
+                showErrorState(error.message || 'Failed to load order details. Please try again.');
+            }
+        }
+
+        // Show payment interface
+        function showPaymentInterface(order) {
+            const mainContent = document.getElementById('mainContent');
+            mainContent.innerHTML = `
+                <div class="row g-4 slide-up">
+                    <!-- Left Column: Payment Section -->
+                    <div class="col-lg-8">
+                        <div class="glass-card p-4 p-xl-5 h-100">
+                            <!-- Header -->
+                            <div class="d-flex justify-content-between align-items-center mb-4">
+                                <div>
+                                    <div class="section-title">Secure Payment Gateway</div>
+                                    <h1 class="h3 fw-bold mb-0">Complete Your Payment</h1>
+                                </div>
+                                <span class="badge-upi">
+                                    <i class="fas fa-shield-alt"></i>
+                                    256-bit Encrypted
+                                </span>
+                            </div>
+
+                            <!-- Order Summary -->
+                            <div class="order-summary">
+                                <div class="d-flex justify-content-between align-items-center mb-3">
+                                    <div>
+                                        <div class="text-muted small">Order Details</div>
+                                        <div class="fw-bold h5 mb-1">${order.serviceType}</div>
+                                    </div>
+                                    <span class="pill-status pill-success">
+                                        ORDER #${order.id.slice(-6)}
+                                    </span>
+                                </div>
+                                <div class="row g-3">
+                                    <div class="col-md-6">
+                                        <div class="text-muted small">Worker</div>
+                                        <div class="fw-semibold">${order.worker ? order.worker.name : 'N/A'}</div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="text-muted small">Order Date</div>
+                                        <div class="fw-semibold">${new Date(order.createdAt).toLocaleDateString()}</div>
+                                    </div>
+                                    <div class="col-12">
+                                        <div class="text-muted small">Description</div>
+                                        <div class="fw-semibold">${order.description || 'No description provided'}</div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Amount Display -->
+                            <div class="mb-4">
+                                <div class="section-title">Payment Amount</div>
+                                <div class="d-flex align-items-baseline gap-3 mb-2">
+                                    <span class="amount-display" id="payAmount">₹${order.totalAmount || 0}</span>
+                                    <span class="${order.status === 'completed' ? 'text-success' : 'text-warning'} fw-semibold" id="amountNote">
+                                        ${order.status === 'completed' ? 'Service completed' : 'Service in progress'}
+                                    </span>
+                                </div>
+                                <div class="text-muted small">
+                                    <i class="fas fa-info-circle me-1"></i>
+                                    Includes all applicable taxes and service charges
+                                </div>
+                            </div>
+
+                            <!-- Payment Methods -->
+                            <div class="mb-4">
+                                <div class="section-title">Select Payment Method</div>
+                                <div class="d-flex flex-column gap-2">
+                                    <div class="method-pill active" data-method="upi" onclick="selectMethod('upi')">
+                                        <div class="d-flex align-items-center">
+                                            <div class="method-icon">
+                                                <i class="fas fa-mobile-alt fa-lg"></i>
+                                            </div>
+                                            <div class="flex-grow-1">
+                                                <div class="fw-semibold">UPI Payment</div>
+                                                <div class="text-muted small">Google Pay, PhonePe, Paytm & More</div>
+                                            </div>
+                                            <div class="checkmark">
+                                                <i class="fas fa-check"></i>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="method-pill" data-method="card" onclick="selectMethod('card')">
+                                        <div class="d-flex align-items-center">
+                                            <div class="method-icon">
+                                                <i class="far fa-credit-card fa-lg"></i>
+                                            </div>
+                                            <div class="flex-grow-1">
+                                                <div class="fw-semibold">Debit / Credit Card</div>
+                                                <div class="text-muted small">Visa, Mastercard, RuPay, American Express</div>
+                                            </div>
+                                            <div class="checkmark">
+                                                <i class="fas fa-check"></i>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="method-pill" data-method="cash" onclick="selectMethod('cash')">
+                                        <div class="d-flex align-items-center">
+                                            <div class="method-icon">
+                                                <i class="fas fa-money-bill-wave fa-lg"></i>
+                                            </div>
+                                            <div class="flex-grow-1">
+                                                <div class="fw-semibold">Cash on Completion</div>
+                                                <div class="text-muted small">Pay directly to worker after service completion</div>
+                                            </div>
+                                            <div class="checkmark">
+                                                <i class="fas fa-check"></i>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- UPI Details -->
+                            <div id="upiBlock">
+                                <div class="section-title">
+                                    <i class="fas fa-qrcode"></i>
+                                    Worker UPI Details
+                                </div>
+                                <div class="upi-display">
+                                    <div class="d-flex justify-content-between align-items-center">
+                                        <div>
+                                            <div class="text-muted small mb-1">Pay directly to worker's UPI ID</div>
+                                            <div id="workerUpi" class="fw-bold h5 mb-0 font-monospace">${order.worker && order.worker.upiId ? order.worker.upiId : 'UPI ID not available'}</div>
+                                        </div>
+                                        <div class="d-flex gap-2">
+                                            <button class="btn btn-outline-primary" type="button" onclick="copyUpi()">
+                                                <i class="fas fa-copy me-2"></i>Copy UPI ID
+                                            </button>
+                                            <button class="btn btn-primary" type="button" onclick="openUpiApp()">
+                                                <i class="fas fa-external-link-alt me-2"></i>Open UPI App
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="alert alert-info bg-primary bg-opacity-10 border-primary border-opacity-25 mt-3">
+                                    <i class="fas fa-lightbulb me-2"></i>
+                                    <strong>How to pay:</strong> Copy the UPI ID above, open your UPI app, paste the ID, enter amount, and complete payment. Then click "I have completed the payment".
+                                </div>
+                            </div>
+
+                            <!-- Screenshot Upload -->
+                            <div class="screenshot-upload">
+                                <div class="d-flex align-items-center mb-3">
+                                    <div class="rounded-circle bg-primary bg-opacity-25 p-3 me-3">
+                                        <i class="fas fa-camera text-primary fa-lg"></i>
+                                    </div>
+                                    <div>
+                                        <div class="fw-semibold">Upload Payment Proof (Optional)</div>
+                                        <div class="text-muted small">Screenshot of UPI payment confirmation</div>
+                                    </div>
+                                </div>
+                                <div class="mb-3">
+                                    <input type="file" id="screenshotInput" accept="image/*" class="form-control form-control-lg" 
+                                           style="background: rgba(15, 23, 42, 0.5); border: 2px dashed var(--border-color); color: var(--text-primary);">
+                                </div>
+                                <div id="screenshotPreview" class="d-none">
+                                    <div class="d-flex align-items-center gap-3">
+                                        <img id="previewImg" src="" alt="Payment Screenshot" class="screenshot-preview">
+                                        <div class="flex-grow-1">
+                                            <div class="fw-semibold">Screenshot uploaded</div>
+                                            <div class="text-muted small">Click the image to view full size</div>
+                                        </div>
+                                        <button type="button" class="btn btn-outline-danger" onclick="removeScreenshot()">
+                                            <i class="fas fa-trash"></i>
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Action Buttons -->
+                            <div class="mt-5">
+                                <div class="d-grid gap-3">
+                                    <button id="payBtn" class="btn btn-primary btn-lg py-3" onclick="confirmPaid()">
+                                        <i class="fas fa-check-circle me-2"></i>
+                                        <span id="payBtnText">I have completed the payment</span>
+                                    </button>
+                                    <button class="btn btn-outline-light py-2" onclick="goBackToDashboard()">
+                                        <i class="fas fa-arrow-left me-2"></i>Back to Dashboard
+                                    </button>
+                                </div>
+                                <div id="paymentMessage" class="mt-3 text-center"></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Right Column: History & Help -->
+                    <div class="col-lg-4">
+                        <!-- Payment History -->
+                        <div class="glass-card p-4 mb-4">
+                            <div class="d-flex justify-content-between align-items-center mb-3">
+                                <div class="section-title">Payment History</div>
+                                <button class="btn btn-sm btn-outline-light" onclick="loadPaymentHistory()">
+                                    <i class="fas fa-sync-alt"></i>
+                                </button>
+                            </div>
+                            <div id="historyList" class="position-relative" style="min-height: 100px;">
+                                <div class="text-center py-4">
+                                    <div class="loading-spinner mx-auto mb-2"></div>
+                                    <div class="text-muted small">Loading payment history...</div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Help Center -->
+                        <div class="glass-card p-4">
+                            <div class="section-title">Help & Support</div>
+                            <h3 class="h6 fw-semibold mb-3">Frequently Asked Questions</h3>
+                            
+                            <div class="help-item">
+                                <div class="d-flex align-items-start gap-2">
+                                    <div class="rounded-circle bg-success bg-opacity-25 p-2 flex-shrink-0">
+                                        <i class="fas fa-lock text-success"></i>
+                                    </div>
+                                    <div>
+                                        <div class="fw-semibold mb-1">Is my payment secure?</div>
+                                        <div class="text-muted small">
+                                            We use 256-bit encryption and never store your UPI PIN or card details.
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="help-item">
+                                <div class="d-flex align-items-start gap-2">
+                                    <div class="rounded-circle bg-info bg-opacity-25 p-2 flex-shrink-0">
+                                        <i class="fas fa-question-circle text-info"></i>
+                                    </div>
+                                    <div>
+                                        <div class="fw-semibold mb-1">Payment not showing as paid?</div>
+                                        <div class="text-muted small">
+                                            Refresh this page or wait 2-3 minutes. If still pending, share UPI reference ID with worker.
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="help-item">
+                                <div class="d-flex align-items-start gap-2">
+                                    <div class="rounded-circle bg-warning bg-opacity-25 p-2 flex-shrink-0">
+                                        <i class="fas fa-headset text-warning"></i>
+                                    </div>
+                                    <div>
+                                        <div class="fw-semibold mb-1">Need more help?</div>
+                                        <div class="text-muted small">
+                                            <div><i class="fas fa-envelope me-2"></i>support@workconnect.local</div>
+                                            <div><i class="fas fa-phone me-2"></i>+91-95247-85164</div>
+                                            <div><i class="fab fa-whatsapp me-2"></i>WhatsApp Support</div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Quick Tips -->
+                            <div class="alert alert-secondary bg-dark border-secondary mt-3">
+                                <div class="fw-semibold mb-2">
+                                    <i class="fas fa-lightbulb me-2"></i>Quick Tip
+                                </div>
+                                <div class="small text-muted">
+                                    Always keep the payment screenshot until the worker confirms receipt. This serves as proof of payment.
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `;
+            
+            // Initialize UI
+            initializeUI();
+        }
+
+        // Initialize UI after template is loaded
+        function initializeUI() {
+            // Set up screenshot upload
+            document.getElementById('screenshotInput').addEventListener('change', handleScreenshotUpload);
+            
+            // Load payment history
+            loadPaymentHistory();
+        }
+
+        // Select payment method
+        function selectMethod(method) {
+            selectedMethod = method;
+            
+            // Remove active class from all methods
+            document.querySelectorAll('.method-pill').forEach(el => {
+                el.classList.remove('active');
+            });
+            
+            // Add active class to selected method
+            const selectedEl = document.querySelector(`.method-pill[data-method="${method}"]`);
+            if (selectedEl) {
+                selectedEl.classList.add('active');
+            }
+            
+            // Show/hide UPI block
+            const upiBlock = document.getElementById('upiBlock');
+            if (upiBlock) {
+                upiBlock.style.display = method === 'upi' ? 'block' : 'none';
+            }
+            
+            // Update button text
+            const payBtnText = document.getElementById('payBtnText');
+            if (payBtnText) {
+                if (method === 'cash') {
+                    payBtnText.textContent = 'Mark as Cash Payment';
+                } else if (method === 'card') {
+                    payBtnText.textContent = 'Proceed to Card Payment';
+                } else {
+                    payBtnText.textContent = 'I have completed the payment';
+                }
+            }
+        }
+
+        // Copy UPI ID
+        function copyUpi() {
+            const upiId = document.getElementById('workerUpi').textContent.trim();
+            if (!upiId || upiId.includes('not available')) {
+                showMessage('UPI ID not available', 'warning');
+                return;
+            }
+            
+            navigator.clipboard.writeText(upiId)
+                .then(() => showMessage('UPI ID copied to clipboard!', 'success'))
+                .catch(() => showMessage('Failed to copy UPI ID', 'error'));
+        }
+
+        // Open UPI app
+        function openUpiApp() {
+            const upiId = document.getElementById('workerUpi').textContent.trim();
+            if (!upiId || upiId.includes('not available')) {
+                showMessage('UPI ID not available', 'warning');
+                return;
+            }
+            
+            const amount = currentOrder?.totalAmount || 0;
+            const upiLink = `upi://pay?pa=${encodeURIComponent(upiId)}&pn=${encodeURIComponent(currentOrder.worker?.name || 'Worker')}&am=${amount}&cu=INR&tn=${encodeURIComponent(`Payment for ${currentOrder.serviceType}`)}`;
+            
+            window.open(upiLink, '_blank');
+            showMessage('Opening UPI app...', 'info');
+        }
+
+        // Handle screenshot upload
+        function handleScreenshotUpload(e) {
+            const file = e.target.files[0];
+            if (!file) return;
+            
+            if (!file.type.startsWith('image/')) {
+                showMessage('Please upload an image file', 'error');
+                return;
+            }
+            
+            if (file.size > 5 * 1024 * 1024) { // 5MB limit
+                showMessage('Image size should be less than 5MB', 'error');
+                return;
+            }
+            
+            screenshotFile = file;
+            
+            const reader = new FileReader();
+            reader.onload = function(event) {
+                document.getElementById('previewImg').src = event.target.result;
+                document.getElementById('screenshotPreview').classList.remove('d-none');
+            };
+            reader.readAsDataURL(file);
+            
+            showMessage('Screenshot uploaded successfully', 'success');
+        }
+
+        // Remove screenshot
+        function removeScreenshot() {
+            screenshotFile = null;
+            document.getElementById('screenshotInput').value = '';
+            document.getElementById('screenshotPreview').classList.add('d-none');
+            showMessage('Screenshot removed', 'info');
+        }
+
+        // Confirm payment
+        async function confirmPaid() {
+            if (!currentOrder) {
+                showMessage('Order not loaded', 'error');
+                return;
+            }
+            
+            if (selectedMethod === 'upi' && !confirm('Have you completed the payment in your UPI app?')) {
+                return;
+            }
+            
+            if (selectedMethod === 'cash' && !confirm('Mark this as cash payment? You will pay directly to the worker.')) {
+                return;
+            }
+            
+            try {
+                // Disable button and show loading
+                const payBtn = document.getElementById('payBtn');
+                const originalText = payBtn.innerHTML;
+                payBtn.innerHTML = '<span class="loading-spinner me-2"></span> Processing...';
+                payBtn.disabled = true;
+                
+                // Prepare payment data
+                const formData = new FormData();
+                formData.append('method', selectedMethod);
+                formData.append('customerId', currentUser.id);
+                if (screenshotFile) {
+                    formData.append('screenshot', screenshotFile);
+                }
+
+                let result;
+                try {
+                    // Try real API first
+                    const res = await fetch(`/api/orders/${currentOrder.id}/pay`, {
+                        method: 'POST',
+                        body: formData
+                    });
+                    
+                    if (!res.ok) throw new Error('API request failed');
+                    result = await res.json();
+                } catch (apiError) {
+                    console.log('API failed, using mock payment:', apiError);
+                    // Fallback to mock payment
+                    await new Promise(resolve => setTimeout(resolve, 800));
+                    
+                    const transactionId = 'TXN' + Math.random().toString(36).substr(2, 9).toUpperCase();
+                    
+                    result = {
+                        success: true,
+                        payment: {
+                            transactionId: transactionId
+                        },
+                        message: 'Payment processed successfully'
+                    };
+                    
+                    // Update mock database
+                    currentOrder.paymentStatus = 'paid';
+                    currentOrder.transactionId = transactionId;
+                }
+                
+                if (result.success) {
+                    showMessage(`Payment successful! Transaction ID: ${result.payment.transactionId}`, 'success');
+                    
+                    // Clear screenshot
+                    removeScreenshot();
+                    
+                    // Update UI
+                    currentOrder.paymentStatus = 'paid';
+                    currentOrder.transactionId = result.payment.transactionId;
+                    
+                    // Update button
+                    payBtn.innerHTML = '<i class="fas fa-check-circle me-2"></i>Payment Successful';
+                    payBtn.className = 'btn btn-success btn-lg py-3';
+                    
+                    // Load updated history
+                    await loadPaymentHistory();
+                    
+                    // Redirect after delay
+                    setTimeout(() => {
+                        window.location.href = 'customer-dashboard.html';
+                    }, 3000);
+                } else {
+                    throw new Error(result.message || 'Payment failed');
+                }
+                
+            } catch (error) {
+                console.error('Payment error:', error);
+                showMessage(`Payment failed: ${error.message}`, 'error');
+                
+                // Re-enable button
+                const payBtn = document.getElementById('payBtn');
+                payBtn.innerHTML = '<i class="fas fa-check-circle me-2"></i>Try Again';
+                payBtn.disabled = false;
+            }
+        }
+
+        // Load payment history
+        async function loadPaymentHistory() {
+            try {
+                const historyList = document.getElementById('historyList');
+                if (!historyList) return;
+                
+                let payments;
+                try {
+                    // Try real API first
+                    const res = await fetch(`/api/payments/customer/${currentUser.id}`);
+                    if (!res.ok) throw new Error('API request failed');
+                    payments = await res.json();
+                } catch (apiError) {
+                    console.log('API failed, using mock data:', apiError);
+                    // Fallback to mock data
+                    await new Promise(resolve => setTimeout(resolve, 300));
+                    payments = mockDatabase.payments
+                        .filter(p => p.customerId === currentUser.id)
+                        .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+                }
+                
+                if (!payments || payments.length === 0) {
+                    historyList.innerHTML = `
+                        <div class="text-center py-4">
+                            <i class="fas fa-history fa-2x text-muted mb-3"></i>
+                            <div class="text-muted">No payment history found</div>
+                            <small class="text-secondary">Your payment history will appear here</small>
+                        </div>
+                    `;
+                    return;
+                }
+                
+                historyList.innerHTML = payments.map(payment => `
+                    <div class="history-row">
+                        <div class="d-flex justify-content-between align-items-start mb-2">
+                            <div>
+                                <div class="fw-bold h6 mb-1">₹${payment.amount}</div>
+                                <div class="text-muted small mb-1">
+                                    ${payment.method === 'upi' ? 'UPI Payment' : 
+                                      payment.method === 'card' ? 'Card Payment' : 'Cash Payment'}
+                                </div>
+                                <div class="text-muted small">
+                                    ${new Date(payment.createdAt).toLocaleDateString('en-IN', {
+                                        day: '2-digit',
+                                        month: 'short',
+                                        year: 'numeric'
+                                    })}
+                                </div>
+                            </div>
+                            <div class="text-end">
+                                <span class="pill-status pill-success">
+                                    ${payment.status || 'success'}
+                                </span>
+                                <div class="text-muted small mt-1">${payment.transactionId}</div>
+                            </div>
+                        </div>
+                        ${payment.screenshot ? `
+                            <div class="mt-2">
+                                <img src="${payment.screenshot}" alt="Payment Proof" 
+                                     class="screenshot-preview cursor-pointer"
+                                     onclick="window.open('${payment.screenshot}', '_blank')">
+                                <div class="mt-1">
+                                    <a href="${payment.screenshot}" target="_blank" class="text-primary small text-decoration-none">
+                                        <i class="fas fa-external-link-alt me-1"></i>View Proof
+                                    </a>
+                                </div>
+                            </div>
+                        ` : ''}
+                    </div>
+                `).join('');
+                
+            } catch (error) {
+                console.error('Error loading payment history:', error);
+                const historyList = document.getElementById('historyList');
+                if (historyList) {
+                    historyList.innerHTML = `
+                        <div class="text-center py-4 text-danger">
+                            <i class="fas fa-exclamation-circle mb-2"></i>
+                            <div>Failed to load payment history</div>
+                            <small>${error.message}</small>
+                        </div>
+                    `;
+                }
+            }
+        }
+
+        // Show message
+        function showMessage(text, type = 'info') {
+            const messageEl = document.getElementById('paymentMessage');
+            if (!messageEl) return;
+            
+            const icons = {
+                success: 'check-circle',
+                error: 'exclamation-circle',
+                warning: 'exclamation-triangle',
+                info: 'info-circle'
+            };
+            
+            const colors = {
+                success: 'success',
+                error: 'danger',
+                warning: 'warning',
+                info: 'info'
+            };
+            
+            messageEl.innerHTML = `
+                <div class="alert alert-${colors[type]} bg-${colors[type]} bg-opacity-10 border-${colors[type]} border-opacity-25 d-flex align-items-center">
+                    <i class="fas fa-${icons[type]} me-2"></i>
+                    ${text}
+                </div>
+            `;
+            
+            // Auto-hide info messages
+            if (type === 'info') {
+                setTimeout(() => {
+                    messageEl.innerHTML = '';
+                }, 5000);
+            }
+        }
+
+        // Retry loading
+        function retryLoad() {
+            const params = new URLSearchParams(window.location.search);
+            const orderId = params.get('orderId');
+            if (orderId) {
+                window.location.reload();
+            } else {
+                goBackToDashboard();
+            }
+        }
+
+        // Navigate back to dashboard
+        function goBackToDashboard() {
+            window.location.href = 'customer-dashboard.html';
+        }
+    </script>
+</body>
+</html>

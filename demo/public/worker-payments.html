@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>WorkConnect - Worker Payments</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        body {
+            min-height: 100vh;
+            background: linear-gradient(135deg, #0f172a 0%, #1e293b 40%, #020617 100%);
+            color: #e5e7eb;
+            font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+        }
+        .navbar {
+            background: rgba(15, 23, 42, 0.95);
+            border-bottom: 1px solid rgba(148, 163, 184, 0.2);
+            backdrop-filter: blur(16px);
+        }
+        .navbar-brand {
+            font-weight: 700;
+            background: linear-gradient(135deg, #38bdf8, #60a5fa);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        .navbar .nav-link {
+            color: #9ca3af;
+        }
+        .navbar .nav-link:hover,
+        .navbar .nav-link.active {
+            color: #e5e7eb;
+        }
+        .page-header {
+            padding: 2.5rem 0 1.5rem;
+        }
+        .page-title {
+            font-size: 1.75rem;
+            font-weight: 700;
+        }
+        .page-subtitle {
+            color: #9ca3af;
+            font-size: 0.95rem;
+        }
+        .card.payment-card {
+            background: rgba(15, 23, 42, 0.95);
+            border-radius: 1.25rem;
+            border: 1px solid rgba(148, 163, 184, 0.35);
+            box-shadow: 0 18px 45px rgba(15,23,42,0.85);
+            padding: 16px 18px;
+        }
+        .badge-success-soft {
+            background: rgba(16,185,129,0.18);
+            color: #6ee7b7;
+            border-radius: 999px;
+            padding: 4px 10px;
+            font-size: 0.75rem;
+            font-weight: 600;
+        }
+        .text-secondary {
+            color: #9ca3af !important;
+        }
+        .pill {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.35rem;
+            padding: 0.25rem 0.6rem;
+            border-radius: 999px;
+            font-size: 0.75rem;
+            background: rgba(15,23,42,0.8);
+            border: 1px solid rgba(148,163,184,0.45);
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar navbar-expand-lg sticky-top">
+        <div class="container-fluid px-4">
+            <a class="navbar-brand fw-bold" href="worker-profile.html">
+                <i class="fas fa-tools me-2"></i>WorkConnect
+            </a>
+            <div class="navbar-nav ms-auto">
+                <a class="nav-link" href="worker-profile.html" id="navUserLink">Profile</a>
+                <a class="nav-link" href="worker-orders.html">Orders</a>
+                <a class="nav-link active" href="worker-payments.html">Payments</a>
+                <button class="btn btn-outline-light btn-sm ms-3" onclick="logout()">
+                    <i class="fas fa-sign-out-alt me-2"></i>Logout
+                </button>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container py-4">
+        <header class="page-header">
+            <h1 class="page-title">My Payments</h1>
+            <p class="page-subtitle">See all payments you have received from customers.</p>
+        </header>
+
+        <section id="paymentsSection">
+            <div id="paymentsList" class="row g-3"></div>
+        </section>
+    </div>
+
+    <script>
+        let currentUser = null;
+
+        document.addEventListener('DOMContentLoaded', () => {
+            try {
+                const userStr = localStorage.getItem('user');
+                currentUser = userStr ? JSON.parse(userStr) : null;
+            } catch {
+                currentUser = null;
+            }
+
+            if (!currentUser) {
+                window.location.href = 'login.html';
+                return;
+            }
+            if (currentUser.role !== 'worker') {
+                window.location.href = 'dashboard.html';
+                return;
+            }
+
+            const navUserLink = document.getElementById('navUserLink');
+            if (navUserLink) {
+                navUserLink.textContent = (currentUser.name || currentUser.username) + ' (Profile)';
+            }
+
+            loadPayments();
+        });
+
+        async function loadPayments() {
+            const listEl = document.getElementById('paymentsList');
+            try {
+                const res = await fetch(`/api/payments/worker/${currentUser.id}`);
+                if (!res.ok) {
+                    listEl.innerHTML = '<div class="col-12 text-center text-secondary">Unable to load payments.</div>';
+                    return;
+                }
+                const payments = await res.json() || [];
+                if (!payments.length) {
+                    listEl.innerHTML = '<div class="col-12 text-center text-secondary py-5"><i class="fas fa-receipt fa-3x mb-3"></i><p class="mb-0">No payments found yet.</p></div>';
+                    return;
+                }
+                listEl.innerHTML = payments
+                    .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))
+                    .map(p => {
+                        const dateStr = new Date(p.createdAt).toLocaleString();
+                        const orderCode = p.orderId ? p.orderId.slice(-6) : '—';
+                        return `
+                            <div class="col-lg-6 col-md-12">
+                                <div class="card payment-card">
+                                    <div class="d-flex justify-content-between align-items-center mb-2">
+                                        <div>
+                                            <div class="small text-secondary">Transaction</div>
+                                            <div class="fw-semibold">${p.transactionId || 'N/A'}</div>
+                                        </div>
+                                        <span class="badge-success-soft">
+                                            <i class="fas fa-check-circle me-1"></i>Success
+                                        </span>
+                                    </div>
+                                    <div class="mb-2">
+                                        <div class="small text-secondary">Amount</div>
+                                        <div class="h5 mb-0">₹${p.amount}</div>
+                                    </div>
+                                    <div class="d-flex flex-wrap gap-2 mb-2">
+                                        <span class="pill">
+                                            <i class="fas fa-file-invoice-dollar"></i>
+                                            Order #${orderCode}
+                                        </span>
+                                        <span class="pill">
+                                            <i class="fas fa-credit-card"></i>
+                                            ${p.method || 'Online'}
+                                        </span>
+                                        <span class="pill">
+                                            <i class="fas fa-clock"></i>
+                                            ${dateStr}
+                                        </span>
+                                    </div>
+                                </div>
+                            </div>
+                        `;
+                    }).join('');
+            } catch (e) {
+                console.error('Error loading worker payments:', e);
+                listEl.innerHTML = '<div class="col-12 text-center text-secondary">Error loading payments.</div>';
+            }
+        }
+
+        function logout() {
+            localStorage.removeItem('user');
+            window.location.href = 'index.html';
+        }
+    </script>
+</body>
+</html>
+
+
