@@ -1,0 +1,295 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>WorkConnect - Find Skilled Workers</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="styles.css">
+  <style>
+    body {
+      background: linear-gradient(180deg, #0e2a47 0%, #071a2f 100%);
+      min-height: 100vh;
+      min-width: 100vw;
+      margin: 0;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      position: relative;
+      overflow-x: hidden;
+      /* Prevent white background on overscroll */
+      overscroll-behavior: none;
+      -webkit-overflow-scrolling: touch;
+    }
+
+    /* Ensure the background extends beyond viewport to prevent white flash */
+    html {
+      background: linear-gradient(180deg, #0e2a47 0%, #071a2f 100%);
+      min-height: 100vh;
+      overscroll-behavior: none;
+    }
+
+    /* Oceanic wave animation background */
+    body::before,
+    body::after {
+      content: '';
+      position: fixed;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      height: 32vh;
+      background-repeat: repeat-x;
+      background-size: 2000px 100%;
+      pointer-events: none;
+      z-index: 0;
+    }
+    body::before {
+      opacity: 0.5;
+      animation: waveSlide1 24s linear infinite;
+      background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1200 200' preserveAspectRatio='none'><path d='M0,120 C150,200 350,0 600,120 C850,240 1050,40 1200,120 L1200,200 L0,200 Z' fill='%23ffffff' fill-opacity='0.25'/></svg>");
+    }
+    body::after {
+      height: 38vh;
+      opacity: 0.8;
+      animation: waveSlide2 36s linear infinite;
+      background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1200 200' preserveAspectRatio='none'><path d='M0,140 C200,60 400,220 600,110 C800,0 1000,180 1200,100 L1200,200 L0,200 Z' fill='%23a8d8ff' fill-opacity='0.15'/></svg>");
+    }
+    @keyframes waveSlide1 {
+      0% { background-position-x: 0; }
+      100% { background-position-x: 2000px; }
+    }
+    @keyframes waveSlide2 {
+      0% { background-position-x: 0; }
+      100% { background-position-x: -2000px; }
+    }
+
+    /* Keep page content above the animated background */
+    body > * { position: relative; z-index: 1; }
+
+    /* Container with its own ocean wave animation */
+    .ocean-container {
+      position: relative;
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 0 20px 80px 20px; /* bottom padding for waves */
+    }
+    .ocean-container::before,
+    .ocean-container::after {
+      content: '';
+      position: absolute;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      height: 120px;
+      background-repeat: repeat-x;
+      background-size: 1200px 100%;
+      pointer-events: none;
+      z-index: 0;
+    }
+    .ocean-container::before {
+      opacity: 0.5;
+      animation: waveSlide1 18s linear infinite;
+      background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1200 200' preserveAspectRatio='none'><path d='M0,120 C150,200 350,0 600,120 C850,240 1050,40 1200,120 L1200,200 L0,200 Z' fill='%23ffffff' fill-opacity='0.20'/></svg>");
+    }
+    .ocean-container::after {
+      height: 160px;
+      opacity: 0.8;
+      animation: waveSlide2 28s linear infinite;
+      background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1200 200' preserveAspectRatio='none'><path d='M0,140 C200,60 400,220 600,110 C800,0 1000,180 1200,100 L1200,200 L0,200 Z' fill='%23a8d8ff' fill-opacity='0.12'/></svg>");
+    }
+    /* Keep content inside container above its waves */
+    .ocean-container > * { position: relative; z-index: 1; }
+
+    .welcome-card {
+      background: transparent;
+      backdrop-filter: blur(10px);
+      width: 100%;
+      height: 100vh; /* Full screen height */
+      padding: 60px 40px;
+      box-sizing: border-box;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+    }
+
+    .welcome-card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 5px;
+      background: linear-gradient(90deg, #667eea00, #ffffff00, #667eea00);
+      background-size: 200% 100%;
+      animation: gradientMove 3s ease infinite;
+    }
+
+    @keyframes gradientMove {
+      0% { background-position: 0% 50%; }
+      50% { background-position: 100% 50%; }
+      100% { background-position: 0% 50%; }
+    }
+
+    .welcome-card h1 {
+      color: #333;
+      margin-bottom: 15px;
+      font-size: 3rem;
+      font-weight: 700;
+      background: linear-gradient(135deg, #667eea, #764ba2);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .welcome-card p {
+      color: #fffdfd;
+      margin-bottom: 40px;
+      font-size: 1.3rem;
+      line-height: 1.6;
+      max-width: 800px;
+    }
+
+    .button-group {
+      display: flex;
+      gap: 20px;
+      justify-content: center;
+      flex-wrap: wrap;
+      margin-bottom: 50px;
+    }
+
+    .btn {
+      padding: 15px 35px;
+      border: none;
+      border-radius: 15px;
+      font-size: 16px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      text-decoration: none;
+      display: inline-block;
+      min-width: 140px;
+    }
+
+    .btn-primary {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+    }
+
+    .btn-primary:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 15px 30px rgba(102, 126, 234, 0.4);
+    }
+
+    .btn-secondary {
+      background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
+      color: white;
+    }
+
+    .btn-secondary:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 15px 30px rgba(40, 167, 69, 0.4);
+    }
+
+    .features {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 25px;
+      width: 100%;
+      max-width: 900px;
+      margin: 0 auto;
+    }
+
+    .feature {
+      padding: 20px;
+      background: rgba(70, 70, 70, 0);
+      border-radius: 15px;
+      border: 1px solid rgba(102, 126, 234, 0.2);
+    }
+
+    .feature-icon {
+      font-size: 4rem;
+      margin-bottom: 10px;
+      display: block;
+    }
+
+    .feature h3 {
+      color: gold;
+      margin: 0 0 8px 0;
+      font-size: 1.2rem;
+    }
+
+    .feature p {
+      color: #ffffff;
+      margin: 0;
+      font-size: 1rem;
+      line-height: 1.4;
+    }
+
+    @media (max-width: 600px) {
+      .welcome-card {
+        padding: 30px 20px;
+      }
+
+      .welcome-card h1 {
+        font-size: 2rem;
+      }
+
+      .welcome-card p {
+        font-size: 1.1rem;
+      }
+
+      .button-group {
+        flex-direction: column;
+        align-items: center;
+      }
+
+      .btn {
+        width: 100%;
+        max-width: 250px;
+      }
+
+      .features {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="ocean-container">
+    <div class="welcome-card">
+    <h1 >WorkConnect</h1>
+    <p text-yellow-500 >Connect with skilled workers and get your projects done efficiently. Find the perfect match for your needs.</p>
+
+    <div class="button-group">
+      <a href="register.html" class="btn btn-primary">Get Started</a>
+      <a href="login.html" class="btn btn-secondary">Sign In</a>
+    </div>
+
+      <div class="features">
+      <div class="feature">
+        <span class="feature-icon">👷</span>
+        <h3>Skilled Workers</h3>
+        <p>Verified professionals with experience</p>
+      </div>
+      <div class="feature">
+        <span class="feature-icon">⚡</span>
+        <h3>Quick Service</h3>
+        <p>Fast response and completion</p>
+      </div>
+      <div class="feature">
+        <span class="feature-icon">💰</span>
+        <h3>Fair Pricing</h3>
+        <p>Transparent and competitive rates</p>
+      </div>
+      <div class="feature">
+        <span class="feature-icon">⭐</span>
+        <h3>Rated & Reviewed</h3>
+        <p>Quality assurance through feedback</p>
+      </div>
+      </div>
+    </div>
+  </div>
+</body>
+</html>
