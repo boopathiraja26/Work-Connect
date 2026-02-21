@@ -1,11 +1,13 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>WorkConnect - My Orders</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+
     <style>
         body {
             min-height: 100vh;
@@ -14,26 +16,28 @@
             font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
             overflow-x: hidden;
         }
-        
+
         /* Custom Scrollbar */
         ::-webkit-scrollbar {
             width: 8px;
         }
+
         ::-webkit-scrollbar-track {
             background: rgba(15, 23, 42, 0.5);
         }
+
         ::-webkit-scrollbar-thumb {
             background: rgba(56, 189, 248, 0.3);
             border-radius: 4px;
         }
-        
+
         .navbar {
             background: rgba(15, 23, 42, 0.98);
             border-bottom: 1px solid rgba(56, 189, 248, 0.2);
             backdrop-filter: blur(16px);
             box-shadow: 0 4px 30px rgba(0, 0, 0, 0.3);
         }
-        
+
         .navbar-brand {
             font-weight: 700;
             background: linear-gradient(135deg, #38bdf8, #60a5fa, #3b82f6);
@@ -42,24 +46,24 @@
             background-clip: text;
             letter-spacing: -0.5px;
         }
-        
+
         .navbar .nav-link {
             color: #cbd5e1;
             transition: all 0.3s ease;
             position: relative;
             padding: 0.5rem 1rem;
         }
-        
+
         .navbar .nav-link:hover {
             color: #ffffff;
             transform: translateY(-2px);
         }
-        
+
         .navbar .nav-link.active {
             color: #38bdf8;
             font-weight: 600;
         }
-        
+
         .navbar .nav-link.active::after {
             content: '';
             position: absolute;
@@ -70,26 +74,26 @@
             background: linear-gradient(90deg, #38bdf8, #3b82f6);
             border-radius: 2px;
         }
-        
+
         .btn-outline {
             border: 1px solid rgba(56, 189, 248, 0.4);
             color: #38bdf8;
             background: transparent;
             transition: all 0.3s ease;
         }
-        
+
         .btn-outline:hover {
             background: rgba(56, 189, 248, 0.1);
             border-color: #38bdf8;
             transform: translateY(-2px);
             box-shadow: 0 4px 12px rgba(56, 189, 248, 0.2);
         }
-        
+
         .page-header {
             padding: 2.5rem 0 2rem;
             position: relative;
         }
-        
+
         .page-title {
             font-size: 2.25rem;
             font-weight: 800;
@@ -100,13 +104,13 @@
             margin-bottom: 0.5rem;
             letter-spacing: -0.5px;
         }
-        
+
         .page-subtitle {
             color: #94a3b8;
             font-size: 1rem;
             max-width: 600px;
         }
-        
+
         /* Filter Tabs */
         .filter-tabs {
             display: flex;
@@ -114,7 +118,7 @@
             margin-bottom: 2rem;
             flex-wrap: wrap;
         }
-        
+
         .filter-tab {
             padding: 0.75rem 1.5rem;
             border-radius: 12px;
@@ -124,20 +128,20 @@
             cursor: pointer;
             transition: all 0.3s ease;
         }
-        
+
         .filter-tab:hover {
             background: rgba(30, 41, 59, 0.9);
             border-color: rgba(56, 189, 248, 0.4);
             transform: translateY(-2px);
         }
-        
+
         .filter-tab.active {
             background: rgba(56, 189, 248, 0.1);
             border-color: #38bdf8;
             color: #38bdf8;
             font-weight: 600;
         }
-        
+
         /* Stats Header */
         .stats-header {
             display: flex;
@@ -147,7 +151,7 @@
             flex-wrap: wrap;
             gap: 1rem;
         }
-        
+
         .stats-box {
             background: rgba(15, 23, 42, 0.7);
             border-radius: 16px;
@@ -156,25 +160,25 @@
             min-width: 180px;
             transition: all 0.3s ease;
         }
-        
+
         .stats-box:hover {
             border-color: rgba(56, 189, 248, 0.3);
             transform: translateY(-5px);
         }
-        
+
         .stats-value {
             font-size: 1.75rem;
             font-weight: 700;
             color: #38bdf8;
             line-height: 1;
         }
-        
+
         .stats-label {
             font-size: 0.9rem;
             color: #94a3b8;
             margin-top: 0.5rem;
         }
-        
+
         /* Order Cards */
         .order-card {
             background: linear-gradient(145deg, rgba(15, 23, 42, 0.95), rgba(30, 41, 59, 0.9));
@@ -188,7 +192,7 @@
             overflow: hidden;
             backdrop-filter: blur(10px);
         }
-        
+
         .order-card::before {
             content: '';
             position: absolute;
@@ -198,17 +202,17 @@
             height: 1px;
             background: linear-gradient(90deg, transparent, rgba(56, 189, 248, 0.5), transparent);
         }
-        
+
         .order-card:hover {
             transform: translateY(-10px);
             border-color: rgba(56, 189, 248, 0.4);
             box-shadow: 0 20px 40px rgba(15, 23, 42, 0.7), 0 0 0 1px rgba(56, 189, 248, 0.1);
         }
-        
+
         .order-card:hover::after {
             opacity: 1;
         }
-        
+
         .order-card::after {
             content: '';
             position: absolute;
@@ -219,11 +223,11 @@
             background: linear-gradient(90deg, transparent, rgba(56, 189, 248, 0.05), transparent);
             transition: left 0.7s ease;
         }
-        
+
         .order-card:hover::after {
             left: 100%;
         }
-        
+
         .badge-success-soft {
             background: rgba(16, 185, 129, 0.2);
             color: #6ee7b7;
@@ -237,7 +241,7 @@
             gap: 6px;
             transition: all 0.3s ease;
         }
-        
+
         .badge-warning-soft {
             background: rgba(245, 158, 11, 0.2);
             color: #fbbf24;
@@ -251,7 +255,7 @@
             gap: 6px;
             transition: all 0.3s ease;
         }
-        
+
         .badge-info-soft {
             background: rgba(14, 165, 233, 0.2);
             color: #7dd3fc;
@@ -265,7 +269,7 @@
             gap: 6px;
             transition: all 0.3s ease;
         }
-        
+
         .badge-danger-soft {
             background: rgba(239, 68, 68, 0.2);
             color: #fca5a5;
@@ -279,7 +283,7 @@
             gap: 6px;
             transition: all 0.3s ease;
         }
-        
+
         .order-card:hover .badge-success-soft,
         .order-card:hover .badge-warning-soft,
         .order-card:hover .badge-info-soft,
@@ -287,11 +291,11 @@
             transform: scale(1.05);
             box-shadow: 0 4px 12px rgba(var(--badge-color), 0.2);
         }
-        
+
         .text-secondary {
             color: #94a3b8 !important;
         }
-        
+
         .pill {
             display: inline-flex;
             align-items: center;
@@ -304,13 +308,13 @@
             transition: all 0.3s ease;
             margin-bottom: 0.5rem;
         }
-        
+
         .order-card:hover .pill {
             background: rgba(30, 41, 59, 0.9);
             border-color: rgba(56, 189, 248, 0.3);
             transform: translateY(-2px);
         }
-        
+
         .amount-display {
             font-size: 1.75rem;
             font-weight: 700;
@@ -320,7 +324,7 @@
             background-clip: text;
             margin: 0.5rem 0;
         }
-        
+
         .pay-button {
             display: inline-flex;
             align-items: center;
@@ -336,13 +340,13 @@
             font-weight: 600;
             cursor: pointer;
         }
-        
+
         .pay-button:hover {
             transform: translateY(-2px);
             box-shadow: 0 8px 20px rgba(56, 189, 248, 0.3);
             color: white;
         }
-        
+
         .view-button {
             display: inline-flex;
             align-items: center;
@@ -356,7 +360,7 @@
             transition: all 0.3s ease;
             margin-top: 1rem;
         }
-        
+
         .view-button:hover {
             background: rgba(56, 189, 248, 0.2);
             border-color: #38bdf8;
@@ -364,7 +368,7 @@
             box-shadow: 0 4px 12px rgba(56, 189, 248, 0.2);
             color: #7dd3fc;
         }
-        
+
         /* Empty State */
         .empty-state {
             text-align: center;
@@ -373,7 +377,7 @@
             background: rgba(15, 23, 42, 0.5);
             border: 2px dashed rgba(56, 189, 248, 0.3);
         }
-        
+
         .empty-state-icon {
             font-size: 4rem;
             background: linear-gradient(135deg, #38bdf8, #3b82f6);
@@ -382,104 +386,329 @@
             background-clip: text;
             margin-bottom: 1.5rem;
         }
-        
+
         /* Animation for cards */
         @keyframes fadeInUp {
             from {
                 opacity: 0;
                 transform: translateY(20px);
             }
+
             to {
                 opacity: 1;
                 transform: translateY(0);
             }
         }
-        
+
         .order-card {
             animation: fadeInUp 0.6s ease forwards;
             opacity: 0;
         }
-        
-        .order-card:nth-child(1) { animation-delay: 0.1s; }
-        .order-card:nth-child(2) { animation-delay: 0.2s; }
-        .order-card:nth-child(3) { animation-delay: 0.3s; }
-        .order-card:nth-child(4) { animation-delay: 0.4s; }
-        .order-card:nth-child(5) { animation-delay: 0.5s; }
-        .order-card:nth-child(6) { animation-delay: 0.6s; }
-        
+
+        .order-card:nth-child(1) {
+            animation-delay: 0.1s;
+        }
+
+        .order-card:nth-child(2) {
+            animation-delay: 0.2s;
+        }
+
+        .order-card:nth-child(3) {
+            animation-delay: 0.3s;
+        }
+
+        .order-card:nth-child(4) {
+            animation-delay: 0.4s;
+        }
+
+        .order-card:nth-child(5) {
+            animation-delay: 0.5s;
+        }
+
+        .order-card:nth-child(6) {
+            animation-delay: 0.6s;
+        }
+
+        /* Notifications */
+        .notifications-dropdown {
+            position: absolute;
+            right: 0;
+            top: 125%;
+            width: 300px;
+            background: rgba(15, 23, 42, 0.98);
+            border-radius: 0.75rem;
+            border: 1px solid rgba(148, 163, 184, 0.4);
+            box-shadow: 0 18px 45px rgba(15, 23, 42, 0.95);
+            padding: 0.5rem 0;
+            display: none;
+            z-index: 1050;
+        }
+
+        .notifications-dropdown.show {
+            display: block;
+        }
+
+        .notifications-dropdown h6 {
+            font-size: 0.8rem;
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+            padding: 0.6rem 1rem;
+            margin-bottom: 0;
+            border-bottom: 1px solid rgba(148, 163, 184, 0.1);
+            color: #9ca3af;
+        }
+
+        .notif-item {
+            padding: 12px 1rem;
+            border-bottom: 1px solid rgba(148, 163, 184, 0.1);
+            transition: background 0.2s ease;
+        }
+
+        .notif-item:last-child {
+            border-bottom: none;
+        }
+
+        .notif-item:hover {
+            background: rgba(255, 255, 255, 0.05);
+        }
+
+        .notif-title {
+            color: #e5e7eb;
+            font-size: 0.85rem;
+            margin-bottom: 4px;
+        }
+
+        .notif-meta {
+            color: #9ca3af;
+            font-size: 0.7rem;
+        }
+
         /* Responsive Design */
         @media (max-width: 768px) {
             .page-title {
                 font-size: 1.75rem;
             }
-            
+
             .order-card {
                 padding: 20px;
             }
-            
+
             .amount-display {
                 font-size: 1.5rem;
             }
-            
+
             .navbar-nav {
                 padding: 1rem 0;
             }
-            
+
             .filter-tabs {
                 justify-content: center;
             }
-            
+
             .stats-header {
                 flex-direction: column;
                 align-items: flex-start;
             }
         }
-        
+
         @media (max-width: 576px) {
             .page-header {
                 padding: 1.5rem 0 1.5rem;
                 text-align: center;
             }
-            
+
             .order-card {
                 padding: 16px;
             }
-            
+
             .pill {
                 padding: 0.4rem 0.8rem;
                 font-size: 0.75rem;
             }
-            
+
             .filter-tabs {
                 justify-content: center;
             }
-            
+
             .stats-box {
                 min-width: 100%;
             }
         }
+
+        /* Toast Customization for Dark Theme */
+        .toast {
+            background-color: rgba(30, 41, 59, 0.95);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(56, 189, 248, 0.2);
+            color: #e2e8f0;
+        }
+
+        .toast-header {
+            background-color: rgba(15, 23, 42, 0.95);
+            border-bottom: 1px solid rgba(56, 189, 248, 0.1);
+            color: #f8fafc;
+        }
+
+        .btn-close-white {
+            filter: invert(1) grayscale(100%) brightness(200%);
+        }
+
+        /* Modal Styles */
+        .modal-content {
+            background: #1e293b;
+            border: 1px solid rgba(56, 189, 248, 0.2);
+            color: #cbd5e1;
+            backdrop-filter: blur(16px);
+        }
+
+        .modal-header {
+            border-bottom: 1px solid rgba(56, 189, 248, 0.1);
+        }
+
+        .modal-footer {
+            border-top: 1px solid rgba(56, 189, 248, 0.1);
+        }
+
+        .btn-close {
+            filter: invert(1) grayscale(100%) brightness(200%);
+        }
+
+        .detail-label {
+            font-size: 0.85rem;
+            color: #94a3b8;
+            margin-bottom: 0.25rem;
+        }
+
+        .detail-value {
+            font-weight: 600;
+            color: #e2e8f0;
+            font-size: 1rem;
+        }
+
+        /* Star Rating */
+        .rating-stars {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            margin: 20px 0;
+        }
+
+        .star-btn {
+            background: none;
+            border: none;
+            font-size: 2.5rem;
+            color: #475569;
+            cursor: pointer;
+            transition: all 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            padding: 0;
+            line-height: 1;
+        }
+
+        .star-btn:hover {
+            transform: scale(1.2);
+        }
+
+        .star-btn.active {
+            color: #fbbf24;
+            text-shadow: 0 0 15px rgba(251, 191, 36, 0.5);
+        }
+
+        .action-buttons {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+            margin-top: 1rem;
+        }
+
+        .btn-glass {
+            background: rgba(56, 189, 248, 0.1);
+            border: 1px solid rgba(56, 189, 248, 0.2);
+            color: #38bdf8;
+            padding: 8px 16px;
+            border-radius: 10px;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            text-align: center;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.9rem;
+            width: 100%;
+        }
+
+        .btn-glass:hover {
+            background: rgba(56, 189, 248, 0.2);
+            transform: translateY(-2px);
+            color: #7dd3fc;
+        }
+
+        .btn-glass-primary {
+            background: linear-gradient(135deg, rgba(56, 189, 248, 0.8), rgba(59, 130, 246, 0.8));
+            border: none;
+            color: white;
+        }
+
+        .btn-glass-primary:hover {
+            background: linear-gradient(135deg, rgba(56, 189, 248, 1), rgba(59, 130, 246, 1));
+            color: white;
+            box-shadow: 0 4px 15px rgba(56, 189, 248, 0.3);
+        }
     </style>
+    <script src="config.js"></script>
 </head>
+
 <body>
-    <nav class="navbar navbar-expand-lg sticky-top">
-        <div class="container-fluid px-4">
-            <a class="navbar-brand fw-bold" href="customer-dashboard.html">
+    <nav class="navbar"
+        style="background: rgba(15, 23, 42, 0.95); border-bottom: 1px solid rgba(56, 189, 248, 0.2); backdrop-filter: blur(16px); padding: 0.75rem 0; position: sticky; top: 0; z-index: 1000; margin-bottom: 2rem;">
+        <div class="container"
+            style="display: flex; justify-content: space-between; align-items: center; max-width: 1200px;">
+            <a class="navbar-brand" href="customer-dashboard.html"
+                style="font-weight: 700; font-size: 1.5rem; background: linear-gradient(135deg, #38bdf8, #3b82f6); -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent; text-decoration: none;">
                 <i class="fas fa-tools me-2"></i>WorkConnect
             </a>
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
-                <span class="navbar-toggler-icon text-light">
-                    <i class="fas fa-bars"></i>
-                </span>
-            </button>
-            <div class="collapse navbar-collapse" id="navbarNav">
-                <div class="navbar-nav ms-auto">
-                    <a class="nav-link" href="customer-dashboard.html">Dashboard</a>
-                    <a class="nav-link active" href="customer-orders.html">Orders</a>
-                    <a class="nav-link" href="customer-payments.html">Payments</a>
-                    <button class="btn btn-outline ms-lg-3 mt-2 mt-lg-0" onclick="logout()">
-                        <i class="fas fa-sign-out-alt me-2"></i>Logout
+
+            <div style="display: flex; align-items: center; gap: 1.5rem;">
+                <a href="customer-dashboard.html"
+                    style="color: #cbd5e1; text-decoration: none; font-weight: 500; font-size: 0.95rem; transition: color 0.3s;"
+                    onmouseover="this.style.color='#fff'" onmouseout="this.style.color='#cbd5e1'">Dashboard</a>
+                <a href="customer-orders.html"
+                    style="color: #fff; text-decoration: none; font-weight: 700; font-size: 0.95rem; transition: color 0.3s;">My
+                    Orders</a>
+                <a href="customer-payments.html"
+                    style="color: #cbd5e1; text-decoration: none; font-weight: 500; font-size: 0.95rem; transition: color 0.3s;"
+                    onmouseover="this.style.color='#fff'" onmouseout="this.style.color='#cbd5e1'">Payments</a>
+                <a href="customer-help.html"
+                    style="color: #cbd5e1; text-decoration: none; font-weight: 500; font-size: 0.95rem; transition: color 0.3s;"
+                    onmouseover="this.style.color='#fff'" onmouseout="this.style.color='#cbd5e1'">Help</a>
+
+                <div class="nav-notifications">
+                    <button type="button" id="customerNotifBtn"
+                        style="background: none; border: none; color: #cbd5e1; position: relative; cursor: pointer;">
+                        <i class="fas fa-bell"></i>
+                        <span id="customerNotifCount"
+                            style="display: none; position: absolute; top: -5px; right: -5px; background: #ef4444; color: white; border-radius: 50%; padding: 2px 5px; font-size: 0.65rem; font-weight: bold;">0</span>
                     </button>
+                    <div id="customerNotifDropdown" class="notifications-dropdown"
+                        style="position: absolute; top: 100%; right: 0; width: 300px; background: rgba(15, 23, 42, 0.98); border: 1px solid rgba(148, 163, 184, 0.3); border-radius: 0.75rem; display: none; z-index: 1000; padding: 0.5rem 0; box-shadow: 0 10px 40px rgba(0,0,0,0.5);">
+                        <h6
+                            style="padding: 0.5rem 1rem; border-bottom: 1px solid rgba(148, 163, 184, 0.2); color: #94a3b8; font-size: 0.8rem; text-transform: uppercase;">
+                            Notifications</h6>
+                        <div id="customerNotifList" style="max-height: 300px; overflow-y: auto;"></div>
+                    </div>
                 </div>
+
+                <div class="dropdown">
+                    <a href="customer-profile.html"
+                        style="color: #cbd5e1; text-decoration: none; font-weight: 500; font-size: 0.95rem; display: flex; align-items: center; gap: 0.5rem;"
+                        onmouseover="this.style.color='#fff'" onmouseout="this.style.color='#cbd5e1'">
+                        <i class="fas fa-user-circle" style="font-size: 1.2rem;"></i>
+                        <span id="navUserName">Profile</span>
+                    </a>
+                </div>
+
+                <button class="btn btn-outline-danger btn-sm" onclick="logout()" style="border-radius: 8px;">
+                    <i class="fas fa-sign-out-alt"></i>
+                </button>
             </div>
         </div>
     </nav>
@@ -502,7 +731,7 @@
                     </div>
                 </div>
             </div>
-            
+
             <div class="filter-tabs">
                 <div class="filter-tab active" onclick="filterOrders('all')">All Orders</div>
                 <div class="filter-tab" onclick="filterOrders('pending')">Pending</div>
@@ -517,11 +746,223 @@
         </section>
     </div>
 
+    <!-- Order Details Modal -->
+    <div class="modal fade" id="orderDetailsModal" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title fw-bold">
+                        <i class="fas fa-file-invoice me-2 text-info"></i>Order Details
+                    </h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="text-center mb-4">
+                        <div class="h1 mb-2 text-primary" id="modalAmount"></div>
+                        <div id="modalStatusBadge"></div>
+                    </div>
+
+                    <div class="row g-3">
+                        <div class="col-6">
+                            <div class="p-3 rounded bg-black bg-opacity-25 border border-secondary border-opacity-10">
+                                <div class="detail-label">Service Type</div>
+                                <div class="detail-value" id="modalService"></div>
+                            </div>
+                        </div>
+                        <div class="col-6">
+                            <div class="p-3 rounded bg-black bg-opacity-25 border border-secondary border-opacity-10">
+                                <div class="detail-label">Order ID</div>
+                                <div class="detail-value" id="modalOrderId"></div>
+                            </div>
+                        </div>
+                        <div class="col-12">
+                            <div class="p-3 rounded bg-black bg-opacity-25 border border-secondary border-opacity-10">
+                                <div class="detail-label">Description</div>
+                                <div class="detail-value text-break" id="modalDescription" style="font-weight: 400;">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-6">
+                            <div class="p-3 rounded bg-black bg-opacity-25 border border-secondary border-opacity-10">
+                                <div class="detail-label">Worker</div>
+                                <div class="detail-value" id="modalWorker"></div>
+                            </div>
+                        </div>
+                        <div class="col-6">
+                            <div class="p-3 rounded bg-black bg-opacity-25 border border-secondary border-opacity-10">
+                                <div class="detail-label">Duration</div>
+                                <div class="detail-value" id="modalDuration"></div>
+                            </div>
+                        </div>
+                        <div class="col-12">
+                            <div class="p-3 rounded bg-black bg-opacity-25 border border-secondary border-opacity-10">
+                                <div class="detail-label">Date & Time</div>
+                                <div class="detail-value" id="modalDate"></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div id="modalReviewSection" class="mt-4 pt-3 border-top border-secondary border-opacity-25 hidden">
+                        <h6 class="fw-bold mb-3 text-warning">
+                            <i class="fas fa-star me-2"></i>Your Review
+                        </h6>
+                        <div class="p-3 rounded bg-warning bg-opacity-10 border border-warning border-opacity-25">
+                            <div class="d-flex justify-content-between align-items-center mb-2">
+                                <span class="badge bg-warning text-dark" id="modalReviewRating"></span>
+                                <small class="text-muted" id="modalReviewDate"></small>
+                            </div>
+                            <p class="mb-0 fst-italic text-light" id="modalReviewComment"></p>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-glass" data-bs-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-glass btn-glass-primary" id="modalPayBtn"
+                        style="display: none;">
+                        Pay Now
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Rate Service Modal -->
+    <div class="modal fade" id="rateServiceModal" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title fw-bold">
+                        <i class="fas fa-star me-2 text-warning"></i>Rate Service
+                    </h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body text-center">
+                    <p class="text-secondary">How was your experience with <span id="rateWorkerName"
+                            class="text-light fw-bold"></span>?</p>
+
+                    <div class="rating-stars">
+                        <button class="star-btn" onclick="setRating(1)" onmouseenter="hoverRating(1)"
+                            onmouseleave="resetHover()"><i class="fas fa-star"></i></button>
+                        <button class="star-btn" onclick="setRating(2)" onmouseenter="hoverRating(2)"
+                            onmouseleave="resetHover()"><i class="fas fa-star"></i></button>
+                        <button class="star-btn" onclick="setRating(3)" onmouseenter="hoverRating(3)"
+                            onmouseleave="resetHover()"><i class="fas fa-star"></i></button>
+                        <button class="star-btn" onclick="setRating(4)" onmouseenter="hoverRating(4)"
+                            onmouseleave="resetHover()"><i class="fas fa-star"></i></button>
+                        <button class="star-btn" onclick="setRating(5)" onmouseenter="hoverRating(5)"
+                            onmouseleave="resetHover()"><i class="fas fa-star"></i></button>
+                    </div>
+                    <div class="text-warning mb-3 fw-bold" id="ratingText">Select a Rating</div>
+
+                    <div class="form-floating text-dark mb-3">
+                        <textarea class="form-control bg-dark text-light border-secondary"
+                            placeholder="Leave a comment here" id="ratingComment" style="height: 100px"></textarea>
+                        <label for="ratingComment" class="text-secondary">Additional comments (optional)</label>
+                    </div>
+
+                    <div id="ratingError" class="text-danger small mb-2 d-none"></div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-glass" data-bs-dismiss="modal">Cancel</button>
+                    <button type="button" class="btn btn-glass btn-glass-primary" onclick="submitRating()">Submit
+                        Review</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Track Order Modal -->
+    <div class="modal fade" id="trackOrderModal" tabindex="-1">
+        <div class="modal-dialog modal-lg modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title fw-bold">
+                        <i class="fas fa-map-marker-alt me-2 text-info"></i>Track Worker
+                    </h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="d-flex justify-content-between align-items-center mb-3">
+                        <div>
+                            <h6 class="mb-1 text-light" id="trackWorkerName">Worker</h6>
+                            <small class="text-success"><i class="fas fa-circle me-1" style="font-size: 8px;"></i>Live
+                                tracking active</small>
+                        </div>
+                        <div class="text-end">
+                            <h6 class="mb-1 text-info" id="trackEta">ETA: Calculating...</h6>
+                            <small class="text-secondary" id="trackDistance">Distance: -- km</small>
+                        </div>
+                    </div>
+
+                    <div id="trackMap"
+                        style="height: 400px; width: 100%; border-radius: 12px; border: 1px solid rgba(56, 189, 248, 0.2);">
+                    </div>
+
+                    <div class="mt-3 p-3 rounded bg-info bg-opacity-10 border border-info border-opacity-25">
+                        <div class="d-flex align-items-start gap-3">
+                            <div class="bg-info bg-opacity-20 p-2 rounded-circle text-info">
+                                <i class="fas fa-info-circle"></i>
+                            </div>
+                            <div>
+                                <h6 class="mb-1 text-light">Worker is on the way!</h6>
+                                <p class="mb-0 small text-secondary">The worker has accepted your order and is heading
+                                    to your location.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Chat Modal -->
+    <div class="modal fade" id="chatModal" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header bg-dark text-white border-secondary">
+                    <h5 class="modal-title fw-bold">
+                        <i class="fas fa-comments me-2 text-info"></i>Chat with <span id="chatWorkerName">Worker</span>
+                    </h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body bg-dark" style="height: 400px; display: flex; flex-direction: column;">
+                    <div id="chatMessages" class="flex-grow-1 overflow-auto p-3 mb-3"
+                        style="background: rgba(15, 23, 42, 0.5); border-radius: 12px; border: 1px solid rgba(148, 163, 184, 0.1);">
+                        <!-- Messages will be loaded here -->
+                        <div class="text-center text-muted small mt-5">Loading messages...</div>
+                    </div>
+                    <div class="input-group">
+                        <input type="text" id="chatInput" class="form-control bg-black text-white border-secondary"
+                            placeholder="Type a message..." maxlength="200" onkeypress="handleChatEnter(event)">
+                        <button class="btn btn-info text-white" type="button" onclick="sendChatMessage()">
+                            <i class="fas fa-paper-plane"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="toast-container position-fixed bottom-0 end-0 p-3" style="z-index: 1060;">
+        <div id="liveToast" class="toast align-items-center" role="alert" aria-live="assertive" aria-atomic="true">
+            <div class="d-flex">
+                <div class="toast-body d-flex align-items-center">
+                    <i class="fas fa-check-circle text-success me-2 fs-5" id="toastIcon"></i>
+                    <div id="toastMessage">Action successful</div>
+                </div>
+                <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast"
+                    aria-label="Close"></button>
+            </div>
+        </div>
+    </div>
+
     <script>
         let currentUser = null;
         let allOrders = [];
+        let toastInstance = null;
 
         document.addEventListener('DOMContentLoaded', () => {
+
             try {
                 const userStr = localStorage.getItem('user');
                 currentUser = userStr ? JSON.parse(userStr) : null;
@@ -539,19 +980,28 @@
             }
 
             loadOrders();
+            loadNotifications();
+            initCustomerNotifToggle();
+            setInterval(loadNotifications, 10000);
+
+            // Update nav user name
+            const navUserName = document.getElementById('navUserName');
+            if (navUserName && currentUser) {
+                navUserName.textContent = (currentUser.name || currentUser.username).split(' ')[0];
+            }
         });
 
         function parseAmount(amount) {
             if (amount === null || amount === undefined) return 0;
-            
+
             if (typeof amount === 'number') return amount;
-            
+
             if (typeof amount === 'string') {
                 const cleaned = amount.replace(/[₹$,]/g, '').trim();
                 const parsed = parseFloat(cleaned);
                 return isNaN(parsed) ? 0 : parsed;
             }
-            
+
             const parsed = Number(amount);
             return isNaN(parsed) ? 0 : parsed;
         }
@@ -559,7 +1009,7 @@
         async function loadOrders() {
             const listEl = document.getElementById('ordersList');
             try {
-                const res = await fetch(`/api/orders/customer/${currentUser.id}`);
+                const res = await fetch(getApiUrl(`/api/orders/customer/${currentUser.id}`));
                 if (!res.ok) {
                     listEl.innerHTML = `
                         <div class="col-12">
@@ -573,15 +1023,15 @@
                         </div>`;
                     return;
                 }
-                
+
                 allOrders = await res.json() || [];
-                
+
                 // Log for debugging
                 console.log('Loaded orders:', allOrders);
-                
+
                 // Update stats
                 updateStats(allOrders);
-                
+
                 if (!allOrders.length) {
                     listEl.innerHTML = `
                         <div class="col-12">
@@ -598,7 +1048,7 @@
                         </div>`;
                     return;
                 }
-                
+
                 renderOrders(allOrders);
             } catch (e) {
                 console.error('Error loading orders:', e);
@@ -617,19 +1067,19 @@
 
         function updateStats(orders) {
             const totalOrders = orders.length;
-            
+
             // Calculate total amount using safe parsing
             const totalAmount = orders.reduce((sum, order) => {
                 return sum + parseAmount(order.totalAmount);
             }, 0);
-            
+
             // Log for debugging
             console.log('Total amount calculation:', {
                 totalOrders,
                 totalAmount,
                 orderAmounts: orders.map(o => ({ amount: o.totalAmount, parsed: parseAmount(o.totalAmount) }))
             });
-            
+
             document.getElementById('totalOrders').textContent = totalOrders;
             document.getElementById('totalAmount').textContent = `₹${totalAmount.toLocaleString('en-IN', {
                 minimumFractionDigits: 2,
@@ -638,7 +1088,7 @@
         }
 
         function getStatusBadge(status) {
-            switch(status) {
+            switch (status) {
                 case 'pending':
                     return `<span class="badge-warning-soft">
                         <i class="fas fa-clock me-1"></i>Pending
@@ -677,27 +1127,33 @@
 
         function renderOrders(orders) {
             const listEl = document.getElementById('ordersList');
-            
+
             listEl.innerHTML = orders
                 .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))
                 .map(order => {
                     const date = new Date(order.createdAt);
-                    const dateStr = date.toLocaleDateString('en-IN', { 
-                        day: 'numeric', 
-                        month: 'short', 
-                        year: 'numeric' 
+                    const dateStr = date.toLocaleDateString('en-IN', {
+                        day: 'numeric',
+                        month: 'short',
+                        year: 'numeric'
                     });
-                    const timeStr = date.toLocaleTimeString('en-IN', { 
-                        hour: '2-digit', 
-                        minute: '2-digit' 
+                    const timeStr = date.toLocaleTimeString('en-IN', {
+                        hour: '2-digit',
+                        minute: '2-digit'
                     });
                     const orderCode = order.id ? order.id.slice(-6) : '—';
-                    
+
                     // Parse amount for display
                     const displayAmount = parseAmount(order.totalAmount);
                     const paymentStatus = order.paymentStatus || 'unpaid';
                     const canPay = paymentStatus !== 'paid' && (order.status === 'accepted' || order.status === 'completed');
-                    
+                    const isCompleted = order.status === 'completed';
+                    const canTrack = order.status === 'accepted';
+                    const hasRated = order.reviewed || false;
+
+                    const workerName = order.worker?.username || 'Worker';
+                    const safeWorkerName = workerName.replace(/'/g, "\\'");
+
                     return `
                         <div class="col-xl-4 col-lg-6 col-md-12">
                             <div class="order-card">
@@ -711,30 +1167,30 @@
                                 
                                 <div class="mb-3">
                                     <div class="small text-secondary mb-1">Service Type</div>
-                                    <div class="h5 mb-2">${order.serviceType || 'General Service'}</div>
-                                    <div class="text-secondary mb-3">${order.description || 'No description provided'}</div>
+                                    <div class="h5 mb-2 text-truncate">${order.serviceType || 'General Service'}</div>
+                                    <div class="text-secondary mb-3 text-truncate" style="max-width: 100%;">${order.description || 'No description provided'}</div>
                                 </div>
                                 
                                 <div class="mb-3">
                                     <div class="small text-secondary mb-1">Order Value</div>
                                     <div class="amount-display">₹${displayAmount.toLocaleString('en-IN', {
-                                        minimumFractionDigits: 2,
-                                        maximumFractionDigits: 2
-                                    })}</div>
+                        minimumFractionDigits: 2,
+                        maximumFractionDigits: 2
+                    })}</div>
                                 </div>
                                 
                                 <div class="d-flex flex-wrap gap-2 mb-3">
                                     <span class="pill">
                                         <i class="fas fa-clock"></i>
-                                        ${order.duration || 'N/A'} hours
+                                        ${order.duration || 'N/A'} hrs
                                     </span>
                                     <span class="pill">
                                         <i class="fas fa-user-tie"></i>
                                         ${order.worker?.username || 'Not assigned'}
                                     </span>
                                     <span class="pill">
-                                        <i class="fas fa-calendar-day"></i>
-                                        ${dateStr}
+                                        <i class="fas fa-calendar-alt"></i>
+                                        ${order.scheduledDate ? 'Scheduled: ' + new Date(order.scheduledDate).toLocaleString([], { month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' }) : dateStr}
                                     </span>
                                 </div>
                                 
@@ -743,21 +1199,43 @@
                                         <div class="small text-secondary mb-1">Payment Status</div>
                                         ${getPaymentBadge(paymentStatus)}
                                     </div>
+                                    ${hasRated ? `
+                                        <div class="text-end">
+                                        <div class="small text-secondary mb-1">Your Rating</div>
+                                        <div class="text-warning fw-bold">
+                                            <i class="fas fa-star me-1"></i>${order.review?.rating || '5'}/5
+                                        </div>
+                                        </div>
+                                    ` : ''}
                                 </div>
                                 
-                                ${canPay ? `
-                                    <div class="mt-4">
-                                        <button class="pay-button w-100" onclick="payForOrder('${order.id}', ${displayAmount})">
-                                            <i class="fas fa-credit-card me-2"></i>Pay Now - ₹${displayAmount.toLocaleString('en-IN')}
-                                        </button>
-                                    </div>
-                                ` : ''}
+                                <div class="action-buttons">
+                                    <button class="btn btn-glass" onclick="viewOrder('${order.id}')">
+                                        <i class="fas fa-eye me-2"></i>Details
+                                    </button>
                                     
-                                <div class="mt-3 pt-3 border-top border-secondary border-opacity-25">
-                                    <small class="text-secondary">
-                                        <i class="fas fa-info-circle me-1"></i>
-                                        Created at ${timeStr}
-                                    </small>
+                                    ${canTrack ? `
+                                        <button class="btn btn-glass btn-text-info" style="border-color: rgba(14, 165, 233, 0.4); color: #7dd3fc;" onclick="openTrackModal('${order.id}', '${safeWorkerName}')">
+                                            <i class="fas fa-map-marked-alt me-2"></i>Track
+                                        </button>
+                                        <button class="btn btn-glass btn-text-info" style="border-color: rgba(168, 85, 247, 0.4); color: #c084fc; margin-top: 0 !important;" onclick="openChatModal('${order.id}', '${safeWorkerName}')">
+                                            <i class="fas fa-comment-dots me-2"></i>Chat
+                                        </button>
+                                    ` : ''}
+                                    
+                                    ${canPay ? `
+                                        <button class="btn btn-glass btn-glass-primary" onclick="payForOrder('${order.id}')">
+                                            <i class="fas fa-credit-card me-2"></i>Pay
+                                        </button>
+                                    ` : (isCompleted && !hasRated) ? `
+                                        <button class="btn btn-glass btn-text-warning" style="border-color: rgba(251, 191, 36, 0.4); color: #fbbf24;" onclick="openRateModal('${order.id}', '${order.workerId}', '${safeWorkerName}')">
+                                            <i class="fas fa-star me-2"></i>Rate
+                                        </button>
+                                    ` : `
+                                        <button class="btn btn-glass" disabled style="opacity: 0.5; cursor: default;">
+                                            <i class="fas fa-check me-2"></i>${isCompleted ? 'Done' : 'Wait'}
+                                        </button>
+                                    `}
                                 </div>
                             </div>
                         </div>
@@ -771,31 +1249,31 @@
                 tab.classList.remove('active');
             });
             event.target.classList.add('active');
-            
+
             let filtered = [...allOrders];
-            
-            switch(filterType) {
+
+            switch (filterType) {
                 case 'pending':
                     filtered = filtered.filter(o => o.status === 'pending');
                     break;
-                    
+
                 case 'accepted':
                     filtered = filtered.filter(o => o.status === 'accepted');
                     break;
-                    
+
                 case 'completed':
                     filtered = filtered.filter(o => o.status === 'completed');
                     break;
-                    
+
                 case 'unpaid':
                     filtered = filtered.filter(o => (o.paymentStatus || 'unpaid') === 'unpaid');
                     break;
-                    
+
                 default:
                     // 'all' - show everything
                     break;
             }
-            
+
             if (filtered.length === 0) {
                 document.getElementById('ordersList').innerHTML = `
                     <div class="col-12">
@@ -810,20 +1288,495 @@
             } else {
                 renderOrders(filtered);
             }
-            
+
             // Update stats for filtered results
             updateStats(filtered);
         }
 
         function payForOrder(orderId, amount) {
+            // If amount is not passed, find it from orders
+            if (!amount) {
+                const order = allOrders.find(o => o.id === orderId);
+                if (order) amount = parseAmount(order.totalAmount);
+            }
             window.location.href = `payment.html?orderId=${orderId}`;
+        }
+
+        // --- View Details Logic ---
+        let detailsModal = null;
+
+        function viewOrder(orderId) {
+            const order = allOrders.find(o => o.id === orderId);
+            if (!order) return;
+
+            // Init modal if needed
+            if (!detailsModal) detailsModal = new bootstrap.Modal(document.getElementById('orderDetailsModal'));
+
+            // Populate data
+            const displayAmount = parseAmount(order.totalAmount);
+            const date = new Date(order.createdAt);
+
+            document.getElementById('modalOrderId').textContent = '#' + (order.id ? order.id.slice(-6) : '—');
+            document.getElementById('modalService').textContent = order.serviceType || 'General Service';
+            document.getElementById('modalStatusBadge').innerHTML = getStatusBadge(order.status);
+            document.getElementById('modalAmount').textContent = '₹' + displayAmount.toLocaleString('en-IN');
+            document.getElementById('modalDescription').textContent = order.description || 'No description';
+            document.getElementById('modalWorker').textContent = order.worker?.name || order.worker?.username || 'Not assigned';
+            document.getElementById('modalDuration').textContent = (order.duration || '0') + ' hours';
+
+            const scheduledInfo = order.scheduledDate ?
+                `<br><small class="text-info">Scheduled for: ${new Date(order.scheduledDate).toLocaleString()}</small>` : '';
+
+            document.getElementById('modalDate').innerHTML = date.toLocaleString('en-IN', { dateStyle: 'medium', timeStyle: 'short' }) + scheduledInfo;
+
+            // Pay button logic
+            const payBtn = document.getElementById('modalPayBtn');
+            const canPay = (order.paymentStatus !== 'paid') && (order.status === 'accepted' || order.status === 'completed');
+            if (canPay) {
+                payBtn.style.display = 'inline-block';
+                payBtn.onclick = () => payForOrder(order.id);
+            } else {
+                payBtn.style.display = 'none';
+            }
+
+            // Review Section logic
+            const reviewSection = document.getElementById('modalReviewSection');
+            if (order.reviewed && order.review) {
+                reviewSection.classList.remove('hidden');
+                reviewSection.style.display = 'block';
+                document.getElementById('modalReviewRating').textContent = order.review.rating + ' / 5 Stars';
+                document.getElementById('modalReviewComment').textContent = order.review.comment || 'No comment provided.';
+
+                const reviewDate = order.review.createdAt ? new Date(order.review.createdAt) : new Date();
+                document.getElementById('modalReviewDate').textContent = reviewDate.toLocaleDateString();
+            } else {
+                reviewSection.classList.add('hidden');
+                reviewSection.style.display = 'none';
+            }
+
+            detailsModal.show();
+        }
+
+        // --- Rating Logic ---
+        let rateModal = null;
+        let currentRating = 0;
+        let currentRateOrderId = null;
+        let currentRateWorkerId = null;
+
+        function openRateModal(orderId, workerId, workerName) {
+            currentRateOrderId = orderId;
+            currentRateWorkerId = workerId;
+            document.getElementById('rateWorkerName').textContent = workerName;
+
+            // Reset state
+            setRating(0);
+            document.getElementById('ratingComment').value = '';
+            document.getElementById('ratingError').classList.add('d-none');
+
+            if (!rateModal) rateModal = new bootstrap.Modal(document.getElementById('rateServiceModal'));
+            rateModal.show();
+        }
+
+        function setRating(rating) {
+            currentRating = rating;
+            const stars = document.querySelectorAll('#rateServiceModal .star-btn');
+            const ratingText = document.getElementById('ratingText');
+
+            stars.forEach((btn, index) => {
+                if (index < rating) {
+                    btn.classList.add('active');
+                } else {
+                    btn.classList.remove('active');
+                }
+            });
+
+            const texts = ['Select a Rating', 'Poor', 'Fair', 'Good', 'Very Good', 'Excellent'];
+            ratingText.textContent = texts[rating];
+            ratingText.className = rating > 0 ? 'text-warning mb-3 fw-bold' : 'text-secondary mb-3 fw-bold';
+        }
+
+        function hoverRating(rating) {
+            const stars = document.querySelectorAll('#rateServiceModal .star-btn');
+            stars.forEach((btn, index) => {
+                if (index < rating) {
+                    btn.style.color = '#fbbf24';
+                } else {
+                    btn.style.color = '#475569';
+                }
+            });
+        }
+
+        function resetHover() {
+            // Restore actual rating filtering
+            const stars = document.querySelectorAll('#rateServiceModal .star-btn');
+            stars.forEach((btn, index) => {
+                btn.style.color = ''; // Remove inline style
+            });
+        }
+
+        async function submitRating() {
+            if (currentRating === 0) {
+                const err = document.getElementById('ratingError');
+                err.textContent = 'Please select a star rating.';
+                err.classList.remove('d-none');
+                return;
+            }
+
+            const comment = document.getElementById('ratingComment').value;
+            const btn = document.querySelector('#rateServiceModal .btn-glass-primary');
+            const originalText = btn.innerHTML;
+            btn.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i>Submitting...';
+            btn.disabled = true;
+
+            try {
+                const res = await fetch(getApiUrl(`/api/worker/${currentRateWorkerId}/review`), {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        customerId: currentUser.id,
+                        customerName: currentUser.name || currentUser.username,
+                        rating: currentRating,
+                        comment: comment,
+                        orderId: currentRateOrderId
+                    })
+                });
+
+                if (res.ok) {
+                    // Success
+                    rateModal.hide();
+                    showToast('Review submitted successfully!', 'success');
+                    // Reload orders to show updated status
+                    await loadOrders();
+                } else {
+                    const data = await res.json();
+                    throw new Error(data.message || 'Failed to submit review');
+                }
+            } catch (error) {
+                const err = document.getElementById('ratingError');
+                err.textContent = error.message;
+                err.classList.remove('d-none');
+            } finally {
+                btn.innerHTML = originalText;
+                btn.disabled = false;
+            }
         }
 
         function logout() {
             localStorage.removeItem('user');
             window.location.href = 'index.html';
         }
+        function showToast(message, type = 'success') {
+            const toastEl = document.getElementById('liveToast');
+            const msgEl = document.getElementById('toastMessage');
+            const iconEl = document.getElementById('toastIcon');
+
+            msgEl.textContent = message;
+
+            if (type === 'success') {
+                iconEl.className = 'fas fa-check-circle text-success me-2 fs-5';
+            } else if (type === 'error') {
+                iconEl.className = 'fas fa-exclamation-circle text-danger me-2 fs-5';
+            } else {
+                iconEl.className = 'fas fa-info-circle text-primary me-2 fs-5';
+            }
+
+            if (!toastInstance) {
+                toastInstance = new bootstrap.Toast(toastEl);
+            }
+            toastInstance.show();
+        }
+
+        // --- Live Tracking Logic ---
+        let trackModal = null;
+        let map = null;
+        let workerMarker = null;
+        let customerMarker = null;
+        let routePolyline = null;
+        let simulationInterval = null;
+
+        // Real-Time Notifications logic
+        async function loadNotifications() {
+            if (!currentUser) return;
+            try {
+                const res = await fetch(getApiUrl(`/api/notifications/${currentUser.id}`));
+                if (res.ok) {
+                    const notifications = await res.json();
+                    renderNotifications(notifications);
+                }
+            } catch (e) {
+                console.error('Error loading notifications', e);
+            }
+        }
+
+        function renderNotifications(notifications) {
+            const listEl = document.getElementById('customerNotifList');
+            const countEl = document.getElementById('customerNotifCount');
+            if (!listEl || !countEl) return;
+
+            const unread = notifications.filter(n => !n.read);
+            countEl.textContent = unread.length > 9 ? '9+' : unread.length;
+            countEl.style.display = unread.length > 0 ? 'inline-block' : 'none';
+
+            if (notifications.length === 0) {
+                listEl.innerHTML = '<div class="p-3 text-center text-muted small">No notifications</div>';
+                return;
+            }
+
+            listEl.innerHTML = notifications.map(n => `
+                <div class="notif-item ${n.read ? '' : 'unread'}" onclick="markAsRead('${n._id || n.id}', '${n.link}')" style="cursor: pointer; padding: 10px; border-bottom: 1px solid rgba(148, 163, 184, 0.1); ${n.read ? '' : 'background: rgba(56, 189, 248, 0.05); border-left: 3px solid #38bdf8;'}">
+                    <div class="notif-title" style="color: #e5e7eb; font-size: 0.85rem; margin-bottom: 4px; ${n.read ? '' : 'font-weight: 700;'}">${n.message}</div>
+                    <div class="notif-meta" style="color: #9ca3af; font-size: 0.7rem;">${new Date(n.createdAt).toLocaleString([], { month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' })}</div>
+                </div>
+            `).join('');
+        }
+
+        function initCustomerNotifToggle() {
+            const btn = document.getElementById('customerNotifBtn');
+            const dropdown = document.getElementById('customerNotifDropdown');
+            if (!btn || !dropdown) return;
+            btn.addEventListener('click', (e) => {
+                e.stopPropagation();
+                dropdown.classList.toggle('show');
+            });
+            document.addEventListener('click', () => {
+                dropdown.classList.remove('show');
+            });
+        }
+
+        async function markAsRead(notifId, link) {
+            try {
+                await fetch(getApiUrl(`/api/notifications/${notifId}/read`), { method: 'PUT' });
+                if (link && link !== 'null' && link !== 'undefined') {
+                    window.location.href = link;
+                } else {
+                    loadNotifications();
+                }
+            } catch (e) {
+                console.error('Error marking as read', e);
+            }
+        }
+
+        (function initCustomerNotifToggle() {
+            const btn = document.getElementById('customerNotifBtn');
+            const dropdown = document.getElementById('customerNotifDropdown');
+            if (!btn || !dropdown) return;
+            btn.addEventListener('click', (e) => {
+                e.stopPropagation();
+                dropdown.classList.toggle('show');
+            });
+            document.addEventListener('click', () => {
+                dropdown.classList.remove('show');
+            });
+        })();
+
+        // --- Chat Logic ---
+        let chatModal = null;
+        let currentChatOrderId = null;
+        let chatPollInterval = null;
+
+        function openChatModal(orderId, workerName) {
+            currentChatOrderId = orderId;
+            document.getElementById('chatWorkerName').textContent = workerName;
+            document.getElementById('chatMessages').innerHTML = '<div class="text-center text-muted small mt-5">Loading messages...</div>';
+            document.getElementById('chatInput').value = '';
+
+            if (!chatModal) chatModal = new bootstrap.Modal(document.getElementById('chatModal'));
+            chatModal.show();
+
+            loadMessages(true);
+
+            // Poll for new messages every 3 seconds
+            if (chatPollInterval) clearInterval(chatPollInterval);
+            chatPollInterval = setInterval(() => loadMessages(false), 3000);
+        }
+
+        async function loadMessages(scrollToBottom = false) {
+            if (!currentChatOrderId) return;
+            try {
+                const res = await fetch(getApiUrl(`/api/orders/${currentChatOrderId}/messages`));
+                if (res.ok) {
+                    const messages = await res.json();
+                    renderMessages(messages, scrollToBottom);
+                }
+            } catch (e) {
+                console.error('Error loading messages', e);
+            }
+        }
+
+        function renderMessages(messages, scrollToBottom) {
+            const container = document.getElementById('chatMessages');
+            if (messages.length === 0) {
+                container.innerHTML = '<div class="text-center text-muted small mt-5">No messages yet. Say hi!</div>';
+                return;
+            }
+
+            container.innerHTML = messages.map(msg => {
+                const isMe = msg.role === 'customer';
+                const time = new Date(msg.timestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+                return `
+                    <div class="d-flex mb-3 ${isMe ? 'justify-content-end' : 'justify-content-start'}">
+                        <div class="p-2 rounded-3 text-white" style="max-width: 75%; font-size: 0.9rem; background: ${isMe ? 'linear-gradient(135deg, #38bdf8, #3b82f6)' : 'rgba(30, 41, 59, 1); border: 1px solid rgba(148, 163, 184, 0.4);'};">
+                            <div class="mb-1">${msg.text}</div>
+                            <div class="text-end" style="font-size: 0.7rem; opacity: 0.7;">${time}</div>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+
+            if (scrollToBottom) {
+                container.scrollTop = container.scrollHeight;
+            }
+        }
+
+        async function sendChatMessage() {
+            const input = document.getElementById('chatInput');
+            const text = input.value.trim();
+            if (!text || !currentChatOrderId) return;
+
+            // Clear input immediately for UX
+            input.value = '';
+
+            // Optimistic update
+            const tempMsg = {
+                text,
+                role: 'customer',
+                timestamp: new Date().toISOString()
+            };
+            // Append temporary message (optional, or just wait for reload)
+            // For simplicity, we'll wait for reload or manual append if we had the full list in memory
+
+            try {
+                const res = await fetch(getApiUrl(`/api/orders/${currentChatOrderId}/messages`), {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        senderId: currentUser.id,
+                        senderName: currentUser.name || currentUser.username,
+                        text: text,
+                        role: 'customer'
+                    })
+                });
+
+                if (res.ok) {
+                    loadMessages(true);
+                }
+            } catch (e) {
+                console.error('Error sending message', e);
+                showToast('Failed to send message', 'error');
+            }
+        }
+
+        function handleChatEnter(e) {
+            if (e.key === 'Enter') sendChatMessage();
+        }
+
+        // Cleanup chat polling
+        document.getElementById('chatModal').addEventListener('hidden.bs.modal', function () {
+            if (chatPollInterval) clearInterval(chatPollInterval);
+        });
+
+        function initMap() {
+            // Placeholder for Google Maps callback
+        }
+
+        function openTrackModal(orderId, workerName) {
+            document.getElementById('trackWorkerName').textContent = workerName;
+
+            if (!trackModal) trackModal = new bootstrap.Modal(document.getElementById('trackOrderModal'));
+            trackModal.show();
+
+            // Initialize map after modal is shown to ensure correct rendering
+            setTimeout(() => {
+                initializeTrackingMap();
+            }, 500);
+        }
+
+        function initializeTrackingMap() {
+            const mapContainer = document.getElementById('trackMap');
+            if (!mapContainer) return;
+
+            const customerLocation = [19.0760, 72.8777];
+            const workerStartLocation = [19.0860, 72.8877];
+
+            // Clear previous map instance if any
+            if (map && map.remove) {
+                map.remove();
+            }
+
+            map = L.map('trackMap').setView(customerLocation, 13); // Changed from 'map' to 'trackMap'
+
+            L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+            }).addTo(map);
+
+            // Markers
+            customerMarker = L.marker(customerLocation).addTo(map).bindPopup('Your Location').openPopup();
+            workerMarker = L.marker(workerStartLocation).addTo(map).bindPopup('Worker');
+
+            // Draw line
+            routePolyline = L.polyline([workerStartLocation, customerLocation], {
+                color: '#38bdf8',
+                weight: 4,
+                opacity: 0.8
+            }).addTo(map);
+
+            // Fit bounds
+            map.fitBounds(routePolyline.getBounds(), { padding: [50, 50] });
+
+            // Start simulation
+            simulateWorkerMovement(workerStartLocation, customerLocation);
+        }
+
+        function simulateWorkerMovement(start, end) {
+            let step = 0;
+            const totalSteps = 100;
+            const delay = 100;
+
+            const deltaLat = (end[0] - start[0]) / totalSteps;
+            const deltaLng = (end[1] - start[1]) / totalSteps;
+
+            let currentLat = start[0];
+            let currentLng = start[1];
+
+            simulationInterval = setInterval(() => {
+                step++;
+                currentLat += deltaLat;
+                currentLng += deltaLng;
+
+                const newPos = [currentLat, currentLng];
+                workerMarker.setLatLng(newPos);
+
+                // Update info
+                const remainingSteps = totalSteps - step;
+                const progress = step / totalSteps;
+
+                // Simple ETA calc
+                const etaMins = Math.ceil((remainingSteps * delay) / 60000 * 20);
+                document.getElementById('trackEta').textContent = `ETA: ${etaMins} mins`;
+
+                // Simple Distance calc
+                const dist = Math.sqrt(Math.pow(end[0] - currentLat, 2) + Math.pow(end[1] - currentLng, 2)) * 111;
+                document.getElementById('trackDistance').textContent = `Distance: ${dist.toFixed(2)} km`;
+
+                if (step >= totalSteps) {
+                    clearInterval(simulationInterval);
+                    document.getElementById('trackEta').textContent = 'Arrived!';
+                    document.getElementById('trackDistance').textContent = 'Distance: 0 km';
+                    showToast('Worker has arrived at your location!', 'success');
+                }
+            }, delay);
+        }
+
+        // Cleanup on modal close
+        document.getElementById('trackOrderModal').addEventListener('hidden.bs.modal', function () {
+            if (simulationInterval) clearInterval(simulationInterval);
+        });
+
     </script>
+    <!-- Leaflet Local Search (Alternative to Google Maps) -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </body>
+
 </html>

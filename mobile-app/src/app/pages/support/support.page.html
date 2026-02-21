@@ -1,0 +1,108 @@
+<ion-header [translucent]="true">
+  <ion-toolbar color="primary">
+    <ion-buttons slot="start">
+      <ion-back-button defaultHref="/login"></ion-back-button>
+    </ion-buttons>
+    <ion-title>Support Center</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content [fullscreen]="true" class="support-bg">
+  <div class="support-container">
+    <div class="support-hero">
+      <ion-icon name="headset-outline"></ion-icon>
+      <h2>How can we help?</h2>
+      <p>Our team is available 24/7 to assist you.</p>
+    </div>
+
+    <ion-segment [(ngModel)]="activeTab" mode="md">
+      <ion-segment-button value="new">
+        <ion-label>New Ticket</ion-label>
+      </ion-segment-button>
+      <ion-segment-button value="history">
+        <ion-label>My Tickets</ion-label>
+      </ion-segment-button>
+    </ion-segment>
+
+    <div [ngSwitch]="activeTab" class="tab-content">
+      <!-- New Ticket Form -->
+      <div *ngSwitchCase="'new'" class="anim-fade">
+        <div class="form-card">
+          <ion-item class="custom-input">
+            <ion-select label="Issue Category" labelPlacement="floating" [(ngModel)]="ticketData.category">
+              <ion-select-option value="payment">Payment Issue</ion-select-option>
+              <ion-select-option value="account">Account Access</ion-select-option>
+              <ion-select-option value="worker">Worker Conflict</ion-select-option>
+              <ion-select-option value="app">App Bug/Feedback</ion-select-option>
+              <ion-select-option value="other">Other</ion-select-option>
+            </ion-select>
+          </ion-item>
+
+          <ion-item class="custom-input">
+            <ion-input label="Subject" labelPlacement="floating" [(ngModel)]="ticketData.subject"
+              placeholder="Summarize your issue"></ion-input>
+          </ion-item>
+
+          <ion-item class="custom-input">
+            <ion-textarea label="Description" labelPlacement="floating" [(ngModel)]="ticketData.description"
+              placeholder="Provide more details about the issue..." [autoGrow]="true" rows="4"></ion-textarea>
+          </ion-item>
+
+          <ion-button expand="block" (click)="submitTicket()" class="submit-btn" [disabled]="loading">
+            <ion-spinner *ngIf="loading" name="crescent"></ion-spinner>
+            <span *ngIf="!loading">Submit Ticket</span>
+          </ion-button>
+        </div>
+
+        <div class="faq-section">
+          <h3>Common Questions</h3>
+          <ion-accordion-group>
+            <ion-accordion value="first">
+              <ion-item slot="header">
+                <ion-label>How do I cancel an order?</ion-label>
+              </ion-item>
+              <div class="ion-padding" slot="content">
+                You can cancel an order from your dashboard before the worker accepts it. After acceptance, please
+                contact support.
+              </div>
+            </ion-accordion>
+            <ion-accordion value="second">
+              <ion-item slot="header">
+                <ion-label>Is my payment secure?</ion-label>
+              </ion-item>
+              <div class="ion-padding" slot="content">
+                Yes, we use industry-standard encryption and verify all payments through secure gateways.
+              </div>
+            </ion-accordion>
+          </ion-accordion-group>
+        </div>
+      </div>
+
+      <!-- Ticket History -->
+      <div *ngSwitchCase="'history'" class="anim-fade">
+        <div *ngIf="tickets.length === 0" class="empty-state">
+          <ion-icon name="chatbubbles-outline"></ion-icon>
+          <p>You haven't raised any tickets yet.</p>
+        </div>
+
+        <ion-card *ngFor="let ticket of tickets" class="ticket-card">
+          <ion-card-header>
+            <div class="header-row">
+              <ion-badge [color]="ticket.status === 'resolved' ? 'success' : 'warning'">{{ticket.status}}</ion-badge>
+              <span class="date">{{ticket.createdAt | date:'short'}}</span>
+            </div>
+            <ion-card-title>{{ticket.subject}}</ion-card-title>
+            <ion-card-subtitle>{{ticket.category | uppercase}}</ion-card-subtitle>
+          </ion-card-header>
+          <ion-card-content>
+            <p class="description">{{ticket.description}}</p>
+            <div *ngIf="ticket.adminReply" class="admin-reply">
+              <strong>Admin Reply:</strong>
+              <p>{{ticket.adminReply}}</p>
+            </div>
+          </ion-card-content>
+        </ion-card>
+      </div>
+    </div>
+  </div>
+</ion-content>

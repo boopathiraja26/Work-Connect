@@ -1,362 +1,530 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Login - WorkConnect</title>
-    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
     <style>
-        body {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            min-height: 100vh;
+        * {
             margin: 0;
+            padding: 0;
+            box-sizing: border-box;
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            position: relative;
-            overflow-x: hidden;
         }
-        
-        /* Animated background elements */
-        body::before {
-            content: '';
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: 
-                radial-gradient(circle at 20% 80%, rgba(120, 119, 198, 0.3) 0%, transparent 50%),
-                radial-gradient(circle at 80% 20%, rgba(255, 119, 198, 0.3) 0%, transparent 50%),
-                radial-gradient(circle at 40% 40%, rgba(120, 219, 255, 0.3) 0%, transparent 50%);
-            animation: float 20s ease-in-out infinite;
-            z-index: -1;
-        }
-        
-        @keyframes float {
-            0%, 100% { transform: translateY(0px) rotate(0deg); }
-            33% { transform: translateY(-20px) rotate(1deg); }
-            66% { transform: translateY(10px) rotate(-1deg); }
-        }
-        
-        .container {
-            display: flex;
-            justify-content: center;
-            align-items: center;
+
+        body {
+            background-color: #0f172a;
             min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
             padding: 20px;
+            color: #e2e8f0;
         }
-        
-        .form-card {
-            background: rgba(255, 255, 255, 0.1);
-            backdrop-filter: blur(20px);
-            border: 1px solid rgba(255, 255, 255, 0.2);
-            border-radius: 20px;
-            padding: 40px;
-            box-shadow: 0 25px 50px rgba(0, 0, 0, 0.2);
+
+        .container {
             width: 100%;
             max-width: 400px;
-            position: relative;
-            overflow: hidden;
-            animation: cardFloat 6s ease-in-out infinite;
         }
-        
-        @keyframes cardFloat {
-            0%, 100% { transform: translateY(0px) rotate(0deg); }
-            50% { transform: translateY(-10px) rotate(0.5deg); }
-        }
-        
-        .form-card::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            height: 4px;
-            background: linear-gradient(90deg, #667eea, #764ba2, #667eea, #ff6b6b, #4ecdc4);
-            background-size: 300% 100%;
-            animation: gradientMove 4s ease infinite;
-        }
-        
-        .form-card::after {
-            content: '';
-            position: absolute;
-            top: -50%;
-            left: -50%;
-            width: 200%;
-            height: 200%;
-            background: conic-gradient(from 0deg, transparent, rgba(255, 255, 255, 0.1), transparent);
-            animation: rotate 10s linear infinite;
-            z-index: -1;
-        }
-        
-        @keyframes rotate {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
-        }
-        
-        @keyframes gradientMove {
-            0% { background-position: 0% 50%; }
-            50% { background-position: 100% 50%; }
-            100% { background-position: 0% 50%; }
-        }
-        
-        .form-card h1 {
+
+        .form-card {
+            background-color: #1e293b;
+            padding: 40px;
+            border-radius: 20px;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
+            border: 1px solid rgba(255, 255, 255, 0.05);
             text-align: center;
-            color: #ffffff;
-            margin-bottom: 30px;
-            font-size: 2.2rem;
+            animation: fadeIn 0.5s ease-out;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .logo {
+            margin-bottom: 24px;
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 24px;
             font-weight: 700;
-            text-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
-            animation: titleGlow 3s ease-in-out infinite alternate;
+            color: #38bdf8;
         }
-        
-        @keyframes titleGlow {
-            0% { text-shadow: 0 2px 10px rgba(0, 0, 0, 0.3); }
-            100% { text-shadow: 0 2px 20px rgba(255, 255, 255, 0.5); }
-        }
-        
-        .form-group {
-            margin-bottom: 25px;
-            position: relative;
-        }
-        
-        .form-group label {
-            display: block;
+
+        .title {
+            font-size: 28px;
+            font-weight: 700;
             margin-bottom: 8px;
-            color: #ffffff;
-            font-weight: 600;
-            font-size: 0.9rem;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-            text-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
+            color: #f8fafc;
         }
-        
-        .form-group input {
+
+        .subtitle {
+            color: #94a3b8;
+            margin-bottom: 32px;
+            font-size: 14px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+            position: relative;
+            text-align: left;
+        }
+
+        .form-control {
             width: 100%;
-            padding: 15px;
-            border: 2px solid rgba(255, 255, 255, 0.3);
+            padding: 14px 14px 14px 45px;
+            /* Left padding for icon */
+            background-color: #0f172a;
+            border: 1px solid #334155;
             border-radius: 12px;
-            font-size: 16px;
+            color: #f8fafc;
+            font-size: 15px;
             transition: all 0.3s ease;
-            box-sizing: border-box;
-            background: rgba(255, 255, 255, 0.1);
-            color: #ffffff;
-            backdrop-filter: blur(10px);
         }
-        
-        .form-group input::placeholder {
-            color: rgba(255, 255, 255, 0.7);
-        }
-        
-        .form-group input:focus {
+
+        .form-control:focus {
             outline: none;
-            border-color: rgba(255, 255, 255, 0.6);
-            box-shadow: 0 0 0 3px rgba(255, 255, 255, 0.2);
-            transform: translateY(-2px);
-            background: rgba(255, 255, 255, 0.15);
+            border-color: #38bdf8;
+            box-shadow: 0 0 0 3px rgba(56, 189, 248, 0.1);
         }
-        
-        .btn {
-            padding: 15px 30px;
+
+        .form-icon {
+            position: absolute;
+            left: 16px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #64748b;
+            font-size: 16px;
+            transition: color 0.3s;
+        }
+
+        .form-control:focus+.form-icon {
+            color: #38bdf8;
+            /* This needs sibling selector logic reversal or JS, keeping simple for now */
+        }
+
+        .form-control:focus~.form-icon {
+            color: #38bdf8;
+        }
+
+        .password-toggle {
+            position: absolute;
+            right: 16px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #64748b;
+            cursor: pointer;
+            transition: color 0.3s;
+        }
+
+        .password-toggle:hover {
+            color: #e2e8f0;
+        }
+
+        .btn-primary {
+            width: 100%;
+            padding: 14px;
+            background-color: #3b82f6;
+            color: white;
             border: none;
             border-radius: 12px;
             font-size: 16px;
             font-weight: 600;
             cursor: pointer;
-            transition: all 0.3s ease;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
+            transition: all 0.3s;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
         }
-        
-        .btn-primary {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
-            width: 100%;
-            position: relative;
-            overflow: hidden;
-        }
-        
-        .btn-primary::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: -100%;
-            width: 100%;
-            height: 100%;
-            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
-            transition: left 0.5s ease;
-        }
-        
-        .btn-primary:hover::before {
-            left: 100%;
-        }
-        
+
         .btn-primary:hover {
-            transform: translateY(-3px) scale(1.02);
-            box-shadow: 0 15px 35px rgba(102, 126, 234, 0.4);
-        }
-        
-        .btn-primary:active {
-            transform: translateY(0);
-        }
-        
-        .form-footer {
-            text-align: center;
-            margin-top: 25px;
-        }
-        
-        .form-footer a {
-            color: #ffffff;
-            text-decoration: none;
-            font-weight: 600;
-            transition: all 0.3s ease;
-            text-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
-        }
-        
-        .form-footer a:hover {
-            color: #ffd700;
-            text-shadow: 0 0 10px rgba(255, 215, 0, 0.5);
+            background-color: #2563eb;
             transform: translateY(-1px);
         }
-        
-        .form-footer p {
-            margin-top: 15px;
-            color: rgba(255, 255, 255, 0.8);
-            font-size: 0.9rem;
-            text-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
+
+        .form-footer {
+            margin-top: 24px;
+            font-size: 14px;
+            color: #94a3b8;
         }
-        
+
+        .form-footer a {
+            color: #38bdf8;
+            text-decoration: none;
+            font-weight: 500;
+            transition: color 0.2s;
+        }
+
+        .form-footer a:hover {
+            color: #7dd3fc;
+            text-decoration: underline;
+        }
+
+        .divider {
+            margin: 24px 0;
+            display: flex;
+            align-items: center;
+            color: #475569;
+            font-size: 13px;
+        }
+
+        .divider::before,
+        .divider::after {
+            content: "";
+            flex: 1;
+            height: 1px;
+            background-color: #334155;
+        }
+
+        .divider span {
+            padding: 0 10px;
+        }
+
+        .btn-admin {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 10px 20px;
+            background-color: rgba(30, 41, 59, 0.5);
+            border: 1px solid #334155;
+            border-radius: 10px;
+            color: #94a3b8;
+            text-decoration: none;
+            font-size: 13px;
+            transition: all 0.3s;
+        }
+
+        .btn-admin:hover {
+            background-color: #334155;
+            color: #f8fafc;
+            border-color: #475569;
+        }
+
         .error {
-            color: #e74c3c;
-            font-size: 0.8rem;
-            margin-top: 5px;
+            color: #ef4444;
+            font-size: 13px;
+            margin-top: 6px;
             display: block;
+            text-align: left;
         }
-        
-        /* Modal styles */
+
+        /* Modal Styles */
         .modal {
             display: none;
             position: fixed;
-            z-index: 1000;
-            left: 0;
             top: 0;
+            left: 0;
             width: 100%;
             height: 100%;
-            background-color: rgba(0, 0, 0, 0.5);
-            backdrop-filter: blur(5px);
+            background-color: rgba(0, 0, 0, 0.7);
+            backdrop-filter: blur(4px);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
         }
-        
+
         .modal-content {
-            background: rgba(255, 255, 255, 0.1);
-            backdrop-filter: blur(20px);
-            border: 1px solid rgba(255, 255, 255, 0.2);
-            margin: 10% auto;
+            background-color: #1e293b;
             padding: 30px;
             border-radius: 20px;
             width: 90%;
             max-width: 400px;
-            box-shadow: 0 25px 50px rgba(0, 0, 0, 0.3);
             position: relative;
-            animation: modalFloat 4s ease-in-out infinite;
+            border: 1px solid #334155;
+            animation: scaleIn 0.3s ease-out;
         }
-        
-        @keyframes modalFloat {
-            0%, 100% { transform: translateY(0px); }
-            50% { transform: translateY(-5px); }
+
+        @keyframes scaleIn {
+            from {
+                transform: scale(0.9);
+                opacity: 0;
+            }
+
+            to {
+                transform: scale(1);
+                opacity: 1;
+            }
         }
-        
+
         .close {
             position: absolute;
+            top: 15px;
             right: 20px;
-            top: 20px;
-            color: #aaa;
-            font-size: 28px;
-            font-weight: bold;
+            color: #94a3b8;
+            font-size: 24px;
             cursor: pointer;
-            transition: color 0.3s ease;
+            transition: color 0.2s;
         }
-        
+
         .close:hover {
-            color: #333;
+            color: #f8fafc;
         }
-        
-        .modal-content h2 {
-            color: #ffffff;
-            margin-bottom: 15px;
-            text-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
-        }
-        
-        .modal-content p {
-            color: rgba(255, 255, 255, 0.8);
+
+        .message {
+            padding: 12px;
+            border-radius: 10px;
             margin-bottom: 20px;
-            text-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
+            text-align: center;
+            font-size: 14px;
+            animation: slideDown 0.3s ease-out;
         }
-        
+
+        .message.success {
+            background-color: rgba(16, 185, 129, 0.2);
+            color: #34d399;
+            border: 1px solid #059669;
+        }
+
+        .message.error {
+            background-color: rgba(239, 68, 68, 0.2);
+            color: #fca5a5;
+            border: 1px solid #b91c1c;
+        }
+
+        @keyframes slideDown {
+            from {
+                opacity: 0;
+                transform: translateY(-10px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
         @media (max-width: 480px) {
             .form-card {
                 padding: 30px 20px;
-                margin: 10px;
             }
-            
-            .form-card h1 {
-                font-size: 1.8rem;
-            }
-            
-            .modal-content {
-                margin: 20% auto;
-                padding: 20px;
+
+            .title {
+                font-size: 24px;
             }
         }
+
+        /* Login Animation Overlay */
+        #loginAnimationOverlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: #020617;
+            z-index: 9999;
+            display: none;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            text-align: center;
+        }
+
+        .loader-video-container {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+            z-index: -1;
+        }
+
+        .loader-video {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            opacity: 0.4;
+            filter: blur(8px);
+        }
+
+        .loader-content {
+            position: relative;
+            z-index: 10;
+        }
+
+        .loader-circle {
+            width: 80px;
+            height: 80px;
+            border: 4px solid rgba(56, 189, 248, 0.1);
+            border-top: 4px solid #38bdf8;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 20px;
+        }
+
+        @keyframes spin {
+            0% {
+                transform: rotate(0deg);
+            }
+
+            100% {
+                transform: rotate(360deg);
+            }
+        }
+
+        .loader-text {
+            font-size: 24px;
+            font-weight: 700;
+            letter-spacing: 2px;
+            background: linear-gradient(135deg, #fff, #38bdf8);
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 10px;
+        }
+
+        .loader-subtext {
+            color: #94a3b8;
+            font-size: 16px;
+        }
     </style>
+    <script src="config.js"></script>
 </head>
+
 <body>
+    <!-- Login Animation Overlay -->
+    <div id="loginAnimationOverlay">
+        <div class="loader-video-container">
+            <video class="loader-video" autoplay muted loop playsinline>
+                <source
+                    src="https://assets.mixkit.co/videos/preview/mixkit-software-developer-working-on-code-screen-close-up-34395-large.mp4"
+                    type="video/mp4">
+            </video>
+        </div>
+        <div class="loader-content">
+            <div class="loader-circle"></div>
+            <div class="loader-text">AUTHENTICATING</div>
+            <div class="loader-subtext" id="loaderSubtext">Initializing secure connection...</div>
+        </div>
+    </div>
     <div class="container">
         <div class="form-card">
-            <h1>Welcome Back</h1>
-            
+            <div class="logo">
+                <i class="fas fa-tools"></i>
+                WorkConnect
+            </div>
+            <h1 class="title">Welcome Back</h1>
+            <p class="subtitle">Sign in to access your account</p>
+
             <form id="loginForm">
                 <div class="form-group">
-                    <label for="username">Username</label>
-                    <input type="text" id="username" name="username" required placeholder="Enter your username">
+                    <i class="fas fa-user form-icon"></i>
+                    <input type="text" id="username" class="form-control" name="username"
+                        placeholder="Enter your username" required>
                     <span class="error" id="username-error"></span>
                 </div>
 
                 <div class="form-group">
-                    <label for="password">Password</label>
-                    <input type="password" id="password" name="password" required placeholder="Enter your password">
+                    <i class="fas fa-lock form-icon"></i>
+                    <input type="password" id="password" class="form-control" name="password"
+                        placeholder="Enter your password" required>
+                    <i class="fas fa-eye password-toggle" id="password-toggle-icon"
+                        onclick="togglePasswordVisibility()"></i>
                     <span class="error" id="password-error"></span>
                 </div>
 
-                <div class="form-group">
-                    <button type="submit" class="btn btn-primary">Sign In</button>
+                <button type="submit" class="btn-primary">
+                    Sign In <i class="fas fa-arrow-right"></i>
+                </button>
+
+                <div style="margin-bottom: 20px;">
+                    <a href="#" id="forgotPasswordLink"
+                        style="color: #94a3b8; font-size: 13px; text-decoration: none; display: inline-flex; align-items: center; gap: 6px;">
+                        <i class="fas fa-key"></i> Forgot Password?
+                    </a>
                 </div>
 
                 <div class="form-footer">
-                    <a href="#" id="forgotPasswordLink">Forgot Password?</a>
-                    <p>Don't have an account? <a href="register.html">Register here</a></p>
+                    <i class="fas fa-user-plus me-1"></i> Don't have an account? <a href="register.html">Register
+                        here</a>
                 </div>
+
+                <div class="divider">
+                    <span>OR</span>
+                </div>
+
+                <a href="admin.html" class="btn-admin">
+                    <i class="fas fa-shield-alt"></i> Admin Login
+                </a>
             </form>
         </div>
+    </div>
 
-        <!-- Forgot Password Modal -->
-        <div id="forgotPasswordModal" class="modal">
-            <div class="modal-content">
-                <span class="close">&times;</span>
-                <h2>Forgot Password</h2>
-                <p>Enter your email address to reset your password:</p>
-                <form id="forgotPasswordForm">
-                    <div class="form-group">
-                        <label for="resetEmail">Email Address</label>
-                        <input type="email" id="resetEmail" name="resetEmail" required placeholder="Enter your email">
-                        <span class="error" id="resetEmail-error"></span>
-                    </div>
-                    <div class="form-group">
-                        <button type="submit" class="btn btn-primary">Send Reset Link</button>
-                    </div>
-                </form>
-            </div>
+    <!-- Forgot Password Modal -->
+    <div id="forgotPasswordModal" class="modal">
+        <div class="modal-content">
+            <span class="close">&times;</span>
+            <h2 style="margin-bottom: 10px; color: #f8fafc;">Reset Password</h2>
+            <p style="color: #94a3b8; margin-bottom: 20px; font-size: 14px;">Enter your email address to receive a reset
+                link</p>
+            <form id="forgotPasswordForm">
+                <div class="form-group">
+                    <i class="fas fa-envelope form-icon"></i>
+                    <input type="email" id="resetEmail" class="form-control" name="resetEmail" required
+                        placeholder="Enter your email">
+                    <span class="error" id="resetEmail-error"></span>
+                </div>
+                <button type="submit" class="btn-primary">Send Reset Link</button>
+            </form>
         </div>
     </div>
 
     <script src="login.js"></script>
+    <script>
+        // Inline toggle script just in case, or rely on login.js
+        function togglePasswordVisibility() {
+            const passwordInput = document.getElementById('password');
+            const toggleIcon = document.getElementById('password-toggle-icon');
+
+            if (passwordInput.type === 'password') {
+                passwordInput.type = 'text';
+                toggleIcon.className = 'fas fa-eye-slash password-toggle';
+            } else {
+                passwordInput.type = 'password';
+                toggleIcon.className = 'fas fa-eye password-toggle';
+            }
+        }
+
+        // Modal logic is likely in login.js, but ensuring IDs match
+        // login.js expects: forgotPasswordModal, forgotPasswordLink, .close, forgotPasswordForm
+        // My HTML structure provides these.
+
+        // Make sure modal display uses flex
+        const modal = document.getElementById('forgotPasswordModal');
+        const link = document.getElementById('forgotPasswordLink');
+        const closeBtn = document.querySelector('.close');
+
+        if (link) {
+            link.addEventListener('click', (e) => {
+                e.preventDefault();
+                modal.style.display = 'flex'; // Override login.js 'block' if it sets block, flex centers it
+            });
+        }
+        if (closeBtn) {
+            closeBtn.addEventListener('click', () => {
+                modal.style.display = 'none';
+            });
+        }
+        window.onclick = function (event) {
+            if (event.target == modal) {
+                modal.style.display = "none";
+            }
+        }
+    </script>
 </body>
-</html> 
+
+</html>

@@ -1,0 +1,179 @@
+.register-bg {
+    --background: #0f172a;
+}
+
+.progress-bar-container {
+    width: 100%;
+    height: 4px;
+    background: rgba(255, 255, 255, 0.1);
+    position: sticky;
+    top: 0;
+    z-index: 10;
+
+    .progress-bar {
+        height: 100%;
+        background: linear-gradient(90deg, #3b82f6, #06b6d4);
+        transition: width 0.3s ease;
+    }
+}
+
+.register-container {
+    padding: 30px 20px;
+}
+
+.step-header {
+    margin-bottom: 32px;
+
+    h2 {
+        font-size: 26px;
+        font-weight: 800;
+        color: white;
+        margin: 0;
+    }
+
+    p {
+        color: #94a3b8;
+        margin-top: 6px;
+        font-size: 15px;
+    }
+}
+
+.custom-input {
+    --background: rgba(255, 255, 255, 0.05);
+    --border-radius: 12px;
+    margin-bottom: 12px;
+    border: 1px solid rgba(255, 255, 255, 0.05);
+    --padding-start: 16px;
+
+    ion-icon[slot="start"] {
+        color: #3b82f6;
+        margin-right: 12px;
+    }
+
+    ion-input {
+        color: white;
+    }
+}
+
+.row {
+    display: flex;
+    gap: 12px;
+
+    .half {
+        flex: 1;
+    }
+}
+
+.role-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+    margin-bottom: 32px;
+}
+
+.role-card {
+    background: rgba(255, 255, 255, 0.05);
+    border: 2px solid transparent;
+    border-radius: 20px;
+    padding: 24px 16px;
+    text-align: center;
+    transition: all 0.2s;
+
+    ion-icon {
+        font-size: 42px;
+        color: #94a3b8;
+        margin-bottom: 12px;
+    }
+
+    h3 {
+        color: white;
+        margin: 0;
+        font-size: 18px;
+        font-weight: 700;
+    }
+
+    p {
+        color: #64748b;
+        font-size: 13px;
+        margin-top: 6px;
+    }
+
+    &.selected {
+        border-color: #3b82f6;
+        background: rgba(59, 130, 246, 0.1);
+
+        ion-icon {
+            color: #3b82f6;
+        }
+    }
+}
+
+.verification-card {
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 20px;
+    padding: 32px 24px;
+    text-align: center;
+    margin-bottom: 24px;
+
+    ion-icon {
+        font-size: 64px;
+        margin-bottom: 16px;
+    }
+
+    h3 {
+        color: white;
+        margin: 0;
+    }
+
+    p {
+        color: #94a3b8;
+        margin-bottom: 24px;
+    }
+
+    .resend {
+        margin-top: 16px;
+        color: #3b82f6;
+        font-weight: 600;
+        font-size: 14px;
+        text-decoration: underline;
+        cursor: pointer;
+    }
+}
+
+.image-upload {
+    background: rgba(255, 255, 255, 0.05);
+    border: 2px dashed rgba(255, 255, 255, 0.2);
+    border-radius: 16px;
+    padding: 32px;
+    text-align: center;
+    margin: 16px 0;
+    color: #94a3b8;
+
+    ion-icon {
+        font-size: 32px;
+        margin-bottom: 8px;
+    }
+}
+
+.btn-group {
+    display: flex;
+    flex-direction: column-reverse;
+    gap: 8px;
+    margin-top: 24px;
+}
+
+.anim-fade {
+    animation: fadeIn 0.4s ease-out;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}

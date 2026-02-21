@@ -1,0 +1,361 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Responsive Design Test - WorkConnect</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="stylesheet" href="responsive.css">
+    <style>
+        body {
+            background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+            color: #e2e8f0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            padding: 2rem;
+            min-height: 100vh;
+        }
+
+        .test-container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .test-header {
+            text-align: center;
+            margin-bottom: 3rem;
+            padding: 2rem;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 20px;
+            backdrop-filter: blur(10px);
+        }
+
+        .test-header h1 {
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+            background: linear-gradient(to right, #38bdf8, #60a5fa);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+        }
+
+        .screen-indicator {
+            display: inline-block;
+            padding: 0.5rem 1rem;
+            background: #3b82f6;
+            border-radius: 10px;
+            font-weight: 600;
+            margin-top: 1rem;
+        }
+
+        .test-section {
+            margin-bottom: 3rem;
+            padding: 2rem;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 15px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .test-section h2 {
+            color: #38bdf8;
+            margin-bottom: 1.5rem;
+            font-size: 1.5rem;
+        }
+
+        .demo-grid {
+            display: grid;
+            gap: 1rem;
+            grid-template-columns: 1fr;
+        }
+
+        @media (min-width: 768px) {
+            .demo-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        @media (min-width: 1024px) {
+            .demo-grid {
+                grid-template-columns: repeat(3, 1fr);
+            }
+        }
+
+        .demo-card {
+            background: rgba(255, 255, 255, 0.1);
+            padding: 1.5rem;
+            border-radius: 12px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            transition: transform 0.3s;
+        }
+
+        .demo-card:hover {
+            transform: translateY(-5px);
+            background: rgba(255, 255, 255, 0.15);
+        }
+
+        .demo-card h3 {
+            color: #60a5fa;
+            margin-bottom: 0.5rem;
+        }
+
+        .demo-button {
+            width: 100%;
+            padding: 0.75rem 1.5rem;
+            background: linear-gradient(135deg, #3b82f6, #2563eb);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            margin-top: 1rem;
+        }
+
+        .demo-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(59, 130, 246, 0.3);
+        }
+
+        .responsive-table {
+            width: 100%;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 10px;
+            overflow: hidden;
+        }
+
+        .responsive-table th,
+        .responsive-table td {
+            padding: 1rem;
+            text-align: left;
+        }
+
+        .responsive-table th {
+            background: rgba(255, 255, 255, 0.1);
+            font-weight: 600;
+        }
+
+        .status-badge {
+            display: inline-block;
+            padding: 0.25rem 0.75rem;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            font-weight: 600;
+        }
+
+        .status-success {
+            background: #10b981;
+            color: white;
+        }
+
+        .status-warning {
+            background: #f59e0b;
+            color: white;
+        }
+
+        .status-info {
+            background: #3b82f6;
+            color: white;
+        }
+
+        .breakpoint-info {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background: rgba(0, 0, 0, 0.8);
+            padding: 1rem;
+            border-radius: 10px;
+            font-family: monospace;
+            font-size: 0.9rem;
+            z-index: 1000;
+            border: 2px solid #38bdf8;
+        }
+
+        .breakpoint-info div {
+            margin: 0.25rem 0;
+        }
+
+        .current-breakpoint {
+            color: #10b981;
+            font-weight: 700;
+        }
+    </style>
+    <script src="config.js"></script>
+</head>
+
+<body>
+    <div class="test-container">
+        <div class="test-header">
+            <h1><i class="fas fa-mobile-alt"></i> Responsive Design Test</h1>
+            <p>Resize your browser window to see the responsive design in action</p>
+            <div class="screen-indicator" id="screenSize">Loading...</div>
+        </div>
+
+        <!-- Grid Test -->
+        <div class="test-section">
+            <h2><i class="fas fa-th"></i> Responsive Grid System</h2>
+            <p style="margin-bottom: 1rem; color: #94a3b8;">
+                <strong>Mobile:</strong> 1 column | <strong>Tablet:</strong> 2 columns | <strong>Desktop:</strong> 3
+                columns
+            </p>
+            <div class="demo-grid">
+                <div class="demo-card">
+                    <h3><i class="fas fa-user"></i> Card 1</h3>
+                    <p>This card adapts to screen size automatically.</p>
+                    <button class="demo-button">Action Button</button>
+                </div>
+                <div class="demo-card">
+                    <h3><i class="fas fa-briefcase"></i> Card 2</h3>
+                    <p>Responsive padding and spacing applied.</p>
+                    <button class="demo-button">Action Button</button>
+                </div>
+                <div class="demo-card">
+                    <h3><i class="fas fa-chart-line"></i> Card 3</h3>
+                    <p>Touch-friendly on mobile devices.</p>
+                    <button class="demo-button">Action Button</button>
+                </div>
+                <div class="demo-card">
+                    <h3><i class="fas fa-cog"></i> Card 4</h3>
+                    <p>Optimized for all screen sizes.</p>
+                    <button class="demo-button">Action Button</button>
+                </div>
+                <div class="demo-card">
+                    <h3><i class="fas fa-bell"></i> Card 5</h3>
+                    <p>Consistent design across devices.</p>
+                    <button class="demo-button">Action Button</button>
+                </div>
+                <div class="demo-card">
+                    <h3><i class="fas fa-star"></i> Card 6</h3>
+                    <p>Professional and modern UI.</p>
+                    <button class="demo-button">Action Button</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Table Test -->
+        <div class="test-section">
+            <h2><i class="fas fa-table"></i> Responsive Table</h2>
+            <p style="margin-bottom: 1rem; color: #94a3b8;">
+                <strong>Mobile:</strong> Card layout | <strong>Tablet/Desktop:</strong> Traditional table
+            </p>
+            <table class="responsive-table">
+                <thead>
+                    <tr>
+                        <th>Order ID</th>
+                        <th>Customer</th>
+                        <th>Status</th>
+                        <th>Amount</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td data-label="Order ID">#12345</td>
+                        <td data-label="Customer">John Doe</td>
+                        <td data-label="Status"><span class="status-badge status-success">Completed</span></td>
+                        <td data-label="Amount">₹1,500</td>
+                    </tr>
+                    <tr>
+                        <td data-label="Order ID">#12346</td>
+                        <td data-label="Customer">Jane Smith</td>
+                        <td data-label="Status"><span class="status-badge status-warning">Pending</span></td>
+                        <td data-label="Amount">₹2,300</td>
+                    </tr>
+                    <tr>
+                        <td data-label="Order ID">#12347</td>
+                        <td data-label="Customer">Bob Johnson</td>
+                        <td data-label="Status"><span class="status-badge status-info">In Progress</span></td>
+                        <td data-label="Amount">₹3,750</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Button Group Test -->
+        <div class="test-section">
+            <h2><i class="fas fa-hand-pointer"></i> Responsive Buttons</h2>
+            <p style="margin-bottom: 1rem; color: #94a3b8;">
+                <strong>Mobile:</strong> Stacked | <strong>Tablet/Desktop:</strong> Inline
+            </p>
+            <div class="btn-group">
+                <button class="demo-button"><i class="fas fa-save"></i> Save Changes</button>
+                <button class="demo-button"><i class="fas fa-times"></i> Cancel</button>
+                <button class="demo-button"><i class="fas fa-trash"></i> Delete</button>
+            </div>
+        </div>
+
+        <!-- Typography Test -->
+        <div class="test-section">
+            <h2><i class="fas fa-font"></i> Responsive Typography</h2>
+            <h1 class="heading-responsive">Heading 1 - Responsive</h1>
+            <h2 class="heading-responsive">Heading 2 - Responsive</h2>
+            <h3 class="heading-responsive">Heading 3 - Responsive</h3>
+            <p class="text-responsive">
+                This paragraph uses responsive text sizing. The font size automatically adjusts based on the viewport
+                width,
+                ensuring optimal readability across all devices from mobile phones to large desktop monitors.
+            </p>
+        </div>
+
+        <!-- Visibility Test -->
+        <div class="test-section">
+            <h2><i class="fas fa-eye"></i> Device-Specific Visibility</h2>
+            <div class="mobile-only"
+                style="padding: 1rem; background: rgba(16, 185, 129, 0.2); border-radius: 10px; margin-bottom: 1rem;">
+                <strong><i class="fas fa-mobile-alt"></i> Mobile Only:</strong> This content is only visible on mobile
+                devices (< 768px) </div>
+                    <div class="tablet-only"
+                        style="padding: 1rem; background: rgba(59, 130, 246, 0.2); border-radius: 10px; margin-bottom: 1rem;">
+                        <strong><i class="fas fa-tablet-alt"></i> Tablet Only:</strong> This content is only visible on
+                        tablets (768px - 1023px)
+                    </div>
+                    <div class="desktop-only"
+                        style="padding: 1rem; background: rgba(168, 85, 247, 0.2); border-radius: 10px;">
+                        <strong><i class="fas fa-desktop"></i> Desktop Only:</strong> This content is only visible on
+                        desktop (≥ 1024px)
+                    </div>
+            </div>
+        </div>
+
+        <!-- Breakpoint Indicator -->
+        <div class="breakpoint-info">
+            <div><strong>Screen Width:</strong> <span id="width">-</span>px</div>
+            <div><strong>Screen Height:</strong> <span id="height">-</span>px</div>
+            <div><strong>Breakpoint:</strong> <span id="breakpoint" class="current-breakpoint">-</span></div>
+        </div>
+
+        <script>
+            function updateScreenInfo() {
+                const width = window.innerWidth;
+                const height = window.innerHeight;
+                let breakpoint = '';
+                let screenSize = '';
+
+                if (width < 768) {
+                    breakpoint = 'Mobile';
+                    screenSize = '📱 Mobile View';
+                } else if (width >= 768 && width < 1024) {
+                    breakpoint = 'Tablet';
+                    screenSize = '📱 Tablet View';
+                } else if (width >= 1024 && width < 1440) {
+                    breakpoint = 'Desktop';
+                    screenSize = '💻 Desktop View';
+                } else {
+                    breakpoint = 'Large Desktop';
+                    screenSize = '🖥️ Large Desktop View';
+                }
+
+                document.getElementById('width').textContent = width;
+                document.getElementById('height').textContent = height;
+                document.getElementById('breakpoint').textContent = breakpoint;
+                document.getElementById('screenSize').textContent = screenSize;
+            }
+
+            // Update on load and resize
+            updateScreenInfo();
+            window.addEventListener('resize', updateScreenInfo);
+
+            // Update every 100ms for smooth updates
+            setInterval(updateScreenInfo, 100);
+        </script>
+</body>
+
+</html>

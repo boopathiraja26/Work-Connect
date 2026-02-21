@@ -1,0 +1,16 @@
+{
+    "name": "WorkConnect",
+    "short_name": "WorkConnect",
+    "start_url": "/",
+    "display": "standalone",
+    "background_color": "#ffffff",
+    "theme_color": "#0054e9",
+    "icons": [
+        {
+            "src": "assets/icon/favicon.png",
+            "sizes": "512x512",
+            "type": "image/png",
+            "purpose": "any maskable"
+        }
+    ]
+}

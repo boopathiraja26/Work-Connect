@@ -1,0 +1,85 @@
+<ion-header [translucent]="true">
+  <ion-toolbar color="primary">
+    <ion-buttons slot="start">
+      <ion-back-button [defaultHref]="'/worker-details/' + workerId"></ion-back-button>
+    </ion-buttons>
+    <ion-title>Confirm Booking</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content [fullscreen]="true" class="booking-bg">
+  <div *ngIf="loading" class="loading-container">
+    <ion-spinner name="crescent"></ion-spinner>
+  </div>
+
+  <div *ngIf="!loading && worker" class="booking-container">
+    <div class="worker-summary">
+      <img [src]="worker.profileImage || 'assets/default-avatar.png'"
+        (onerror)="$any($event.target).src='https://placehold.co/100x100?text=Avatar'">
+      <div class="info">
+        <h3>{{worker.name || worker.username}}</h3>
+        <p>{{worker.skills?.[0]}}</p>
+        <span class="rate">${{worker.hourlyRate}}/hr</span>
+      </div>
+    </div>
+
+    <ion-list lines="none">
+      <div class="section-title">Service Details</div>
+
+      <ion-item class="custom-input">
+        <ion-select label="Service Type" labelPlacement="floating" [(ngModel)]="bookingData.serviceType">
+          <ion-select-option *ngFor="let skill of worker.skills" [value]="skill">{{skill}}</ion-select-option>
+          <ion-select-option value="General Maintenance">General Maintenance</ion-select-option>
+        </ion-select>
+      </ion-item>
+
+      <ion-item class="custom-input">
+        <ion-textarea label="Work Description" labelPlacement="floating" [(ngModel)]="bookingData.description"
+          placeholder="Describe the work to be done..." [autoGrow]="true"></ion-textarea>
+      </ion-item>
+
+      <div class="section-title">Schedule & Duration</div>
+
+      <ion-item class="custom-input">
+        <ion-datetime-button datetime="datetime"></ion-datetime-button>
+        <ion-modal [keepContentsMounted]="true">
+          <ng-template>
+            <ion-datetime id="datetime" [(ngModel)]="bookingData.orderDate" presentation="date-time"></ion-datetime>
+          </ng-template>
+        </ion-modal>
+      </ion-item>
+
+      <ion-item class="custom-input">
+        <ion-range [min]="1" [max]="8" [pin]="true" [snaps]="true" [(ngModel)]="bookingData.duration"
+          (ionChange)="calculateTotal()">
+          <ion-label slot="start">1hr</ion-label>
+          <ion-label slot="end">8hrs</ion-label>
+        </ion-range>
+      </ion-item>
+      <p class="duration-label">Estimated Duration: {{bookingData.duration}} Hours</p>
+    </ion-list>
+
+    <div class="billing-summary">
+      <div class="bill-row">
+        <span>Hourly Rate</span>
+        <span>${{worker.hourlyRate}}</span>
+      </div>
+      <div class="bill-row">
+        <span>Estimated Duration</span>
+        <span>x {{bookingData.duration}} hrs</span>
+      </div>
+      <div class="bill-row total">
+        <span>Total Amount</span>
+        <span>${{bookingData.totalAmount}}</span>
+      </div>
+    </div>
+
+    <p class="disclaimer">
+      * Final amount may vary based on actual work hours and material costs.
+    </p>
+
+    <ion-button expand="block" (click)="confirmBooking()" class="confirm-btn">
+      Proceed to Payment
+    </ion-button>
+  </div>
+</ion-content>

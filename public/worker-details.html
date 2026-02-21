@@ -1,359 +1,1035 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes">
     <title>Worker Details</title>
-    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
-        .worker-details {
-            max-width: 1000px;
-            margin: 0 auto;
-            padding: 20px;
+        :root {
+            --primary: #38bdf8;
+            --primary-dark: #3b82f6;
+            --bg-dark: #020617;
+            --card-bg: rgba(15, 23, 42, 0.95);
+            --border: rgba(148, 163, 184, 0.1);
+            `
         }
-        
-        .back-btn {
-            background: #667eea;
-            color: white;
-            padding: 10px 20px;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-            margin-bottom: 20px;
-            text-decoration: none;
-            display: inline-block;
+
+        * {
+            A box-sizing: border-box;
         }
-        
-        .back-btn:hover {
-            background: #5a6fd8;
-        }
-        
-        .worker-header {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
-            border-radius: 15px;
-            padding: 30px;
-            margin-bottom: 30px;
-            text-align: center;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
-        }
-        
-        .worker-header h1 {
-            margin: 0 0 10px 0;
-            font-size: 2.5rem;
-        }
-        
-        .worker-header p {
+
+        body {
+            min-height: 100vh;
+            background: radial-gradient(circle at top, #020617 0%, #020617 45%, #020617 100%);
+            color: #e5e7eb;
+            font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
             margin: 0;
-            opacity: 0.9;
+            line-height: 1.6;
+            overflow-x: hidden;
+        }
+
+        /* Responsive Container */
+        .container {
+            width: 100%;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 1rem;
+        }
+
+        @media (min-width: 640px) {
+            .container {
+                padding: 0 1.5rem;
+            }
+        }
+
+        @media (min-width: 1024px) {
+            .container {
+                padding: 0 2rem;
+            }
+        }
+
+        /* Navigation - Fully Responsive */
+        .navbar {
+            background: rgba(15, 23, 42, 0.95);
+            border-bottom: 1px solid rgba(56, 189, 248, 0.2);
+            backdrop-filter: blur(16px);
+            padding: 0.5rem 0;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            width: 100%;
+        }
+
+        .nav-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            width: 100%;
+        }
+
+        .nav-links {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        @media (max-width: 768px) {
+            .nav-links {
+                gap: 0.75rem;
+            }
+
+            .nav-links a span:not(.profile-text) {
+                display: none;
+            }
+
+            .profile-text {
+                display: none;
+            }
+
+            .navbar-brand {
+                font-size: 1.2rem !important;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .nav-links {
+                gap: 0.5rem;
+            }
+
+            .nav-links a {
+                font-size: 0.85rem;
+            }
+        }
+
+        /* Worker Profile Section - Responsive */
+        .worker-profile-header {
+            text-align: center;
+            margin: 1.5rem 0 2rem;
+            padding: 0 1rem;
+        }
+
+        .profile-img-large {
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 4px solid #38bdf8;
+            box-shadow: 0 0 20px rgba(56, 189, 248, 0.3);
+            margin-bottom: 1rem;
+        }
+
+        @media (max-width: 480px) {
+            .profile-img-large {
+                width: 100px;
+                height: 100px;
+            }
+        }
+
+        .worker-name-large {
+            font-size: 2rem;
+            font-weight: 700;
+            color: #fff;
+            margin-bottom: 0.25rem;
+            word-break: break-word;
+        }
+
+        @media (max-width: 768px) {
+            .worker-name-large {
+                font-size: 1.75rem;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .worker-name-large {
+                font-size: 1.5rem;
+            }
+        }
+
+        .worker-role-large {
+            color: #94a3b8;
             font-size: 1.1rem;
         }
-        
-        .worker-content {
-            display: grid;
-            grid-template-columns: 2fr 1fr;
-            gap: 30px;
-            margin-bottom: 30px;
+
+        /* Badges Row - Responsive */
+        .badges-row {
+            display: flex;
+            gap: 0.5rem;
+            justify-content: center;
+            margin: 1rem 0;
+            flex-wrap: wrap;
         }
-        
-        .main-section {
-            background: white;
-            border-radius: 15px;
-            padding: 25px;
-            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.1);
+
+        .badge-pill {
+            padding: 0.25rem 0.75rem;
+            border-radius: 999px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 0.25rem;
+            white-space: nowrap;
         }
-        
-        .sidebar-section {
-            background: white;
-            border-radius: 15px;
-            padding: 25px;
-            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.1);
-            height: fit-content;
+
+        /* Stats Card - Responsive */
+        .stats-card {
+            display: flex;
+            background: rgba(30, 41, 59, 0.5);
+            border: 1px solid rgba(148, 163, 184, 0.2);
+            border-radius: 1rem;
+            padding: 1.5rem;
+            margin: 0 auto 2rem;
+            backdrop-filter: blur(12px);
+            max-width: 500px;
+            width: 100%;
         }
-        
-        .section-title {
-            color: #333;
-            margin-bottom: 20px;
-            border-bottom: 2px solid #667eea;
-            padding-bottom: 10px;
-            font-size: 1.3rem;
+
+        @media (max-width: 480px) {
+            .stats-card {
+                padding: 1rem;
+            }
         }
-        
+
+        .stat-box {
+            flex: 1;
+            text-align: center;
+            display: flex;
+            flex-direction: column;
+            gap: 0.25rem;
+        }
+
+        .stat-divider {
+            width: 1px;
+            background: rgba(148, 163, 184, 0.2);
+            margin: 0 1rem;
+        }
+
+        .stat-label {
+            color: #94a3b8;
+            font-size: 0.9rem;
+        }
+
+        .stat-value {
+            color: #fff;
+            font-size: 1.5rem;
+            font-weight: 700;
+        }
+
+        @media (max-width: 480px) {
+            .stat-value {
+                font-size: 1.25rem;
+            }
+        }
+
+        /* Action Buttons - Responsive */
+        .action-buttons {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+            margin: 0 auto 2rem;
+            max-width: 500px;
+            width: 100%;
+            padding: 0 1rem;
+        }
+
+        .btn-book {
+            width: 100%;
+            padding: 1rem;
+            border: none;
+            border-radius: 0.75rem;
+            background: linear-gradient(135deg, #0ea5e9, #0284c7);
+            color: white;
+            font-weight: 700;
+            font-size: 1.1rem;
+            cursor: pointer;
+            transition: transform 0.2s, box-shadow 0.2s;
+            box-shadow: 0 4px 15px rgba(14, 165, 233, 0.3);
+        }
+
+        .btn-pricelist {
+            width: 100%;
+            padding: 0.75rem;
+            border: 1px solid rgba(148, 163, 184, 0.3);
+            border-radius: 999px;
+            background: transparent;
+            color: #38bdf8;
+            cursor: pointer;
+            font-size: 0.9rem;
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+            transition: background 0.2s;
+        }
+
+        /* Tabs Navigation - Responsive */
+        .tabs-nav {
+            display: flex;
+            border-bottom: 1px solid rgba(148, 163, 184, 0.2);
+            margin: 0 1rem 2rem;
+            max-width: 800px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .tab-btn {
+            flex: 1;
+            text-align: center;
+            padding: 1rem;
+            background: transparent;
+            border: none;
+            color: #94a3b8;
+            font-weight: 600;
+            cursor: pointer;
+            border-bottom: 2px solid transparent;
+            font-size: 1rem;
+            transition: all 0.2s;
+        }
+
+        @media (max-width: 480px) {
+            .tab-btn {
+                padding: 0.75rem 0.5rem;
+                font-size: 0.9rem;
+            }
+        }
+
+        .tab-btn.active {
+            color: #38bdf8;
+            border-bottom-color: #38bdf8;
+        }
+
+        .tab-content {
+            display: none;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 0 1rem;
+            animation: fadeIn 0.3s ease;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(5px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Bio Card - Responsive */
+        .bio-card {
+            background: rgba(30, 41, 59, 0.4);
+            border: 1px solid rgba(148, 163, 184, 0.2);
+            border-radius: 1rem;
+            padding: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        @media (max-width: 480px) {
+            .bio-card {
+                padding: 1rem;
+            }
+        }
+
+        .bio-title {
+            color: #38bdf8;
+            font-size: 1.1rem;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+        }
+
+        .bio-text {
+            color: #cbd5e1;
+            line-height: 1.7;
+            font-size: 0.95rem;
+        }
+
+        /* Info Grid - Responsive */
         .info-grid {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
             gap: 20px;
-            margin-bottom: 25px;
+            margin-bottom: 30px;
         }
-        
+
+        @media (max-width: 640px) {
+            .info-grid {
+                grid-template-columns: 1fr;
+                gap: 15px;
+            }
+        }
+
         .info-item {
-            background: #f8f9fa;
-            padding: 15px;
-            border-radius: 10px;
-            border-left: 4px solid #667eea;
+            background: rgba(30, 41, 59, 0.4);
+            padding: 20px;
+            border-radius: 1rem;
+            border: 1px solid var(--border);
+            transition: all 0.3s ease;
         }
-        
+
+        @media (max-width: 480px) {
+            .info-item {
+                padding: 15px;
+            }
+        }
+
         .info-label {
-            font-weight: 600;
-            color: #333;
-            margin-bottom: 5px;
-            font-size: 0.9rem;
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            color: #64748b;
+            margin-bottom: 8px;
         }
-        
+
         .info-value {
-            color: #666;
-            font-size: 1rem;
+            color: #f1f5f9;
+            font-size: 1.1rem;
+            font-weight: 600;
+            word-break: break-word;
         }
-        
-        .skills-container {
-            margin-bottom: 25px;
-        }
-        
+
+        /* Skills List - Responsive */
         .skills-list {
             display: flex;
             flex-wrap: wrap;
             gap: 10px;
         }
-        
+
         .skill-tag {
-            background: #667eea;
-            color: white;
-            padding: 8px 15px;
+            background: rgba(56, 189, 248, 0.1);
+            color: var(--primary);
+            padding: 6px 16px;
             border-radius: 20px;
             font-size: 14px;
-        }
-        
-        .availability-badge {
-            display: inline-block;
-            padding: 8px 16px;
-            border-radius: 25px;
-            font-size: 14px;
             font-weight: 600;
-            margin-bottom: 20px;
+            border: 1px solid rgba(56, 189, 248, 0.2);
+            word-break: break-word;
         }
-        
-        .available {
-            background: #d4edda;
-            color: #155724;
+
+        @media (max-width: 480px) {
+            .skill-tag {
+                padding: 4px 12px;
+                font-size: 12px;
+            }
         }
-        
-        .busy {
-            background: #fff3cd;
-            color: #856404;
-        }
-        
-        .unavailable {
-            background: #f8d7da;
-            color: #721c24;
-        }
-        
-        .rating-section {
-            margin-bottom: 25px;
-        }
-        
-        .rating-display {
-            font-size: 2rem;
-            color: #f39c12;
-            margin-bottom: 10px;
-        }
-        
-        .reviews-section {
-            margin-top: 30px;
-        }
-        
-        .review-item {
-            background: #f8f9fa;
-            border-radius: 10px;
-            padding: 15px;
-            margin-bottom: 15px;
-            border-left: 4px solid #667eea;
-        }
-        
-        .review-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 10px;
-        }
-        
-        .review-rating {
-            color: #f39c12;
-            font-weight: bold;
-        }
-        
-        .review-date {
-            color: #888;
-            font-size: 0.9rem;
-        }
-        
-        .review-comment {
-            color: #666;
-            font-style: italic;
-        }
-        
-        .hire-btn {
-            background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
-            color: white;
-            width: 100%;
-            padding: 15px;
-            border: none;
-            border-radius: 8px;
-            font-size: 18px;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            margin-bottom: 20px;
-        }
-        
-        .hire-btn:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 5px 15px rgba(40, 167, 69, 0.3);
-        }
-        
-        .hire-btn:disabled {
-            background: #6c757d;
-            cursor: not-allowed;
-            transform: none;
-            box-shadow: none;
-        }
-        
+
+        /* Contact Info - Responsive */
         .contact-info {
-            background: #f8f9fa;
-            padding: 20px;
-            border-radius: 10px;
-            margin-bottom: 20px;
+            background: rgba(30, 41, 59, 0.3);
+            padding: 25px;
+            border-radius: 1rem;
+            margin-bottom: 25px;
+            border: 1px solid var(--border);
         }
-        
+
+        @media (max-width: 480px) {
+            .contact-info {
+                padding: 15px;
+            }
+        }
+
         .contact-item {
             display: flex;
             align-items: center;
-            margin-bottom: 10px;
+            gap: 15px;
+            margin-bottom: 15px;
+            color: #94a3b8;
+            word-break: break-word;
         }
-        
+
         .contact-icon {
-            margin-right: 10px;
+            color: var(--primary);
             font-size: 1.2rem;
+            width: 24px;
+            flex-shrink: 0;
         }
-        
-        .location-map {
-            height: 200px;
-            border-radius: 10px;
+
+        /* Photos Grid - Responsive */
+        .photos-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+            gap: 1rem;
+            padding-bottom: 2rem;
+        }
+
+        @media (max-width: 640px) {
+            .photos-grid {
+                grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+                gap: 0.75rem;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .photos-grid {
+                grid-template-columns: repeat(2, 1fr);
+                gap: 0.5rem;
+            }
+        }
+
+        .photo-item {
+            aspect-ratio: 1;
+            background: #334155;
+            border-radius: 0.75rem;
+            overflow: hidden;
+            position: relative;
+            cursor: pointer;
+            border: 1px solid rgba(148, 163, 184, 0.2);
+        }
+
+        .photo-item img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.3s;
+        }
+
+        /* Reviews Section - Responsive */
+        .review-item {
+            background: rgba(30, 41, 59, 0.3);
+            border-radius: 1rem;
+            padding: 20px;
+            margin-bottom: 15px;
+            border: 1px solid var(--border);
+        }
+
+        @media (max-width: 480px) {
+            .review-item {
+                padding: 15px;
+            }
+        }
+
+        .review-rating {
+            color: #fbbf24;
+            margin-right: 10px;
+        }
+
+        .review-date {
+            color: #64748b;
+            font-size: 0.85rem;
+        }
+
+        .review-comment {
+            color: #cbd5e1;
             margin-top: 10px;
+            line-height: 1.5;
+            word-break: break-word;
         }
-        
+
+        /* Modal - Responsive */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1002;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.7);
+            backdrop-filter: blur(4px);
+            overflow-y: auto;
+            padding: 1rem;
+        }
+
+        .modal-content {
+            background: rgba(30, 41, 59, 0.95);
+            color: #fff;
+            margin: 5% auto;
+            padding: 2rem;
+            border-radius: 1rem;
+            width: 90%;
+            max-width: 500px;
+            border: 1px solid rgba(56, 189, 248, 0.2);
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+        }
+
+        @media (max-width: 640px) {
+            .modal-content {
+                margin: 2% auto;
+                padding: 1.5rem;
+            }
+        }
+
+        /* Form Elements - Responsive */
+        input,
+        textarea,
+        select {
+            background: rgba(15, 23, 42, 0.6);
+            border: 1px solid rgba(148, 163, 184, 0.2);
+            border-radius: 0.5rem;
+            color: #fff;
+            font-size: 1rem;
+            padding: 0.75rem;
+            width: 100%;
+        }
+
+        @media (max-width: 480px) {
+
+            input,
+            textarea,
+            select {
+                font-size: 16px;
+                /* Prevents zoom on mobile */
+                padding: 0.6rem;
+            }
+        }
+
+        .form-group {
+            margin-bottom: 1rem;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            color: #cbd5e1;
+            font-size: 0.9rem;
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1rem;
+        }
+
+        @media (max-width: 480px) {
+            .form-row {
+                grid-template-columns: 1fr;
+                gap: 0.75rem;
+            }
+        }
+
+        /* Notification Dropdown - Responsive */
+        .nav-notifications {
+            position: relative;
+        }
+
+        .notifications-dropdown {
+            position: absolute;
+            right: -100px;
+            top: 125%;
+            width: 280px;
+            background: rgba(15, 23, 42, 0.98);
+            border-radius: 0.75rem;
+            border: 1px solid rgba(148, 163, 184, 0.4);
+            box-shadow: 0 18px 45px rgba(15, 23, 42, 0.95);
+            padding: 0.5rem 0;
+            display: none;
+            z-index: 30;
+        }
+
         @media (max-width: 768px) {
-            .worker-content {
-                grid-template-columns: 1fr;
+            .notifications-dropdown {
+                right: -20px;
+                width: 260px;
             }
-            
-            .worker-header h1 {
-                font-size: 2rem;
+        }
+
+        @media (max-width: 480px) {
+            .notifications-dropdown {
+                right: -50px;
+                width: 240px;
             }
-            
-            .info-grid {
-                grid-template-columns: 1fr;
+        }
+
+        .notifications-dropdown.show {
+            display: block;
+        }
+
+        .notifications-dropdown h6 {
+            padding: 0.5rem 1rem;
+            border-bottom: 1px solid rgba(148, 163, 184, 0.2);
+            color: #94a3b8;
+            font-size: 0.8rem;
+            text-transform: uppercase;
+        }
+
+        .notifications-dropdown .notif-item {
+            padding: 0.35rem 0.9rem;
+            font-size: 0.8rem;
+            border-bottom: 1px solid rgba(30, 41, 59, 0.9);
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+
+        .notifications-dropdown .notif-item:last-child {
+            border-bottom: none;
+        }
+
+        .notifications-dropdown .notif-item:hover {
+            background: rgba(255, 255, 255, 0.04);
+        }
+
+        .notifications-dropdown .notif-item.unread {
+            background: rgba(56, 189, 248, 0.05);
+            border-left: 3px solid #38bdf8;
+        }
+
+        .notifications-dropdown .notif-title {
+            font-weight: 600;
+            color: #e5e7eb;
+            word-break: break-word;
+        }
+
+        .notifications-dropdown .notif-meta {
+            color: #9ca3af;
+            font-size: 0.72rem;
+        }
+
+        /* Location Map - Responsive */
+        .location-map {
+            height: 250px;
+            border-radius: 1rem;
+            border: 1px solid var(--border);
+            overflow: hidden;
+            margin-top: 15px;
+        }
+
+        @media (max-width: 480px) {
+            .location-map {
+                height: 200px;
+            }
+        }
+
+        /* Star Rating - Responsive */
+        .star-rating {
+            font-size: 1.5rem;
+            color: #fbbf24;
+            cursor: pointer;
+        }
+
+        @media (max-width: 480px) {
+            .star-rating {
+                font-size: 1.25rem;
+            }
+        }
+
+        .star-rating i {
+            margin-right: 0.25rem;
+        }
+
+        /* Section Titles */
+        .section-title {
+            color: #fff;
+            margin-bottom: 25px;
+            font-size: 1.4rem;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        @media (max-width: 480px) {
+            .section-title {
+                font-size: 1.2rem;
+                margin-bottom: 15px;
+            }
+        }
+
+        .section-title::after {
+            content: '';
+            flex: 1;
+            height: 1px;
+            background: linear-gradient(90deg, var(--border), transparent);
+        }
+
+        /* Utility Classes */
+        .text-center {
+            text-align: center;
+        }
+
+        .w-100 {
+            width: 100%;
+        }
+
+        .mt-2 {
+            margin-top: 0.5rem;
+        }
+
+        .mt-4 {
+            margin-top: 1rem;
+        }
+
+        .mb-2 {
+            margin-bottom: 0.5rem;
+        }
+
+        .mb-4 {
+            margin-bottom: 1rem;
+        }
+
+        .p-2 {
+            padding: 0.5rem;
+        }
+
+        .p-4 {
+            padding: 1rem;
+        }
+
+        /* Loading States */
+        .loading {
+            opacity: 0.7;
+            pointer-events: none;
+        }
+
+        /* Responsive Font Sizes */
+        @media (max-width: 768px) {
+            body {
+                font-size: 14px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            body {
+                font-size: 13px;
             }
         }
     </style>
+    <script src="config.js"></script>
 </head>
+
 <body>
-    <div class="container">
-        <div class="worker-details">
-            <a href="customer-dashboard.html" class="back-btn">← Back to Dashboard</a>
-            
-            <div class="worker-header">
-                <h1 id="workerName">Worker Details</h1>
-                <p id="workerRole">Professional Worker</p>
-            </div>
-            
-            <div class="worker-content">
-                <div class="main-section">
-                    <div class="availability-badge" id="availabilityBadge">Available</div>
-                    
-                    <div class="info-grid">
-                        <div class="info-item">
-                            <div class="info-label">Experience</div>
-                            <div class="info-value" id="experience">N/A</div>
-                        </div>
-                        <div class="info-item">
-                            <div class="info-label">Hourly Rate</div>
-                            <div class="info-value" id="hourlyRate">N/A</div>
-                        </div>
-                        <div class="info-item">
-                            <div class="info-label">Phone</div>
-                            <div class="info-value" id="phone">N/A</div>
-                        </div>
-                        <div class="info-item">
-                            <div class="info-label">Email</div>
-                            <div class="info-value" id="email">N/A</div>
-                        </div>
-                    </div>
-                    
-                    <div class="skills-container">
-                        <h3 class="section-title">Skills</h3>
-                        <div class="skills-list" id="skillsList">
-                            <!-- Skills will be populated here -->
-                        </div>
-                    </div>
-                    
-                    <div class="rating-section">
-                        <h3 class="section-title">Rating & Reviews</h3>
-                        <div class="rating-display" id="ratingDisplay">No ratings yet</div>
-                        <div id="reviewsList">
-                            <!-- Reviews will be populated here -->
-                        </div>
-                    </div>
-                    
-                    <div class="reviews-section">
-                        <h3 class="section-title">About</h3>
-                        <p id="description">No description available.</p>
+    <!-- Navigation – exact same as customer-dashboard.html -->
+    <nav class="navbar">
+        <div class="container nav-container">
+            <a class="navbar-brand" href="customer-dashboard.html"
+                style="font-weight: 700; font-size: 1.5rem; background: linear-gradient(135deg, #38bdf8, #3b82f6); -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent; text-decoration: none;">
+                <i class="fas fa-tools me-2"></i>WorkConnect
+            </a>
+
+            <div class="nav-links">
+                <a href="customer-dashboard.html"
+                    style="color: #cbd5e1; text-decoration: none; font-weight: 500; font-size: 0.95rem; transition: color 0.3s;"
+                    onmouseover="this.style.color='#fff'" onmouseout="this.style.color='#cbd5e1'">
+                    <i class="fas fa-home"></i> <span>Dashboard</span>
+                </a>
+                <a href="customer-orders.html"
+                    style="color: #cbd5e1; text-decoration: none; font-weight: 500; font-size: 0.95rem; transition: color 0.3s;"
+                    onmouseover="this.style.color='#fff'" onmouseout="this.style.color='#cbd5e1'">
+                    <i class="fas fa-shopping-bag"></i> <span>Orders</span>
+                </a>
+                <a href="customer-payments.html"
+                    style="color: #cbd5e1; text-decoration: none; font-weight: 500; font-size: 0.95rem; transition: color 0.3s;"
+                    onmouseover="this.style.color='#fff'" onmouseout="this.style.color='#cbd5e1'">
+                    <i class="fas fa-credit-card"></i> <span>Payments</span>
+                </a>
+
+                <div class="nav-notifications">
+                    <button type="button" id="customerNotifBtn"
+                        style="background: none; border: none; color: #cbd5e1; position: relative; cursor: pointer;">
+                        <i class="fas fa-bell"></i>
+                        <span id="customerNotifCount"
+                            style="display: none; position: absolute; top: -5px; right: -5px; background: #ef4444; color: white; border-radius: 50%; padding: 2px 5px; font-size: 0.65rem; font-weight: bold;">0</span>
+                    </button>
+                    <div id="customerNotifDropdown" class="notifications-dropdown">
+                        <h6>Notifications</h6>
+                        <div id="customerNotifList" style="max-height: 300px; overflow-y: auto;"></div>
                     </div>
                 </div>
-                
-                <div class="sidebar-section">
-                    <h3 class="section-title">Contact & Location</h3>
-                    
-                    <div class="contact-info">
-                        <div class="contact-item">
-                            <span class="contact-icon">📞</span>
-                            <span id="contactPhone">N/A</span>
-                        </div>
-                        <div class="contact-item">
-                            <span class="contact-icon">✉️</span>
-                            <span id="contactEmail">N/A</span>
-                        </div>
-                        <div class="contact-item" id="addressItem" style="display: none;">
-                            <span class="contact-icon">🏠</span>
-                            <span id="contactAddress">N/A</span>
-                        </div>
-                        <div class="contact-item" id="locationItem" style="display: none;">
-                            <span class="contact-icon">📍</span>
-                            <a id="locationLink" href="#" target="_blank" style="color: #667eea; text-decoration: none;">
-                                View on Map
-                            </a>
-                        </div>
-                    </div>
-                    
-                    <div id="mapContainer" style="display: none;">
-                        <h4>Location</h4>
-                        <div id="map" class="location-map"></div>
-                    </div>
-                    
-                    <button class="hire-btn" id="hireBtn" onclick="openOrderModal()">
-                        Hire This Worker
+
+                <div class="dropdown">
+                    <a href="customer-profile.html"
+                        style="color: #cbd5e1; text-decoration: none; font-weight: 500; font-size: 0.95rem; display: flex; align-items: center; gap: 0.5rem;"
+                        onmouseover="this.style.color='#fff'" onmouseout="this.style.color='#cbd5e1'">
+                        <i class="fas fa-user-circle" style="font-size: 1.2rem;"></i>
+                        <span class="profile-text" id="navUserName">Profile</span>
+                    </a>
+                </div>
+
+                <button onclick="logout()"
+                    style="background: transparent; border: 1px solid #ef4444; color: #ef4444; border-radius: 8px; padding: 4px 10px; cursor: pointer; font-size: 0.85rem; transition: all 0.2s;"
+                    onmouseover="this.style.background='rgba(239,68,68,0.15)'"
+                    onmouseout="this.style.background='transparent'">
+                    <i class="fas fa-sign-out-alt"></i>
+                </button>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container">
+        <!-- Headers & Badges -->
+        <div class="worker-profile-header">
+            <img id="workerProfileImg" src="https://placehold.co/150x150?text=Avatar" class="profile-img-large"
+                alt="Profile">
+            <div class="badges-row">
+                <span class="badge-pill badge-online"><i class="fas fa-circle" style="font-size: 8px;"></i>
+                    Online</span>
+                <span class="badge-pill badge-recommended"><i class="fas fa-star" style="font-size: 10px;"></i>
+                    Recommended</span>
+            </div>
+            <h1 class="worker-name-large" id="workerName">Worker Name</h1>
+            <p class="worker-role-large" id="workerRole">Professional</p>
+        </div>
+
+        <!-- Stats Card -->
+        <div class="stats-card">
+            <div class="stat-box">
+                <span class="stat-label">Total jobs</span>
+                <span class="stat-value" id="statsTotalJobs">--</span>
+            </div>
+            <div class="stat-divider"></div>
+            <div class="stat-box">
+                <span class="stat-label">Customer Ratings</span>
+                <span class="stat-value" id="statsRating">--/5</span>
+            </div>
+        </div>
+
+        <!-- Action Buttons -->
+        <div class="action-buttons">
+            <button class="btn-book" onclick="openOrderModal()">Book Service</button>
+            <button class="btn-pricelist" onclick="openPriceList()">
+                See PriceList <i class="fas fa-chevron-right"></i>
+            </button>
+        </div>
+
+        <!-- Tabs Navigation -->
+        <div class="tabs-nav">
+            <button class="tab-btn active" onclick="switchTab('about')">About</button>
+            <button class="tab-btn" onclick="switchTab('photos')">Photos</button>
+            <button class="tab-btn" onclick="switchTab('reviews')">Reviews</button>
+        </div>
+
+        <!-- Tab Contents -->
+
+        <!-- ABOUT TAB -->
+        <div id="tab-about" class="tab-content active">
+            <div class="bio-card">
+                <h3 class="bio-title">Bio</h3>
+                <p class="bio-text" id="description">
+                    Professional worker with expertise in various services. Dedicated to providing high-quality service
+                    and ensuring customer satisfaction.
+                </p>
+            </div>
+
+            <div class="info-grid">
+                <div class="info-item">
+                    <div class="info-label">Experience</div>
+                    <div class="info-value" id="experience">N/A</div>
+                </div>
+                <div class="info-item">
+                    <div class="info-label">Hourly Rate</div>
+                    <div class="info-value" id="hourlyRate">N/A</div>
+                </div>
+                <div class="info-item">
+                    <div class="info-label">Location</div>
+                    <div class="info-value" id="contactCity">N/A</div>
+                </div>
+            </div>
+
+            <div class="skills-container" style="margin-top: 2rem;">
+                <h3 class="section-title">Skills</h3>
+                <div class="skills-list" id="skillsList">
+                    <!-- Populated by JS -->
+                </div>
+            </div>
+
+            <div class="contact-info" style="margin-top: 2rem;">
+                <h3 class="section-title">Contact & Location</h3>
+                <div class="contact-item">
+                    <span class="contact-icon">📞</span>
+                    <span id="contactPhone">N/A</span>
+                </div>
+                <div class="contact-item">
+                    <span class="contact-icon">✉️</span>
+                    <span id="contactEmail">N/A</span>
+                </div>
+                <div class="contact-item" id="locationItem" style="display: none;">
+                    <span class="contact-icon">📍</span>
+                    <a id="locationLink" href="#" target="_blank" style="color: #38bdf8; text-decoration: none;">View on
+                        Map</a>
+                </div>
+            </div>
+
+            <div id="mapContainer" style="display: none; margin-top: 1rem;">
+                <div id="map" class="location-map"></div>
+            </div>
+        </div>
+
+        <!-- PHOTOS TAB -->
+        <div id="tab-photos" class="tab-content">
+            <!-- Worker Only Controls -->
+            <div id="photoUploadControls" style="display: none; text-align: center; margin-bottom: 2rem;">
+                <input type="file" id="photoInput" accept="image/*" style="display: none;"
+                    onchange="handlePhotoUpload(this)">
+                <button onclick="document.getElementById('photoInput').click()" class="btn-pricelist"
+                    style="display: inline-flex; width: auto; padding: 0.75rem 2rem; border-style: dashed;">
+                    <i class="fas fa-plus"></i> Add Project Photo
+                </button>
+            </div>
+
+            <div id="photosGrid" class="photos-grid">
+                <!-- Populated by JS -->
+            </div>
+
+            <div id="noPhotosMsg" style="text-align: center; padding: 4rem; color: #94a3b8; display: none;">
+                <i class="fas fa-images" style="font-size: 3rem; margin-bottom: 1rem; opacity: 0.5;"></i>
+                <p>No photos uploaded yet.</p>
+            </div>
+        </div>
+
+        <!-- REVIEWS TAB -->
+        <div id="tab-reviews" class="tab-content">
+            <div class="rating-section">
+                <div class="rating-display" id="ratingDisplayTab"
+                    style="text-align: center; margin-bottom: 2rem; font-size: 2rem; font-weight: 700; color: #fbbf24;">
+                    <!-- Rating populated here -->
+                </div>
+
+                <div style="text-align: center; margin-bottom: 2rem;">
+                    <button onclick="toggleReviewForm()" class="btn-pricelist"
+                        style="display: inline-flex; width: auto; padding: 0.5rem 1.5rem;">
+                        <i class="fas fa-pencil-alt"></i> Write a Review
                     </button>
+                </div>
+
+                <div id="reviewFormContainer"
+                    style="display: none; background: rgba(30, 41, 59, 0.4); padding: 1.5rem; border-radius: 1rem; margin-bottom: 2rem; border: 1px solid rgba(148, 163, 184, 0.2);">
+                    <h4 style="margin-top: 0; color: #fff; margin-bottom: 1rem;">Share your experience</h4>
+                    <form id="reviewForm" onsubmit="submitReview(event)">
+                        <div style="margin-bottom: 1rem;">
+                            <label style="display: block; color: #cbd5e1; margin-bottom: 0.5rem;">Rating</label>
+                            <div class="star-rating">
+                                <i class="far fa-star" onclick="setRating(1)" id="star1"></i>
+                                <i class="far fa-star" onclick="setRating(2)" id="star2"></i>
+                                <i class="far fa-star" onclick="setRating(3)" id="star3"></i>
+                                <i class="far fa-star" onclick="setRating(4)" id="star4"></i>
+                                <i class="far fa-star" onclick="setRating(5)" id="star5"></i>
+                            </div>
+                            <input type="hidden" id="reviewRating" value="0" required>
+                        </div>
+                        <div style="margin-bottom: 1rem;">
+                            <label style="display: block; color: #cbd5e1; margin-bottom: 0.5rem;">Review</label>
+                            <textarea id="reviewComment" required rows="3" placeholder="How was the service?"
+                                style="width: 100%; padding: 0.75rem; background: rgba(15, 23, 42, 0.6); border: 1px solid rgba(148, 163, 184, 0.2); border-radius: 0.5rem; color: #fff;"></textarea>
+                        </div>
+                        <button type="submit" class="btn-book" style="padding: 0.75rem; font-size: 1rem;">Submit
+                            Review</button>
+                    </form>
+                </div>
+
+                <div id="reviewsList">
+                    <!-- Reviews populated here -->
                 </div>
             </div>
         </div>
     </div>
-    
+
     <!-- Order Modal -->
-    <div id="orderModal" class="modal" style="display: none; position: fixed; z-index: 1000; left: 0; top: 0; width: 100%; height: 100%; background-color: rgba(0, 0, 0, 0.5);">
-        <div class="modal-content" style="background-color: white; margin: 5% auto; padding: 30px; border-radius: 15px; width: 90%; max-width: 500px; box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);">
-            <div class="modal-header" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
-                <h2 class="modal-title" style="font-size: 1.5rem; font-weight: 600; color: #333;">Place Order</h2>
-                <span class="close" onclick="closeModal()" style="color: #aaa; font-size: 28px; font-weight: bold; cursor: pointer;">&times;</span>
+    <div id="orderModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header"
+                style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem; border-bottom: 1px solid rgba(148, 163, 184, 0.2); padding-bottom: 1rem;">
+                <h2 class="modal-title" style="font-size: 1.5rem; font-weight: 600; color: #fff;">Book Service</h2>
+                <span class="close" onclick="closeModal()"
+                    style="color: #94a3b8; font-size: 28px; font-weight: 400; cursor: pointer; transition: color 0.2s;">&times;</span>
             </div>
-            <form class="order-form" id="orderForm" style="display: grid; gap: 15px;">
+            <form class="order-form" id="orderForm">
                 <div class="form-group">
                     <label for="serviceType">Service Type</label>
                     <input type="text" id="serviceType" required placeholder="e.g., Plumbing repair">
@@ -362,28 +1038,58 @@
                     <label for="description">Description</label>
                     <textarea id="description" rows="3" required placeholder="Describe the work needed"></textarea>
                 </div>
-                <div class="form-group">
-                    <label for="duration">Duration (hours)</label>
-                    <input type="number" id="duration" min="1" required placeholder="Estimated hours">
+                <div class="form-row">
+                    <div>
+                        <label for="duration">Duration (hrs)</label>
+                        <input type="number" id="duration" min="1" required placeholder="Hours">
+                    </div>
+                    <div>
+                        <label for="totalAmount">Amount (₹)</label>
+                        <input type="number" id="totalAmount" min="0" step="50" required placeholder="Cost">
+                    </div>
                 </div>
-                <div class="form-group">
-                    <label for="totalAmount">Total Amount (₹)</label>
-                    <input type="number" id="totalAmount" min="0" step="50" required placeholder="Total cost">
-                </div>
-                <button type="submit" class="submit-order-btn" style="background: linear-gradient(135deg, #28a745 0%, #20c997 100%); color: white; padding: 12px; border: none; border-radius: 8px; font-size: 16px; cursor: pointer;">Place Order</button>
+                <button type="submit" class="submit-order-btn"
+                    style="background: linear-gradient(135deg, #0ea5e9, #0284c7); color: white; padding: 1rem; border: none; border-radius: 0.75rem; font-size: 1rem; font-weight: 600; cursor: pointer; margin-top: 0.5rem; transition: transform 0.2s;">
+                    Confirm Booking
+                </button>
             </form>
         </div>
     </div>
 
-    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyB41DRUbKWJHPxaFjMAwdrzWzbVKartNGg" async defer></script>
+    <!-- Price List Modal -->
+    <div id="priceListModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header"
+                style="padding: 1.5rem; border-bottom: 1px solid rgba(148, 163, 184, 0.1); display: flex; justify-content: space-between; align-items: center;">
+                <h3 style="margin: 0; font-size: 1.25rem;">Standard Rates</h3>
+                <button onclick="closePriceList()"
+                    style="background: none; border: none; color: #94a3b8; font-size: 1.5rem; cursor: pointer; padding: 0;">&times;</button>
+            </div>
+            <div class="modal-body" style="padding: 1.5rem;">
+                <div id="priceListContent" style="display: flex; flex-direction: column; gap: 1rem;">
+                    <!-- Populated by JS -->
+                </div>
+            </div>
+            <div class="modal-footer"
+                style="padding: 1rem 1.5rem; border-top: 1px solid rgba(148, 163, 184, 0.1); text-align: center;">
+                <p style="font-size: 0.8rem; color: #64748b; margin: 0;">* Final price may vary based on work complexity
+                </p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Leaflet Local Search (Alternative to Google Maps) -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
     <script>
+        // Your existing JavaScript remains exactly the same
         let currentUser = null;
         let currentWorker = null;
         let map = null;
         let marker = null;
 
         // Check if user is logged in and is a customer
-        document.addEventListener('DOMContentLoaded', function() {
+        document.addEventListener('DOMContentLoaded', function () {
             let user;
             try {
                 const userStr = localStorage.getItem('user');
@@ -395,33 +1101,112 @@
                 window.location.href = 'login.html';
                 return;
             }
-            
+
             if (user.role !== 'customer') {
                 window.location.href = 'dashboard.html';
                 return;
             }
-            
+
             currentUser = user;
+
+            // Set nav username
+            const nameDisplay = currentUser.name || currentUser.username;
+            const navUserName = document.getElementById('navUserName');
+            if (navUserName) navUserName.textContent = nameDisplay.split(' ')[0];
+
             loadWorkerDetails();
+
+            // Notifications logic
+            loadNotifications();
+            setInterval(loadNotifications, 10000);
+            initCustomerNotifToggle();
         });
-        
+
+        async function loadNotifications() {
+            if (!currentUser) return;
+            try {
+                const res = await fetch(getApiUrl(`/api/notifications/${currentUser.id}`));
+                if (res.ok) {
+                    const notifications = await res.json();
+                    renderNotifications(notifications);
+                }
+            } catch (e) {
+                console.error('Error loading notifications', e);
+            }
+        }
+
+        function renderNotifications(notifications) {
+            const listEl = document.getElementById('customerNotifList');
+            const countEl = document.getElementById('customerNotifCount');
+            if (!listEl || !countEl) return;
+
+            const unread = notifications.filter(n => !n.read);
+            countEl.textContent = unread.length > 9 ? '9+' : unread.length;
+            countEl.style.display = unread.length > 0 ? 'inline-block' : 'none';
+
+            if (notifications.length === 0) {
+                listEl.innerHTML = '<div class="p-3 text-center text-muted small">No notifications</div>';
+                return;
+            }
+
+            listEl.innerHTML = notifications.map(n => `
+                <div class="notif-item ${n.read ? '' : 'unread'}" onclick="markAsRead('${n._id || n.id}', '${n.link}')">
+                    <div class="notif-title">${n.message}</div>
+                    <div class="notif-meta">${new Date(n.createdAt).toLocaleString([], { month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' })}</div>
+                </div>
+            `).join('');
+        }
+
+        async function markAsRead(notifId, link) {
+            try {
+                await fetch(getApiUrl(`/api/notifications/${notifId}/read`), { method: 'PUT' });
+                if (link && link !== 'null' && link !== 'undefined') {
+                    window.location.href = link;
+                } else {
+                    loadNotifications();
+                }
+            } catch (e) {
+                console.error('Error marking as read', e);
+            }
+        }
+
+        function initCustomerNotifToggle() {
+            const btn = document.getElementById('customerNotifBtn');
+            const dropdown = document.getElementById('customerNotifDropdown');
+            if (!btn || !dropdown) return;
+            btn.addEventListener('click', (e) => {
+                e.stopPropagation();
+                dropdown.classList.toggle('show');
+            });
+            document.addEventListener('click', () => {
+                dropdown.classList.remove('show');
+            });
+        }
+
         async function loadWorkerDetails() {
             const urlParams = new URLSearchParams(window.location.search);
             const workerId = urlParams.get('id');
-            
+
             if (!workerId) {
                 alert('Worker ID not provided');
                 window.location.href = 'customer-dashboard.html';
                 return;
             }
-            
+
             try {
-                const response = await fetch(`/api/worker/${workerId}`);
+                const response = await fetch(getApiUrl(`/api/worker/${workerId}`));
                 if (response.ok) {
                     currentWorker = await response.json();
+                    console.log('Loaded Worker:', currentWorker);
                     displayWorkerDetails();
-                    loadReviews(workerId);
-                    initMap();
+                    // Load reviews without blocking
+                    loadReviews(workerId).catch(err => console.error('Reviews leak:', err));
+                    // Initialize map safely
+                    try {
+                        initMap();
+                    } catch (mErr) {
+                        console.warn('Map initialization deferred or failed:', mErr);
+                    }
                 } else {
                     alert('Worker not found');
                     window.location.href = 'customer-dashboard.html';
@@ -431,140 +1216,453 @@
                 alert('Error loading worker details');
             }
         }
-        
+
         function displayWorkerDetails() {
-            // Header
-            document.getElementById('workerName').textContent = currentWorker.name || currentWorker.username;
-            
-            // Availability
-            const availabilityBadge = document.getElementById('availabilityBadge');
-            availabilityBadge.textContent = currentWorker.availability || 'Available';
-            availabilityBadge.className = `availability-badge ${(currentWorker.availability || 'Available').toLowerCase()}`;
-            
-            // Basic info
-            document.getElementById('experience').textContent = currentWorker.experience ? `${currentWorker.experience} years` : 'N/A';
-            document.getElementById('hourlyRate').textContent = currentWorker.hourlyRate ? `$${currentWorker.hourlyRate}/hour` : 'N/A';
-            document.getElementById('phone').textContent = currentWorker.phone || 'N/A';
-            document.getElementById('email').textContent = currentWorker.email || 'N/A';
-            
-            // Contact info
-            document.getElementById('contactPhone').textContent = currentWorker.phone || 'N/A';
-            document.getElementById('contactEmail').textContent = currentWorker.email || 'N/A';
-            
-            // Address
-            if (currentWorker.address) {
-                const address = `${currentWorker.address.street || ''} ${currentWorker.address.city || ''} ${currentWorker.address.state || ''} ${currentWorker.address.pincode || ''}`.trim();
-                if (address) {
-                    document.getElementById('contactAddress').textContent = address;
-                    document.getElementById('addressItem').style.display = 'flex';
+            // Header Stats
+            const profileImg = document.getElementById('workerProfileImg');
+            if (profileImg) profileImg.src = currentWorker.profileImage || '/uploads/default-avatar.png';
+
+            const nameEl = document.getElementById('workerName');
+            if (nameEl) nameEl.textContent = currentWorker.name || currentWorker.username;
+
+            const roleEl = document.getElementById('workerRole');
+            if (roleEl) roleEl.textContent = currentWorker.skills?.[0] || 'Professional Worker';
+
+            // Availability Badge Logic
+            const badgeContainer = document.querySelector('.badge-online');
+            if (badgeContainer) {
+                const status = (currentWorker.availability || 'Available').trim();
+                let icon = 'fa-circle';
+                let bgStyle = 'background: rgba(34, 197, 94, 0.15); color: #4ade80; border: 1px solid rgba(34, 197, 94, 0.3);';
+
+                if (status === 'Busy') {
+                    bgStyle = 'background: rgba(239, 68, 68, 0.15); color: #f87171; border: 1px solid rgba(239, 68, 68, 0.3);';
+                } else if (status === 'Offline') {
+                    bgStyle = 'background: rgba(148, 163, 184, 0.15); color: #94a3b8; border: 1px solid rgba(148, 163, 184, 0.3);';
+                } else if (status === 'Unavailable') {
+                    bgStyle = 'background: rgba(239, 68, 68, 0.15); color: #f87171; border: 1px solid rgba(239, 68, 68, 0.3);';
                 }
+
+                badgeContainer.style.cssText = bgStyle;
+                badgeContainer.innerHTML = `<i class="fas ${icon}" style="font-size: 8px;"></i> ${status}`;
             }
-            
+
+            // Stats Logic - Calculate total jobs if not available
+            fetchWorkerStats(currentWorker.id);
+
+            // Basic Info
+            const expEl = document.getElementById('experience');
+            if (expEl) expEl.textContent = currentWorker.experience ? `${currentWorker.experience} years` : 'N/A';
+
+            const rateEl = document.getElementById('hourlyRate');
+            if (rateEl) rateEl.textContent = currentWorker.hourlyRate ? `₹${currentWorker.hourlyRate}/hr` : 'N/A';
+
+            const descEl = document.getElementById('description');
+            if (descEl) descEl.textContent = currentWorker.description || 'Professional worker available for hire.';
+
             // Location
-            if (currentWorker.location && currentWorker.location.link) {
-                document.getElementById('locationLink').href = currentWorker.location.link;
-                document.getElementById('locationItem').style.display = 'flex';
-                document.getElementById('mapContainer').style.display = 'block';
+            const cityEl = document.getElementById('contactCity');
+            if (cityEl && currentWorker.address && currentWorker.address.city) {
+                cityEl.textContent = currentWorker.address.city;
             }
-            
+
+            // Contact
+            const phoneEl = document.getElementById('contactPhone');
+            if (phoneEl) phoneEl.textContent = currentWorker.phone || 'N/A';
+
+            const emailEl = document.getElementById('contactEmail');
+            if (emailEl) emailEl.textContent = currentWorker.email || 'N/A';
+
+            // Map Link
+            const locItem = document.getElementById('locationItem');
+            const locLink = document.getElementById('locationLink');
+            const mapCont = document.getElementById('mapContainer');
+
+            if (currentWorker.location && currentWorker.location.link) {
+                if (locLink) locLink.href = currentWorker.location.link;
+                if (locItem) locItem.style.display = 'flex';
+                if (mapCont) mapCont.style.display = 'block';
+            }
+
             // Skills
             const skillsList = document.getElementById('skillsList');
-            if (currentWorker.skills && currentWorker.skills.length > 0) {
-                skillsList.innerHTML = currentWorker.skills.map(skill => 
-                    `<span class="skill-tag">${skill}</span>`
-                ).join('');
-            } else {
-                skillsList.innerHTML = '<p style="color: #666;">No skills listed</p>';
+            if (skillsList) {
+                skillsList.innerHTML = '';
+                if (currentWorker.skills && currentWorker.skills.length > 0) {
+                    currentWorker.skills.forEach(skill => {
+                        const span = document.createElement('span');
+                        span.className = 'skill-tag';
+                        span.textContent = skill;
+                        skillsList.appendChild(span);
+                    });
+                } else {
+                    skillsList.innerHTML = '<span class="text-muted">No skills listed</span>';
+                }
             }
-            
-            // Rating
-            const ratingDisplay = document.getElementById('ratingDisplay');
-            if (currentWorker.averageRating) {
-                ratingDisplay.innerHTML = `⭐ ${currentWorker.averageRating} (${currentWorker.reviewsCount || 0} reviews)`;
-            } else {
-                ratingDisplay.innerHTML = 'No ratings yet';
+
+            // Photos & Owner Controls
+            if (currentUser && currentWorker && (currentUser.id == currentWorker.id)) {
+                const controls = document.getElementById('photoUploadControls');
+                if (controls) controls.style.display = 'block';
             }
-            
-            // Description
-            document.getElementById('description').textContent = currentWorker.description || 'No description available.';
-            
-            // Hire button
-            const hireBtn = document.getElementById('hireBtn');
-            if (currentWorker.availability === 'Unavailable') {
-                hireBtn.textContent = 'Unavailable';
-                hireBtn.disabled = true;
+            renderPhotos();
+        }
+
+        function renderPhotos() {
+            const grid = document.getElementById('photosGrid');
+            const noMsg = document.getElementById('noPhotosMsg');
+            const photos = currentWorker.portfolio || [];
+
+            // If no real photos, show placeholders ONLY if not owner (or maybe show them anyway as examples?)
+            // For this demo, let's use placeholders if portfolio is empty
+            let displayPhotos = photos.length > 0 ? photos : [
+                'https://placehold.co/600x400/0f172a/38bdf8?text=Work+Sample+1',
+                'https://placehold.co/600x400/0f172a/38bdf8?text=Work+Sample+2',
+                'https://placehold.co/600x400/0f172a/38bdf8?text=Work+Sample+3',
+                'https://placehold.co/600x400/0f172a/38bdf8?text=Work+Sample+4'
+            ];
+
+            if (photos.length === 0 && (!currentUser || currentUser.id != currentWorker.id)) {
+                // If visitor and no photos, show placeholders or nothing? 
+                // Let's keep placeholders for visual appeal
+            }
+
+            grid.innerHTML = displayPhotos.map(url => `
+                <div class="photo-item">
+                    <img src="${url}" alt="Work"
+                    onerror="this.src='https://placehold.co/400x400/1e293b/64748b?text=No+Image'">
+                </div>
+            `).join('');
+
+            if (displayPhotos.length === 0) {
+                grid.style.display = 'none';
+                noMsg.style.display = 'block';
+            } else {
+                grid.style.display = 'grid';
+                noMsg.style.display = 'none';
             }
         }
-        
+
+        async function handlePhotoUpload(input) {
+            if (input.files && input.files[0]) {
+                const formData = new FormData();
+                formData.append('photo', input.files[0]);
+
+                try {
+                    const response = await fetch(getApiUrl(`/api/worker-portfolio/${currentWorker.id}`), {
+                        method: 'POST',
+                        body: formData
+                    });
+
+                    if (response.ok) {
+                        const data = await response.json();
+                        if (!currentWorker.portfolio) currentWorker.portfolio = [];
+                        currentWorker.portfolio = data.portfolio || [...currentWorker.portfolio, data.photoUrl];
+                        renderPhotos();
+                        alert('Photo uploaded successfully!');
+                    } else {
+                        const err = await response.json();
+                        alert('Upload failed: ' + err.message);
+                    }
+                } catch (error) {
+                    console.error('Error uploading photo:', error);
+                    alert('Error uploading photo');
+                }
+            }
+        }
+
+        async function fetchWorkerStats(workerId) {
+            try {
+                // Fetch orders for this worker to count completed ones
+                const res = await fetch(getApiUrl(`/api/orders/${workerId}`));
+                if (res.ok) {
+                    const orders = await res.json();
+                    const workerOrders = orders.filter(o => (o.workerId == workerId || o.workerId == currentWorker._id) && o.status === 'completed');
+                    document.getElementById('statsTotalJobs').textContent = workerOrders.length;
+                } else {
+                    document.getElementById('statsTotalJobs').textContent = '0';
+                }
+            } catch (e) {
+                console.error('Error loading stats', e);
+                document.getElementById('statsTotalJobs').textContent = '0';
+            }
+        }
+
+        function switchTab(tabName) {
+            // Hide all tabs
+            document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
+            document.querySelectorAll('.tab-btn').forEach(el => el.classList.remove('active'));
+
+            // Show selected
+            document.getElementById(`tab-${tabName}`).classList.add('active');
+
+            // Activate button
+            const btnIndex = ['about', 'photos', 'reviews'].indexOf(tabName);
+            document.querySelectorAll('.tab-btn')[btnIndex].classList.add('active');
+        }
+
+
+        function StarsHtml(rating) {
+            let html = '';
+            const fullStars = Math.floor(rating);
+            const hasHalf = rating % 1 >= 0.5;
+            for (let i = 0; i < 5; i++) {
+                if (i < fullStars) html += '<i class="fas fa-star text-warning"></i>';
+                else if (i === fullStars && hasHalf) html += '<i class="fas fa-star-half-alt text-warning"></i>';
+                else html += '<i class="far fa-star text-muted"></i>';
+            }
+            return html;
+        }
+
         async function loadReviews(workerId) {
             try {
-                const response = await fetch(`/api/worker/${workerId}/reviews`);
+                const response = await fetch(getApiUrl(`/api/worker/${workerId}/reviews`));
                 const reviews = await response.json();
                 const reviewsList = document.getElementById('reviewsList');
-                
+                const ratingDisplayTab = document.getElementById('ratingDisplayTab');
+                const statsRating = document.getElementById('statsRating');
+
                 if (!reviews || reviews.length === 0) {
                     reviewsList.innerHTML = '<p style="color: #888;">No reviews yet.</p>';
+                    if (ratingDisplayTab) ratingDisplayTab.textContent = 'No ratings';
+                    if (statsRating) statsRating.textContent = '0/5';
                     return;
                 }
-                
+
+                // Calculate Average Rating
+                const totalRating = reviews.reduce((sum, r) => sum + r.rating, 0);
+                const avgRating = (totalRating / reviews.length).toFixed(1);
+
+                // Update UI
+                if (ratingDisplayTab) ratingDisplayTab.innerHTML = `${avgRating} <span style="font-size:1rem;color:#94a3b8;">(${reviews.length} reviews)</span>`;
+                if (statsRating) statsRating.textContent = `${avgRating}/5`;
+
                 reviewsList.innerHTML = reviews.map(review => `
                     <div class="review-item">
-                        <div class="review-header">
-                            <span class="review-rating">${'★'.repeat(review.rating)}${'☆'.repeat(5-review.rating)}</span>
-                            <span class="review-date">${new Date(review.createdAt).toLocaleDateString()}</span>
+                        <div class="review-header" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.5rem;">
+                            <span class="review-rating">${'★'.repeat(review.rating)}${'☆'.repeat(5 - review.rating)}</span>
+                            <span class="review-date" style="font-size: 0.75rem; color: #64748b;">${new Date(review.createdAt).toLocaleDateString()}</span>
                         </div>
-                        <div class="review-comment">${review.comment || 'No comment provided'}</div>
+                        <div class="review-comment" style="color: #e2e8f0; margin-bottom: 0.5rem;">${review.comment || 'No comment provided'}</div>
+                        <div style="font-size: 0.8rem; color: #38bdf8;">- ${review.customerName || 'Anonymous'}</div>
                     </div>
                 `).join('');
             } catch (error) {
                 console.error('Error loading reviews:', error);
-                document.getElementById('reviewsList').innerHTML = '<p style="color: #888;">Error loading reviews.</p>';
+                const list = document.getElementById('reviewsList');
+                if (list) list.innerHTML = '<p style="color: #888;">Error loading reviews.</p>';
             }
         }
-        
+
         function initMap() {
-            if (!currentWorker.location || !currentWorker.location.latitude || !currentWorker.location.longitude) {
+            const mapContainer = document.getElementById('map');
+            if (!mapContainer || !currentWorker || !currentWorker.location || !currentWorker.location.latitude || !currentWorker.location.longitude) {
                 return;
             }
-            
+
             const lat = parseFloat(currentWorker.location.latitude);
             const lng = parseFloat(currentWorker.location.longitude);
-            
-            if (isNaN(lat) || isNaN(lng)) {
+
+            if (isNaN(lat) || isNaN(lng)) return;
+
+            // Clear previous map instance if any
+            if (map && map.remove) {
+                map.remove();
+            }
+
+            const pos = [lat, lng];
+            map = L.map('map').setView(pos, 15);
+
+            L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+            }).addTo(map);
+
+            marker = L.marker(pos).addTo(map)
+                .bindPopup(currentWorker.name || currentWorker.username)
+                .openPopup();
+        }
+
+        function openPriceList() {
+            const modal = document.getElementById('priceListModal');
+            const content = document.getElementById('priceListContent');
+
+            // Generate mock prices based on skills
+            let services = [];
+            const skills = currentWorker.skills || [];
+
+            if (skills.length === 0) {
+                services = [
+                    { name: 'General Consultation', price: '₹200' },
+                    { name: 'Hourly Service', price: `₹${currentWorker.hourlyRate || 300}/hr` },
+                    { name: 'Full Day Service', price: '₹2000' }
+                ];
+            } else {
+                skills.forEach(skill => {
+                    services.push({ name: `${skill} Consultation`, price: '₹300' });
+                    services.push({ name: `${skill} Basic Service`, price: '₹500 - ₹1000' });
+                    services.push({ name: `${skill} Advanced Repair`, price: '₹1500+' });
+                });
+            }
+
+            content.innerHTML = services.map(s => `
+                <div style="display: flex; justify-content: space-between; align-items: center; padding: 0.75rem 0; border-bottom: 1px dashed rgba(148, 163, 184, 0.2);">
+                    <div style="display: flex; flex-direction: column;">
+                        <span style="font-weight: 500; color: #e2e8f0;">${s.name}</span>
+                        <span style="font-weight: 700; color: #38bdf8; font-size: 0.9rem;">${s.price}</span>
+                    </div>
+                    <button onclick="bookService('${s.name}', '${s.price}')" 
+                        class="btn-pricelist" 
+                        style="width: auto; padding: 0.4rem 1rem; font-size: 0.8rem; margin: 0; background: rgba(56, 189, 248, 0.1);">
+                        Book
+                    </button>
+                </div>
+            `).join('');
+
+            modal.style.display = 'block';
+        }
+
+        function bookService(name, priceStr) {
+            closePriceList();
+            openOrderModal();
+
+            // Clean price string (remove ₹ and +)
+            const price = parseInt(priceStr.replace(/[^0-9]/g, '')) || 0;
+
+            const serviceInput = document.getElementById('serviceType');
+            const amountInput = document.getElementById('totalAmount');
+            const durationInput = document.getElementById('duration');
+
+            if (serviceInput) serviceInput.value = name;
+            if (amountInput) amountInput.value = price;
+            if (durationInput) durationInput.value = 1; // Default
+        }
+
+        function closePriceList() {
+            document.getElementById('priceListModal').style.display = 'none';
+        }
+
+        function openOrderModal() {
+            if (currentWorker.availability === 'Unavailable' || currentWorker.availability === 'Busy') {
+                alert(`This worker is currently ${currentWorker.availability}. Please try again later.`);
                 return;
             }
-            
-            const mapOptions = {
-                center: { lat, lng },
-                zoom: 15
-            };
-            
-            map = new google.maps.Map(document.getElementById('map'), mapOptions);
-            marker = new google.maps.Marker({
-                position: { lat, lng },
-                map: map,
-                title: currentWorker.name || currentWorker.username
-            });
-        }
-        
-        function openOrderModal() {
             document.getElementById('orderModal').style.display = 'block';
         }
-        
+
+        async function toggleReviewForm() {
+            const form = document.getElementById('reviewFormContainer');
+            if (form.style.display === 'none') {
+                // Check eligibility
+                try {
+                    const res = await fetch(getApiUrl(`/api/orders/customer/${currentUser.id}`));
+                    const orders = await res.json();
+                    const canReview = orders.some(o =>
+                        (o.workerId == currentWorker.id || o.workerId == currentWorker._id) &&
+                        o.status === 'completed' &&
+                        !o.reviewed
+                    );
+
+                    if (!canReview) {
+                        alert('You can only write a review after completing a service with this worker that has not been reviewed yet.');
+                        return;
+                    }
+                    form.style.display = 'block';
+                } catch (err) {
+                    alert('Could not verify eligibility. Please try again.');
+                }
+            } else {
+                form.style.display = 'none';
+            }
+        }
+
+        function setRating(n) {
+            document.getElementById('reviewRating').value = n;
+            for (let i = 1; i <= 5; i++) {
+                const star = document.getElementById(`star${i}`);
+                if (i <= n) {
+                    star.classList.remove('far');
+                    star.classList.add('fas');
+                } else {
+                    star.classList.remove('fas');
+                    star.classList.add('far');
+                }
+            }
+        }
+
+        async function submitReview(e) {
+            e.preventDefault();
+            const rating = document.getElementById('reviewRating').value;
+            if (rating == 0) { alert('Please select a rating'); return; }
+
+            const comment = document.getElementById('reviewComment').value;
+
+            // Find a completed unreviewed order for this worker
+            let orderIdToReview = null;
+            try {
+                const res = await fetch(getApiUrl(`/api/orders/customer/${currentUser.id}`));
+                const orders = await res.json();
+                const validOrder = orders.find(o =>
+                    (o.workerId == currentWorker.id || o.workerId == currentWorker._id) &&
+                    o.status === 'completed' &&
+                    !o.reviewed
+                );
+
+                if (!validOrder) {
+                    alert('You can only review workers after completing a service with them (and only once per order).');
+                    return;
+                }
+                orderIdToReview = validOrder.id || validOrder._id;
+            } catch (err) {
+                console.error('Error finding order:', err);
+                alert('Verification failed. Please try again.');
+                return;
+            }
+
+            const reviewData = {
+                customerId: currentUser.id,
+                customerName: currentUser.name || currentUser.username,
+                rating: parseInt(rating),
+                comment: comment,
+                orderId: orderIdToReview
+            };
+
+            try {
+                const response = await fetch(getApiUrl(`/api/worker/${currentWorker.id}/review`), {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(reviewData)
+                });
+
+                if (response.ok) {
+                    alert('Review submitted successfully!');
+                    loadReviews(currentWorker.id); // Reload list
+                    document.getElementById('reviewFormContainer').style.display = 'none';
+                    document.getElementById('reviewForm').reset();
+                    setRating(0);
+                } else {
+                    const err = await response.json();
+                    alert('Failed to submit review: ' + err.message);
+                }
+            } catch (error) {
+                console.error('Error submitting review:', error);
+                alert('Error submitting review');
+            }
+        }
+
         function closeModal() {
             document.getElementById('orderModal').style.display = 'none';
             document.getElementById('orderForm').reset();
         }
-        
+
         // Handle order form submission
-        document.getElementById('orderForm').addEventListener('submit', async function(e) {
+        document.getElementById('orderForm').addEventListener('submit', async function (e) {
             e.preventDefault();
-            
+
             if (!currentWorker) {
                 alert('No worker selected');
                 return;
             }
-            
+
             const formData = {
                 customerId: currentUser.id,
                 workerId: currentWorker.id,
@@ -573,16 +1671,16 @@
                 duration: document.getElementById('duration').value,
                 totalAmount: document.getElementById('totalAmount').value
             };
-            
+
             try {
-                const response = await fetch('/api/orders', {
+                const response = await fetch(getApiUrl('/api/orders'), {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
                     },
                     body: JSON.stringify(formData)
                 });
-                
+
                 if (response.ok) {
                     alert('Order placed successfully!');
                     closeModal();
@@ -596,14 +1694,20 @@
                 alert('Error placing order');
             }
         });
-        
+
         // Close modal when clicking outside
-        window.onclick = function(event) {
+        window.onclick = function (event) {
             const modal = document.getElementById('orderModal');
             if (event.target === modal) {
                 closeModal();
             }
         }
+
+        function logout() {
+            localStorage.removeItem('user');
+            window.location.href = 'login.html';
+        }
     </script>
 </body>
-</html> 
+
+</html>

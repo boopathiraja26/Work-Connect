@@ -1,8 +1,9 @@
 let currentStep = 1;
 const totalSteps = 6;
+let phoneVerified = false;
 
 // Initialize the form
-document.addEventListener('DOMContentLoaded', function() {
+document.addEventListener('DOMContentLoaded', function () {
     updateProgress();
     setupPasswordStrength();
     setupFormValidation();
@@ -16,13 +17,22 @@ function updateProgress() {
 
 // Show specific step
 function showStep(step) {
-    // Hide all steps
-    for (let i = 1; i <= totalSteps; i++) {
-        document.getElementById(`step${i}`).classList.remove('active');
-    }
-    
+    // Hide all steps, including dynamically created ones
+    document.querySelectorAll('.form-step').forEach(el => {
+        el.classList.remove('active');
+        el.style.display = 'none';
+    });
+
     // Show current step
-    document.getElementById(`step${step}`).classList.add('active');
+    const target = document.getElementById(`step${step}`) ||
+        (step === 7 ? document.getElementById('step7-email') : null) ||
+        (step === 8 ? document.getElementById('step8-aadhaar') : null) ||
+        (step === 3.5 ? document.getElementById('step3-phone-otp') : null);
+
+    if (target) {
+        target.classList.add('active');
+        target.style.display = 'block';
+    }
     currentStep = step;
     updateProgress();
 }
@@ -30,6 +40,10 @@ function showStep(step) {
 // Next step function
 function nextStep(step) {
     if (validateStep(step)) {
+        if (step === 3 && !phoneVerified) {
+            sendPhoneOTP();
+            return;
+        }
         if (step < totalSteps) {
             showStep(step + 1);
         }
@@ -38,16 +52,20 @@ function nextStep(step) {
 
 // Previous step function
 function prevStep(step) {
+    if (step === 3.5) {
+        showStep(3);
+        return;
+    }
     if (step > 1) {
-        showStep(step - 1);
+        showStep(Math.floor(step) - (step % 1 === 0 ? 1 : 0));
     }
 }
 
 // Validate each step
 function validateStep(step) {
     clearErrors();
-    
-    switch(step) {
+
+    switch (step) {
         case 1:
             return validateUsername();
         case 2:
@@ -77,22 +95,22 @@ function clearErrors() {
 function validateUsername() {
     const username = document.getElementById('username').value.trim();
     const errorElement = document.getElementById('username-error');
-    
+
     if (!username) {
         errorElement.textContent = 'Username is required';
         return false;
     }
-    
+
     if (username.length < 3) {
         errorElement.textContent = 'Username must be at least 3 characters long';
         return false;
     }
-    
+
     if (!/^[a-zA-Z0-9_]+$/.test(username)) {
         errorElement.textContent = 'Username can only contain letters, numbers, and underscores';
         return false;
     }
-    
+
     return true;
 }
 
@@ -100,18 +118,18 @@ function validateUsername() {
 function validateEmail() {
     const email = document.getElementById('email').value.trim();
     const errorElement = document.getElementById('email-error');
-    
+
     if (!email) {
         errorElement.textContent = 'Email is required';
         return false;
     }
-    
+
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     if (!emailRegex.test(email)) {
         errorElement.textContent = 'Please enter a valid email address';
         return false;
     }
-    
+
     return true;
 }
 
@@ -119,18 +137,18 @@ function validateEmail() {
 function validatePhone() {
     const phone = document.getElementById('phone').value.trim();
     const errorElement = document.getElementById('phone-error');
-    
+
     if (!phone) {
         errorElement.textContent = 'Phone number is required';
         return false;
     }
-    
+
     const phoneRegex = /^[\+]?[1-9][\d]{0,15}$/;
     if (!phoneRegex.test(phone.replace(/\s/g, ''))) {
         errorElement.textContent = 'Please enter a valid phone number';
         return false;
     }
-    
+
     return true;
 }
 
@@ -138,24 +156,24 @@ function validatePhone() {
 function validatePassword() {
     const password = document.getElementById('password').value;
     const errorElement = document.getElementById('password-error');
-    
+
     if (!password) {
         errorElement.textContent = 'Password is required';
         return false;
     }
-    
+
     if (password.length < 8) {
         errorElement.textContent = 'Password must be at least 8 characters long';
         return false;
     }
-    
+
     // Check password strength
     const strength = checkPasswordStrength(password);
     if (strength === 'weak') {
         errorElement.textContent = 'Password is too weak. Please use a stronger password';
         return false;
     }
-    
+
     return true;
 }
 
@@ -164,17 +182,17 @@ function validateConfirmPassword() {
     const password = document.getElementById('password').value;
     const confirmPassword = document.getElementById('confirmPassword').value;
     const errorElement = document.getElementById('confirmPassword-error');
-    
+
     if (!confirmPassword) {
         errorElement.textContent = 'Please confirm your password';
         return false;
     }
-    
+
     if (password !== confirmPassword) {
         errorElement.textContent = 'Passwords do not match';
         return false;
     }
-    
+
     return true;
 }
 
@@ -182,19 +200,19 @@ function validateConfirmPassword() {
 function validateRole() {
     const role = document.querySelector('input[name="role"]:checked');
     const errorElement = document.getElementById('role-error');
-    
+
     if (!role) {
         errorElement.textContent = 'Please select a role';
         return false;
     }
-    
+
     return true;
 }
 
 // Setup password strength checker
 function setupPasswordStrength() {
     const passwordInput = document.getElementById('password');
-    passwordInput.addEventListener('input', function() {
+    passwordInput.addEventListener('input', function () {
         const password = this.value;
         const strength = checkPasswordStrength(password);
         updatePasswordStrengthUI(strength);
@@ -204,13 +222,13 @@ function setupPasswordStrength() {
 // Check password strength
 function checkPasswordStrength(password) {
     let score = 0;
-    
+
     if (password.length >= 8) score++;
     if (/[a-z]/.test(password)) score++;
     if (/[A-Z]/.test(password)) score++;
     if (/[0-9]/.test(password)) score++;
     if (/[^A-Za-z0-9]/.test(password)) score++;
-    
+
     if (score < 2) return 'weak';
     if (score < 3) return 'fair';
     if (score < 4) return 'good';
@@ -221,12 +239,12 @@ function checkPasswordStrength(password) {
 function updatePasswordStrengthUI(strength) {
     const strengthFill = document.getElementById('strength-fill');
     const strengthText = document.getElementById('strength-text');
-    
+
     // Remove all classes
     strengthFill.className = 'strength-fill';
-    
+
     // Add appropriate class and text
-    switch(strength) {
+    switch (strength) {
         case 'weak':
             strengthFill.classList.add('weak');
             strengthText.textContent = 'Weak password';
@@ -249,9 +267,9 @@ function updatePasswordStrengthUI(strength) {
 // Setup form validation
 function setupFormValidation() {
     const form = document.getElementById('registrationForm');
-    form.addEventListener('submit', function(e) {
+    form.addEventListener('submit', function (e) {
         e.preventDefault();
-        
+
         // Validate all steps
         for (let i = 1; i <= totalSteps; i++) {
             if (!validateStep(i)) {
@@ -259,7 +277,7 @@ function setupFormValidation() {
                 return;
             }
         }
-        
+
         // If all validations pass, submit the form
         submitRegistration();
     });
@@ -270,7 +288,7 @@ function onRoleChange() {
     const role = document.querySelector('input[name="role"]:checked');
     const workerFields = document.getElementById('workerFields');
     const customerFields = document.getElementById('customerFields');
-    
+
     if (role && role.value === 'worker') {
         workerFields.style.display = '';
         customerFields.style.display = 'none';
@@ -294,7 +312,7 @@ async function onRegisterClick() {
         }
     }
     const role = document.querySelector('input[name="role"]:checked').value;
-    
+
     // For both workers and customers, send email OTP first
     await sendEmailOTP(role);
 }
@@ -302,9 +320,9 @@ async function onRegisterClick() {
 // Send Email OTP for both workers and customers
 async function sendEmailOTP(role) {
     const email = document.getElementById('email').value.trim();
-    
+
     try {
-        const response = await fetch('/api/send-email-otp', {
+        const response = await fetch(getApiUrl('/api/send-email-otp'), {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
@@ -314,9 +332,9 @@ async function sendEmailOTP(role) {
                 role: role
             })
         });
-        
+
         const result = await response.json();
-        if (response.ok && result.emailOtp) {
+        if (response.ok) {
             // Show email OTP step
             showEmailOTPStep(result.emailOtp);
         } else {
@@ -329,18 +347,11 @@ async function sendEmailOTP(role) {
 
 // Show Email OTP verification step
 function showEmailOTPStep(emailOtp) {
-    // Create email OTP step if it doesn't exist
-    if (!document.getElementById('step7-email')) {
-        createEmailOTPStep();
-    }
-    
-    // Hide current step and show email OTP step
-    document.getElementById('step6').style.display = 'none';
-    document.getElementById('step7-email').style.display = 'block';
-    document.getElementById('step7-email').classList.add('active');
-    
-    // Show OTP for demo purposes
-    showMessage(`Email OTP sent to your email: ${emailOtp}`, 'success');
+    if (!document.getElementById('step7-email')) createEmailOTPStep();
+    showStep(7);
+
+    if (emailOtp) showMessage(`Demo Mode: Email OTP is ${emailOtp}`, 'success');
+    else showMessage('Verification code sent to your email address.', 'success');
 }
 
 // Create Email OTP step dynamically
@@ -361,7 +372,7 @@ function createEmailOTPStep() {
             <button type="button" class="btn btn-primary" onclick="verifyEmailOTP()">Verify Email</button>
         </div>
     `;
-    
+
     // Insert after step 6
     const step6 = document.getElementById('step6');
     step6.parentNode.insertBefore(step7Email, step6.nextSibling);
@@ -375,11 +386,11 @@ async function verifyEmailOTP() {
         document.getElementById('emailOtp-error').textContent = 'Enter the 6-digit OTP';
         return;
     }
-    
+
     const role = document.querySelector('input[name="role"]:checked').value;
-    
+
     try {
-        const response = await fetch('/api/verify-email-otp', {
+        const response = await fetch(getApiUrl('/api/verify-email-otp'), {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
@@ -390,7 +401,7 @@ async function verifyEmailOTP() {
                 role: role
             })
         });
-        
+
         const result = await response.json();
         if (response.ok) {
             if (role === 'worker') {
@@ -430,14 +441,14 @@ async function sendAadhaarOTP() {
     }
     const aadhaar = document.getElementById('aadhaarNumber').value.trim();
     const phone = document.getElementById('phone').value.trim();
-    
+
     if (!aadhaar || !/^\d{12}$/.test(aadhaar)) {
         document.getElementById('aadhaar-error').textContent = 'Valid 12-digit Aadhaar number required';
         return;
     }
-    
+
     try {
-        const response = await fetch('/api/send-aadhaar-otp', {
+        const response = await fetch(getApiUrl('/api/send-aadhaar-otp'), {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
@@ -447,9 +458,9 @@ async function sendAadhaarOTP() {
                 phone: phone
             })
         });
-        
+
         const result = await response.json();
-        if (response.ok && result.aadhaarOtp) {
+        if (response.ok) {
             // Show Aadhaar OTP step
             showAadhaarOTPStep(result.aadhaarOtp);
         } else {
@@ -462,18 +473,17 @@ async function sendAadhaarOTP() {
 
 // Show Aadhaar OTP verification step
 function showAadhaarOTPStep(aadhaarOtp) {
-    // Create Aadhaar OTP step if it doesn't exist
-    if (!document.getElementById('step8-aadhaar')) {
-        createAadhaarOTPStep();
+    if (!document.getElementById('step8-aadhaar')) createAadhaarOTPStep();
+    showStep(8);
+
+    // Show simulated SMS notification if OTP is returned (Demo Mode)
+    if (aadhaarOtp) {
+        showMessage(`📱 SMS Simulation: Your verification code is ${aadhaarOtp}`, 'success');
+        // Also log to console for developers
+        console.log(`%c[SMS] OTP sent to ${document.getElementById('phone').value}: ${aadhaarOtp}`, 'color: green; font-weight: bold; font-size: 14px;');
+    } else {
+        showMessage('Verification code sent to your Aadhaar-linked mobile.', 'success');
     }
-    
-    // Hide email OTP step and show Aadhaar OTP step
-    document.getElementById('step7-email').style.display = 'none';
-    document.getElementById('step8-aadhaar').style.display = 'block';
-    document.getElementById('step8-aadhaar').classList.add('active');
-    
-    // Show OTP for demo purposes
-    showMessage(`Aadhaar OTP sent to your mobile: ${aadhaarOtp}`, 'success');
 }
 
 // Create Aadhaar OTP step dynamically
@@ -494,7 +504,7 @@ function createAadhaarOTPStep() {
             <button type="button" class="btn btn-success" onclick="verifyAadhaarOTPAndRegister()">Verify & Register</button>
         </div>
     `;
-    
+
     // Insert after email OTP step
     const step7Email = document.getElementById('step7-email');
     step7Email.parentNode.insertBefore(step8Aadhaar, step7Email.nextSibling);
@@ -512,7 +522,7 @@ async function verifyAadhaarOTPAndRegister(isFromDigiLocker = false) {
             return;
         }
     }
-    
+
     // Prepare FormData for final worker registration
     const formData = new FormData();
     formData.append('username', document.getElementById('username').value.trim());
@@ -526,7 +536,7 @@ async function verifyAadhaarOTPAndRegister(isFromDigiLocker = false) {
     } else {
         formData.append('digilockerVerified', 'true');
     }
-    
+
     // Add address/location as JSON
     const address = {
         street: document.getElementById('street').value,
@@ -535,7 +545,7 @@ async function verifyAadhaarOTPAndRegister(isFromDigiLocker = false) {
         pincode: document.getElementById('pincode').value
     };
     formData.append('address', JSON.stringify(address));
-    
+
     // Handle location link and extract coordinates if possible
     const locationLink = document.getElementById('locationLink').value;
     let locationData = { link: locationLink };
@@ -555,24 +565,24 @@ async function verifyAadhaarOTPAndRegister(isFromDigiLocker = false) {
         }
     }
     formData.append('location', JSON.stringify(locationData));
-    
+
     // Add image if selected
     const imgInput = document.getElementById('profileImage');
     if (imgInput.files.length > 0) {
         formData.append('profileImage', imgInput.files[0]);
     }
-    
+
     try {
-        const response = await fetch('/api/register', {
+        const response = await fetch(getApiUrl('/api/register'), {
             method: 'POST',
             body: formData
         });
         const result = await response.json();
         if (response.ok) {
-            showMessage('Registration successful! Please login.', 'success');
+            showMessage('✅ Registration successful! Your account is pending admin approval. You will be able to login once approved.', 'success');
             setTimeout(() => {
                 window.location.href = 'login.html';
-            }, 2000);
+            }, 4000);
         } else {
             showMessage(result.message || 'Registration failed. Please try again.', 'error');
         }
@@ -590,7 +600,7 @@ async function finalizeCustomerRegistration() {
     formData.append('phone', document.getElementById('phone').value.trim());
     formData.append('password', document.getElementById('password').value);
     formData.append('role', 'customer');
-    
+
     // Add customer address/location as JSON
     const address = {
         street: document.getElementById('customerStreet').value,
@@ -599,7 +609,7 @@ async function finalizeCustomerRegistration() {
         pincode: document.getElementById('customerPincode').value
     };
     formData.append('address', JSON.stringify(address));
-    
+
     // Handle customer location link and extract coordinates if possible
     const locationLink = document.getElementById('customerLocationLink').value;
     let locationData = { link: locationLink };
@@ -619,15 +629,15 @@ async function finalizeCustomerRegistration() {
         }
     }
     formData.append('location', JSON.stringify(locationData));
-    
+
     // Add customer image if selected
     const imgInput = document.getElementById('customerProfileImage');
     if (imgInput.files.length > 0) {
         formData.append('profileImage', imgInput.files[0]);
     }
-    
+
     try {
-        const response = await fetch('/api/register', {
+        const response = await fetch(getApiUrl('/api/register'), {
             method: 'POST',
             body: formData
         });
@@ -649,7 +659,7 @@ async function finalizeCustomerRegistration() {
 async function submitRegistration() {
     const role = document.querySelector('input[name="role"]:checked').value;
     if (role === 'worker') return; // handled by onRegisterClick/verifyOtpAndRegister
-    
+
     // Prepare FormData for customer registration with location
     const formData = new FormData();
     formData.append('username', document.getElementById('username').value.trim());
@@ -657,7 +667,7 @@ async function submitRegistration() {
     formData.append('phone', document.getElementById('phone').value.trim());
     formData.append('password', document.getElementById('password').value);
     formData.append('role', 'customer');
-    
+
     // Add customer address/location as JSON
     const address = {
         street: document.getElementById('customerStreet').value,
@@ -666,7 +676,7 @@ async function submitRegistration() {
         pincode: document.getElementById('customerPincode').value
     };
     formData.append('address', JSON.stringify(address));
-    
+
     // Handle customer location link and extract coordinates if possible
     const locationLink = document.getElementById('customerLocationLink').value;
     let locationData = { link: locationLink };
@@ -686,15 +696,15 @@ async function submitRegistration() {
         }
     }
     formData.append('location', JSON.stringify(locationData));
-    
+
     // Add customer image if selected
     const imgInput = document.getElementById('customerProfileImage');
     if (imgInput.files.length > 0) {
         formData.append('profileImage', imgInput.files[0]);
     }
-    
+
     try {
-        const response = await fetch('/api/register', {
+        const response = await fetch(getApiUrl('/api/register'), {
             method: 'POST',
             body: formData
         });
@@ -712,6 +722,84 @@ async function submitRegistration() {
     }
 }
 
+// --- Phone OTP Flow ---
+async function sendPhoneOTP() {
+    const phone = document.getElementById('phone').value.trim();
+    try {
+        const response = await fetch(getApiUrl('/api/send-phone-otp'), {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ phone })
+        });
+        const result = await response.json();
+        if (response.ok) {
+            showPhoneOTPStep(result.phoneOtp);
+        } else {
+            showMessage(result.message || 'Failed to send OTP', 'error');
+        }
+    } catch (error) {
+        showMessage('Error sending phone OTP', 'error');
+    }
+}
+
+function showPhoneOTPStep(otp) {
+    if (!document.getElementById('step3-phone-otp')) createPhoneOTPStep();
+    showStep(3.5);
+    if (otp) {
+        showMessage(`📱 SMS Simulation: Your verification code is ${otp}`, 'success');
+        console.log(`%c[SMS] Phone OTP: ${otp}`, 'color: blue; font-weight: bold;');
+    } else {
+        showMessage('Verification code sent to your phone.', 'success');
+    }
+}
+
+function createPhoneOTPStep() {
+    const step = document.createElement('div');
+    step.id = 'step3-phone-otp';
+    step.className = 'form-step';
+    step.style.display = 'none';
+    step.innerHTML = `
+        <h2>Phone Verification</h2>
+        <div class="form-group">
+            <label for="phoneOtp">Enter 6-digit OTP</label>
+            <input type="text" id="phoneOtp" maxlength="6" placeholder="Enter OTP">
+            <span class="error" id="phoneOtp-error"></span>
+        </div>
+        <div class="button-group">
+            <button type="button" class="btn btn-secondary" onclick="prevStep(3.5)">Back</button>
+            <button type="button" class="btn btn-primary" onclick="verifyPhoneOTP()">Verify & Continue</button>
+        </div>
+    `;
+    const step3 = document.getElementById('step3');
+    step3.parentNode.insertBefore(step, step3.nextSibling);
+}
+
+async function verifyPhoneOTP() {
+    const phone = document.getElementById('phone').value.trim();
+    const otp = document.getElementById('phoneOtp').value.trim();
+    if (!otp || otp.length !== 6) {
+        document.getElementById('phoneOtp-error').textContent = 'Enter 6-digit OTP';
+        return;
+    }
+    try {
+        const response = await fetch(getApiUrl('/api/verify-phone-otp'), {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ phone, otp })
+        });
+        if (response.ok) {
+            phoneVerified = true;
+            showMessage('Phone verified successfully!', 'success');
+            showStep(4);
+        } else {
+            const result = await response.json();
+            showMessage(result.message || 'Invalid OTP', 'error');
+        }
+    } catch (error) {
+        showMessage('Error verifying phone OTP', 'error');
+    }
+}
+
 // Show message
 function showMessage(message, type) {
     // Remove existing messages
@@ -719,16 +807,16 @@ function showMessage(message, type) {
     if (existingMessage) {
         existingMessage.remove();
     }
-    
+
     // Create new message
     const messageDiv = document.createElement('div');
     messageDiv.className = `message ${type}`;
     messageDiv.textContent = message;
-    
+
     // Insert at the top of the form
     const formCard = document.querySelector('.form-card');
     formCard.insertBefore(messageDiv, formCard.firstChild);
-    
+
     // Auto remove after 5 seconds
     setTimeout(() => {
         if (messageDiv.parentNode) {

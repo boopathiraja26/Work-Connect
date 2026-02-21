@@ -1,0 +1,49 @@
+<ion-content [fullscreen]="true" class="login-bg">
+  <div class="login-container">
+    <div class="logo-wrapper">
+      <div class="logo-icon">
+        <ion-icon name="tools-outline"></ion-icon>
+      </div>
+      <h1>WorkConnect</h1>
+      <p>Connect with the best workforce</p>
+    </div>
+
+    <div class="form-card">
+      <div class="form-header">
+        <h2>Welcome Back</h2>
+        <p>Sign in to your account</p>
+      </div>
+
+      <form (ngSubmit)="onLogin()">
+        <ion-item lines="none" class="custom-input">
+          <ion-icon name="person-outline" slot="start"></ion-icon>
+          <ion-input type="text" placeholder="Username" [(ngModel)]="credentials.username" name="username"
+            required></ion-input>
+        </ion-item>
+
+        <ion-item lines="none" class="custom-input">
+          <ion-icon name="lock-closed-outline" slot="start"></ion-icon>
+          <ion-input [type]="showPassword ? 'text' : 'password'" placeholder="Password"
+            [(ngModel)]="credentials.password" name="password" required></ion-input>
+          <ion-button slot="end" fill="clear" (click)="togglePassword()">
+            <ion-icon [name]="showPassword ? 'eye-off-outline' : 'eye-outline'"></ion-icon>
+          </ion-button>
+        </ion-item>
+
+        <div class="helper-links">
+          <ion-text color="medium" (click)="onForgotPassword()">Forgot Password?</ion-text>
+        </div>
+
+        <ion-button expand="block" type="submit" class="login-btn" [disabled]="loading">
+          <ion-spinner *ngIf="loading" name="crescent"></ion-spinner>
+          <span *ngIf="!loading">Sign In</span>
+          <ion-icon *ngIf="!loading" name="arrow-forward-outline" slot="end"></ion-icon>
+        </ion-button>
+      </form>
+
+      <div class="footer-links">
+        <p>Don't have an account? <a (click)="onRegister()">Register</a></p>
+      </div>
+    </div>
+  </div>
+</ion-content>

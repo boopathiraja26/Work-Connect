@@ -1,0 +1,449 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <!-- viewport for proper responsive scaling (mobile, tablet, windows) -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=yes">
+    <title>WorkConnect · Worker Help Center (fully responsive)</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&display=swap');
+
+        :root {
+            --primary: #38bdf8;
+            --primary-dark: #0284c7;
+            --dark-bg: #0f172a;
+            --card-bg: rgba(30, 41, 59, 0.7);
+            --border: rgba(148, 163, 184, 0.2);
+            --glass: rgba(15, 23, 42, 0.8);
+        }
+
+        body {
+            min-height: 100vh;
+            background: radial-gradient(circle at top right, #1e293b, #0f172a, #020617);
+            color: #f1f5f9;
+            font-family: 'Outfit', sans-serif;
+            overflow-x: hidden;
+        }
+
+        /* ----- NAVBAR (full width, responsive, same design) ----- */
+        .navbar {
+            background: var(--glass) !important;
+            backdrop-filter: blur(12px);
+            border-bottom: 1px solid var(--border);
+            padding: 0.75rem 0;
+            width: 100%;
+        }
+        .navbar .container-fluid {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 0 20px;
+            width: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+        .navbar-brand {
+            font-weight: 800;
+            font-size: 1.5rem;
+            background: linear-gradient(135deg, #38bdf8, #818cf8);
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            letter-spacing: -0.5px;
+            text-decoration: none;
+        }
+        .navbar-toggler {
+            border: 1px solid rgba(148,163,184,0.3);
+            padding: 0.5rem;
+            border-radius: 8px;
+            background: transparent;
+        }
+        .navbar-toggler-icon { filter: invert(1); width: 1.3em; height: 1.3em; }
+        .navbar-nav {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        .nav-link {
+            color: #94a3b8 !important;
+            font-weight: 500;
+            padding: 0.6rem 1.25rem !important;
+            border-radius: 12px;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            white-space: nowrap;
+        }
+        .nav-link:hover, .nav-link.active {
+            color: #f1f5f9 !important;
+            background: rgba(255,255,255,0.05);
+        }
+
+        /* notifications dropdown (mobile friendly) */
+        .notifications-dropdown {
+            position: absolute;
+            top: calc(100% + 10px);
+            right: 0;
+            width: 320px;
+            max-width: 90vw;
+            background: #1e293b;
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.5);
+            padding: 1rem 0;
+            display: none;
+            z-index: 1100;
+            backdrop-filter: blur(20px);
+        }
+        .notifications-dropdown.show { display: block; animation: fadeInDown 0.3s ease; }
+        .notif-item { padding: 1rem 1.25rem; border-bottom: 1px solid var(--border); cursor: pointer; }
+        .notif-item.unread { background: rgba(56,189,248,0.05); border-left: 3px solid var(--primary); }
+        @keyframes fadeInDown { 0%{opacity:0; transform:translateY(-10px);} 100%{opacity:1;} }
+
+        /* help page container */
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding-left: 20px;
+            padding-right: 20px;
+        }
+
+        /* cards (exact same design, only padding responsive) */
+        .card {
+            background: var(--card-bg);
+            backdrop-filter: blur(16px);
+            border: 1px solid var(--border);
+            border-radius: 20px;
+            padding: 2rem;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            height: 100%;
+        }
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 20px 40px rgba(0,0,0,0.4);
+        }
+
+        .form-control {
+            background: rgba(15,23,42,0.6);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            color: #f1f5f9;
+            padding: 0.875rem 1rem;
+            transition: all 0.3s ease;
+        }
+        .form-control:focus {
+            background: rgba(15,23,42,0.8);
+            border-color: var(--primary);
+            box-shadow: 0 0 0 4px rgba(56,189,248,0.1);
+            color: white;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #38bdf8, #3b82f6);
+            border: none;
+            border-radius: 12px;
+            padding: 0.875rem 1.5rem;
+            font-weight: 700;
+            transition: all 0.3s ease;
+        }
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(56,189,248,0.4);
+        }
+
+        .ticket-card {
+            border-left: 4px solid var(--primary);
+            margin-bottom: 1.5rem;
+            background: rgba(15,23,42,0.4);
+            border-radius: 12px;
+            padding: 1rem;
+        }
+
+        /* ========== RESPONSIVE ADJUSTMENTS (ONLY LAYOUT, NO DESIGN CHANGE) ========== */
+        @media (max-width: 991.98px) {
+            .navbar-collapse {
+                background: rgba(15,23,42,0.95);
+                backdrop-filter: blur(20px);
+                border: 1px solid var(--border);
+                border-radius: 20px;
+                padding: 1rem 1.5rem;
+                margin-top: 1rem;
+            }
+            .navbar-nav {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 0.75rem;
+                width: 100%;
+            }
+            .nav-link { width: 100%; }
+            .notifications-dropdown {
+                position: static;
+                width: 100%;
+                box-shadow: none;
+                background: rgba(15,23,42,0.4);
+                margin-top: 10px;
+                border-radius: 12px;
+            }
+        }
+
+        /* tablet & mobile */
+        @media (max-width: 768px) {
+            .container { padding-left: 16px; padding-right: 16px; }
+            .row.g-4 { gap: 1.5rem; }
+            .card { padding: 1.5rem; }
+            .btn-primary { width: 100%; }
+        }
+
+        /* mobile narrow */
+        @media (max-width: 576px) {
+            .navbar-brand { font-size: 1.3rem; }
+            .card { padding: 1.2rem; border-radius: 18px; }
+            .form-control { padding: 0.75rem 1rem; }
+            .ticket-card { padding: 0.9rem; }
+            .nav-link span { font-size: 0.9rem; }
+            .notifications-dropdown { width: 280px; right: -20px; }
+        }
+
+        /* extra small */
+        @media (max-width: 400px) {
+            .container { padding-left: 12px; padding-right: 12px; }
+            .navbar-brand { font-size: 1.2rem; }
+            .card { padding: 1rem; }
+        }
+
+        /* large desktop (>=1400) – keep original */
+        @media (min-width: 1400px) {
+            .container { max-width: 1300px; }
+        }
+    </style>
+    <script src="config.js"></script>
+</head>
+<body>
+
+    <!-- NAVBAR (full width, edge-to-edge, responsive) -->
+    <nav class="navbar navbar-expand-lg sticky-top">
+        <div class="container-fluid">
+            <a class="navbar-brand" href="worker-profile.html">
+                <i class="fas fa-tools me-2"></i>WorkConnect
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"><i class="fas fa-bars text-white"></i></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto align-items-lg-center">
+                    <li class="nav-item"><a class="nav-link" href="worker-profile.html">Profile</a></li>
+                    <li class="nav-item"><a class="nav-link" href="worker-orders.html">My Orders</a></li>
+                    <li class="nav-item"><a class="nav-link" href="worker-payments.html">Payments</a></li>
+                    <li class="nav-item"><a class="nav-link active" href="worker-help.html">Help</a></li>
+
+                    <!-- Notifications dropdown -->
+                    <li class="nav-item dropdown px-lg-2">
+                        <a class="nav-link position-relative" href="#" id="workerNotifBtn" role="button">
+                            <i class="fas fa-bell"></i>
+                            <span id="workerNotifCount"
+                                class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger"
+                                style="display: none; font-size: 0.6rem;">0</span>
+                        </a>
+                        <div id="workerNotifDropdown" class="notifications-dropdown">
+                            <h6 class="px-3 pb-2 border-bottom border-secondary">Notifications</h6>
+                            <div id="workerNotifList" style="max-height: 350px; overflow-y: auto;">
+                                <!-- loaded via JS -->
+                            </div>
+                        </div>
+                    </li>
+
+                    <!-- User Profile -->
+                    <li class="nav-item ms-lg-2">
+                        <a class="nav-link d-flex align-items-center gap-2" href="worker-profile.html">
+                            <i class="fas fa-user-hard-hat text-primary"></i>
+                            <span id="navWorkerName">Worker</span>
+                        </a>
+                    </li>
+
+                    <li class="nav-item ms-lg-2">
+                        <button class="btn btn-outline-danger btn-sm rounded-pill px-3"
+                            style="padding-top: 0.6rem; padding-bottom: 0.6rem; line-height: 1; border-width: 1.5px; font-weight: 600;"
+                            onclick="logout()" title="Logout">
+                            <i class="fas fa-sign-out-alt me-2"></i>Logout
+                        </button>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- MAIN CONTENT (fully responsive) -->
+    <div class="container py-4">
+        <div class="row align-items-stretch g-4">
+            <!-- LEFT: FORM CARD -->
+            <div class="col-md-5">
+                <div class="card p-4">
+                    <h3 class="mb-3">Describe Your Problem</h3>
+                    <form id="helpForm">
+                        <div class="mb-3">
+                            <label class="form-label">Subject</label>
+                            <input type="text" id="subject" class="form-control"
+                                placeholder="E.g., Payment issue, Profile update..." required>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Message</label>
+                            <textarea id="message" class="form-control" rows="4"
+                                placeholder="Describe the issue in detail..." required></textarea>
+                        </div>
+                        <button type="submit" class="btn btn-primary w-100 mt-2">
+                            Submit Support Ticket
+                        </button>
+                    </form>
+                </div>
+            </div>
+
+            <!-- RIGHT: TICKET HISTORY CARD -->
+            <div class="col-md-7">
+                <div class="card p-4">
+                    <h3 class="mb-3">My Ticket History</h3>
+                    <div id="ticketList">
+                        <p class="text-secondary">Loading tickets...</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- SCRIPT (exactly the same as original, no changes) -->
+    <script>
+        const currentUser = JSON.parse(localStorage.getItem('user'));
+
+        document.addEventListener('DOMContentLoaded', () => {
+            if (!currentUser || currentUser.role !== 'worker') {
+                window.location.href = 'login.html';
+                return;
+            }
+
+            document.getElementById('navWorkerName').textContent =
+                (currentUser.name || currentUser.username).split(' ')[0];
+
+            loadTickets();
+            loadNotifications();
+            setInterval(loadNotifications, 10000);
+            initWorkerNotifToggle();
+        });
+
+        async function loadNotifications() {
+            if (!currentUser) return;
+            try {
+                const res = await fetch(getApiUrl(`/api/notifications/${currentUser.id}`));
+                if (res.ok) {
+                    renderNotifications(await res.json());
+                }
+            } catch (e) { }
+        }
+
+        function renderNotifications(notifications) {
+            const listEl = document.getElementById('workerNotifList');
+            const countEl = document.getElementById('workerNotifCount');
+            if (!listEl || !countEl) return;
+
+            const unread = notifications.filter(n => !n.read);
+            countEl.textContent = unread.length > 9 ? '9+' : unread.length;
+            countEl.style.display = unread.length > 0 ? 'inline-block' : 'none';
+
+            if (notifications.length === 0) {
+                listEl.innerHTML = '<div class="p-3 text-center text-muted small">No notifications</div>';
+                return;
+            }
+
+            listEl.innerHTML = notifications.map(n => `
+                <div class="notif-item ${n.read ? '' : 'unread'}" onclick="markAsRead('${n._id || n.id}', '${n.link}')">
+                    <div class="notif-title">${n.message}</div>
+                    <div class="notif-meta">${new Date(n.createdAt).toLocaleString([], { month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' })}</div>
+                </div>
+            `).join('');
+        }
+
+        async function markAsRead(notifId, link) {
+            try {
+                await fetch(getApiUrl(`/api/notifications/${notifId}/read`), { method: 'PUT' });
+                if (link && link !== 'null' && link !== 'undefined') {
+                    window.location.href = link;
+                } else {
+                    loadNotifications();
+                }
+            } catch (e) {
+                console.error('Error marking as read', e);
+            }
+        }
+
+        function initWorkerNotifToggle() {
+            const btn = document.getElementById('workerNotifBtn');
+            const dropdown = document.getElementById('workerNotifDropdown');
+            if (!btn || !dropdown) return;
+            btn.addEventListener('click', (e) => {
+                e.stopPropagation();
+                dropdown.classList.toggle('show');
+            });
+            document.addEventListener('click', () => {
+                dropdown.classList.remove('show');
+            });
+        }
+
+        async function loadTickets() {
+            const res = await fetch(getApiUrl(`/api/support/tickets/${currentUser.id}`));
+            const tickets = await res.json();
+            const list = document.getElementById('ticketList');
+
+            list.innerHTML = tickets.length ? '' : '<p class="text-secondary">No tickets submitted yet.</p>';
+
+            tickets.reverse().forEach(t => {
+                list.innerHTML += `
+                    <div class="ticket-card p-3 mb-3">
+                        <div class="d-flex justify-content-between flex-wrap gap-2">
+                            <h5 class="text-info mb-1">${t.subject}</h5>
+                            <span class="badge ${t.status === 'resolved' ? 'bg-success' : 'bg-warning'}">${t.status}</span>
+                        </div>
+                        <p class="small mb-2">${t.message}</p>
+                        ${t.adminReply ? `<div class="mt-2 p-2 bg-secondary bg-opacity-25 rounded small"><b>Admin:</b> ${t.adminReply}</div>` : ''}
+                        <small class="text-secondary">${new Date(t.createdAt).toLocaleString()}</small>
+                    </div>
+                `;
+            });
+        }
+
+        document.getElementById('helpForm').addEventListener('submit', async e => {
+            e.preventDefault();
+
+            const ticket = {
+                userId: currentUser.id,
+                username: currentUser.username,
+                role: currentUser.role,
+                subject: subject.value,
+                message: message.value
+            };
+
+            const res = await fetch(getApiUrl('/api/support/tickets'), {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(ticket)
+            });
+
+            if (res.ok) {
+                alert('Ticket submitted successfully!');
+                e.target.reset();
+                loadTickets();
+            }
+        });
+
+        function logout() {
+            localStorage.removeItem('user');
+            window.location.href = 'login.html';
+        }
+    </script>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

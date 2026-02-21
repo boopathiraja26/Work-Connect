@@ -1,16 +1,6 @@
 {
   "users": [
     {
-      "id": "1754382784332",
-      "username": "udhaya",
-      "email": "udhaya@gmail.com",
-      "phone": "9524785164",
-      "password": "$2a$10$z23dryW6i5DrqGFWj8fYRukPlGOD5fZRB7ZxcpK7oq301.vq/XIay",
-      "role": "worker",
-      "createdAt": "2025-08-05T08:33:04.332Z",
-      "approved": true
-    },
-    {
       "id": "1754383209119",
       "username": "udhayakumar11",
       "email": "jnjn1@gmail.com",
@@ -27,14 +17,21 @@
       "password": "$2a$10$pLDwOdseBAYArlVTQ4cdxOjqYDGFJKKkZlbg43NFuptGJ.wvI0odK",
       "role": "worker",
       "createdAt": "2025-08-05T08:41:20.269Z",
-      "name": "udhaya",
-      "skills": [
-        "home designer",
-        "painter"
+      "portfolio": [
+        "https://images.unsplash.com/photo-1581094794329-c8112a89af12?auto=format&fit=crop&q=80&w=800",
+        "/uploads/1771477161035-584243011.png",
+        "/uploads/1771478245442-470886036.png",
+        "/uploads/1771479328778-983728361.png"
       ],
-      "experience": "5",
-      "hourlyRate": "200",
-      "description": "Homes,Commercial buildings,Industrial sites ",
+      "name": "Udhaya Kumar",
+      "skills": [
+        "Home Design",
+        "Painting",
+        "Interior Decor"
+      ],
+      "experience": "7",
+      "hourlyRate": 25000,
+      "description": "Expert Home Designer and Painter with live UPI support.",
       "availability": "Available",
       "address": {
         "street": "119",
@@ -50,8 +47,8 @@
       "profileImage": "/uploads/1754389704984-571346672.jpg",
       "aadhaarNumber": "123456789012",
       "aadhaarVerified": true,
-      "approved": true,
-      "updatedAt": "2025-12-18T11:34:32.157Z",
+      "approved": "approved",
+      "updatedAt": "2026-02-19T12:15:00.000Z",
       "reviews": [
         {
           "customerId": "1754389796776",
@@ -101,16 +98,40 @@
           "comment": "good",
           "orderId": "1766135101096",
           "createdAt": "2025-12-19T09:09:04.274Z"
+        },
+        {
+          "customerId": "1765815764259",
+          "customerName": "Vicky1183",
+          "rating": 5,
+          "comment": "good",
+          "orderId": "1766649800884",
+          "createdAt": "2025-12-25T09:11:17.661Z"
+        },
+        {
+          "customerId": "1765815764259",
+          "customerName": "vicky",
+          "rating": 3,
+          "comment": "",
+          "orderId": "1770367963974",
+          "createdAt": "2026-02-09T09:53:02.398Z"
+        },
+        {
+          "customerId": "1765815764259",
+          "customerName": "vicky",
+          "rating": 3,
+          "comment": "",
+          "orderId": "1770704720464",
+          "createdAt": "2026-02-10T06:43:10.482Z"
         }
       ],
-      "upiId": "s.udhayakumar144-2@okhdfcbank"
+      "upiId": "kuttyelaa6364@okaxis"
     },
     {
       "id": "admin",
       "username": "admin",
       "email": "admin@demo.com",
       "phone": "",
-      "password": "$2a$10$Q0Q0Q0Q0Q0Q0Q0Q0Q0Q0QeQ0Q0Q0Q0Q0Q0Q0Q0Q0Q0Q0Q0Q0Q0Q0",
+      "password": "$2a$10$N5yvMrGWSWlasbTxKcZHheOVGEvnSYjJ9jEEqcnVF9wf2vOeQfR4u",
       "role": "admin",
       "createdAt": "2025-08-05T10:19:59.538Z"
     },
@@ -146,7 +167,18 @@
       },
       "aadhaarNumber": "123456789012",
       "aadhaarVerified": true,
-      "approved": true
+      "approved": "approved",
+      "name": "Test Worker",
+      "skills": [
+        "General Maintenance",
+        "Electrician"
+      ],
+      "experience": "5",
+      "hourlyRate": 350,
+      "description": "Skilled in general maintenance and electrical repairs.",
+      "availability": "Available",
+      "upiId": "testworker@okaxis",
+      "updatedAt": "2026-02-19T12:10:00.000Z"
     },
     {
       "id": "1754407300543",
@@ -196,8 +228,9 @@
       "hourlyRate": "1",
       "description": "hiiii",
       "availability": "Unavailable",
-      "approved": true,
-      "updatedAt": "2025-08-12T10:15:42.154Z"
+      "approved": "approved",
+      "upiId": "boopathi333@okaxis",
+      "updatedAt": "2026-02-19T12:10:00.000Z"
     },
     {
       "id": "1754417303780",
@@ -225,8 +258,9 @@
       "hourlyRate": "10",
       "description": "fast",
       "availability": "Available",
-      "approved": true,
-      "updatedAt": "2025-08-05T18:09:03.925Z",
+      "approved": "approved",
+      "upiId": "boopathi555@okaxis",
+      "updatedAt": "2026-02-19T12:15:00.000Z",
       "reviews": [
         {
           "customerId": "1754407300543",
@@ -263,10 +297,16 @@
         "Driver"
       ],
       "experience": "22",
-      "hourlyRate": "2.01",
-      "description": "clean and maintained painting work",
-      "availability": "Busy",
-      "updatedAt": "2025-08-26T09:15:31.552Z"
+      "hourlyRate": 450,
+      "description": "Professional construction painting and high-quality finishes.",
+      "availability": "Available",
+      "portfolio": [
+        "https://images.unsplash.com/photo-1595853035070-59a39fe84de1?auto=format&fit=crop&q=80&w=800",
+        "https://images.unsplash.com/photo-1589939705384-5185138a04b9?auto=format&fit=crop&q=80&w=800"
+      ],
+      "updatedAt": "2026-02-19T12:20:00.000Z",
+      "approved": "rejected",
+      "upiId": "udhayakumar22@okaxis"
     },
     {
       "id": "1756199468883",
@@ -345,7 +385,8 @@
           "orderId": "1756887336521",
           "createdAt": "2025-09-03T08:17:46.423Z"
         }
-      ]
+      ],
+      "approved": true
     },
     {
       "id": "1765815764259",
@@ -364,7 +405,91 @@
       },
       "location": {
         "link": "https://maps.app.goo.gl/ptzZE8VWqGd5fPbY9"
-      }
+      },
+      "name": "vicky",
+      "updatedAt": "2025-12-27T13:21:48.020Z"
+    },
+    {
+      "id": "1766654884723",
+      "username": "dfsfs",
+      "email": "efewfew@gmail.com",
+      "phone": "454534534543",
+      "password": "$2a$10$buwufAcbH7.NXoRvaTqaDugpSmj1Dy5rhnyPTjdkEsAz0NUewSHDG",
+      "role": "worker",
+      "createdAt": "2025-12-25T09:28:04.723Z",
+      "profileImage": "/uploads/1766654884640-166827994.png",
+      "address": {
+        "street": "wrwefwe",
+        "city": "ewrwew",
+        "state": "ewweree",
+        "pincode": "erewrew"
+      },
+      "location": {
+        "link": "rerewrewrew"
+      },
+      "aadhaarNumber": "523454254242",
+      "aadhaarVerified": true,
+      "approved": "rejected"
+    },
+    {
+      "username": "udhaya",
+      "email": "vicky0000018@gmail.com",
+      "phone": "9524785164",
+      "password": "$2a$10$gbuvEye4BvC3AklYebmsrOVh5k8btObV.JivG6UZFVu1SAJ/NSLee",
+      "role": "customer",
+      "createdAt": "2026-02-21T05:31:10.411Z",
+      "address": {
+        "street": "sengodampalayam,punnam",
+        "city": "eode",
+        "state": "",
+        "pincode": 638312
+      },
+      "location": {
+        "link": ""
+      },
+      "id": "1771651870411"
+    },
+    {
+      "username": "udhaya11",
+      "email": "s.udhayakumar144@gmail.com",
+      "phone": "9524785164",
+      "password": "$2a$10$1TD6PF3JGt510P/9uDiITuZtC9T2e3k44yh91DaClZ0ZTNreF7atC",
+      "role": "worker",
+      "createdAt": "2026-02-21T06:01:42.217Z",
+      "address": {
+        "street": "paruvachii",
+        "city": "",
+        "state": "",
+        "pincode": 638312
+      },
+      "location": {
+        "link": ""
+      },
+      "aadhaarNumber": "123456789901",
+      "aadhaarVerified": true,
+      "approved": "pending",
+      "id": "1771653702217"
+    },
+    {
+      "username": "vicky",
+      "email": "s.udhayakumar144@mail.com",
+      "phone": "1234567890",
+      "password": "$2a$10$QHmY0m45Is0SVqoB9/J.NOWiXJk.VKGcJUqfmzCAxpt/tgi7HhKNe",
+      "role": "worker",
+      "createdAt": "2026-02-21T06:04:14.757Z",
+      "address": {
+        "street": "text",
+        "city": "test",
+        "state": "",
+        "pincode": 638312
+      },
+      "location": {
+        "link": ""
+      },
+      "aadhaarNumber": "123456789011",
+      "aadhaarVerified": true,
+      "approved": "pending",
+      "id": "1771653854757"
     }
   ],
   "passwordResetTokens": [
@@ -642,6 +767,134 @@
       "status": "pending",
       "paymentStatus": "unpaid",
       "createdAt": "2025-12-19T13:33:22.317Z"
+    },
+    {
+      "id": "1766649800884",
+      "customerId": "1765815764259",
+      "workerId": "1754383280269",
+      "serviceType": "32r32r3rr32r23",
+      "description": "efwefwe",
+      "duration": "12",
+      "totalAmount": "2000",
+      "status": "completed",
+      "paymentStatus": "paid",
+      "createdAt": "2025-12-25T08:03:20.884Z",
+      "updatedAt": "2025-12-25T08:49:35.636Z",
+      "workerLiveLocation": {
+        "latitude": 13.0843007,
+        "longitude": 80.2704622,
+        "timestamp": "2025-12-25T08:47:03.408Z"
+      },
+      "paymentMethod": "upi",
+      "transactionId": "TXN-mjl837sh-e93",
+      "paidAt": "2025-12-25T09:10:51.185Z",
+      "reviewed": true,
+      "review": {
+        "rating": 5,
+        "comment": "good",
+        "customerId": "1765815764259",
+        "customerName": "Vicky1183",
+        "createdAt": "2025-12-25T09:11:17.661Z"
+      }
+    },
+    {
+      "id": "1770367963974",
+      "customerId": "1765815764259",
+      "workerId": "1754383280269",
+      "serviceType": "test",
+      "description": "test",
+      "duration": "200",
+      "totalAmount": "20000",
+      "status": "completed",
+      "paymentStatus": "paid",
+      "createdAt": "2026-02-06T08:52:43.974Z",
+      "updatedAt": "2026-02-06T08:53:51.383Z",
+      "paymentMethod": "cash",
+      "transactionId": "TXN-mlezu86t-a3e",
+      "paidAt": "2026-02-09T09:52:42.485Z",
+      "paymentScreenshot": null,
+      "reviewed": true,
+      "review": {
+        "rating": 3,
+        "comment": "",
+        "customerId": "1765815764259",
+        "customerName": "vicky",
+        "createdAt": "2026-02-09T09:53:02.398Z"
+      }
+    },
+    {
+      "id": "1770368718722",
+      "customerId": "1765815764259",
+      "workerId": "1754383280269",
+      "serviceType": "test",
+      "description": "test",
+      "duration": "2",
+      "totalAmount": "20000",
+      "status": "completed",
+      "paymentStatus": "unpaid",
+      "createdAt": "2026-02-06T09:05:18.722Z",
+      "updatedAt": "2026-02-06T09:05:54.989Z"
+    },
+    {
+      "id": "1770704720464",
+      "customerId": "1765815764259",
+      "workerId": "1754383280269",
+      "serviceType": "painter",
+      "description": "fast",
+      "duration": "4",
+      "totalAmount": "2000",
+      "status": "completed",
+      "paymentStatus": "paid",
+      "createdAt": "2026-02-10T06:25:20.464Z",
+      "updatedAt": "2026-02-10T06:26:01.256Z",
+      "transactionId": "pay_vvq9zhtj0",
+      "paidAt": "2026-02-10T06:26:42.545Z",
+      "reviewed": true,
+      "review": {
+        "rating": 3,
+        "comment": "",
+        "customerId": "1765815764259",
+        "customerName": "vicky",
+        "createdAt": "2026-02-10T06:43:10.482Z"
+      }
+    },
+    {
+      "id": "1770705104187",
+      "customerId": "1765815764259",
+      "workerId": "1754383280269",
+      "serviceType": "test",
+      "description": "test",
+      "duration": "5",
+      "totalAmount": "20000",
+      "status": "completed",
+      "paymentStatus": "unpaid",
+      "createdAt": "2026-02-10T06:31:44.187Z",
+      "updatedAt": "2026-02-10T06:32:06.094Z"
+    },
+    {
+      "id": "test-live-1",
+      "customerId": "1765815764259",
+      "workerId": "1754383280269",
+      "serviceType": "Live Payment Test",
+      "description": "₹1 test order for live Razorpay verification.",
+      "duration": "1",
+      "totalAmount": "1",
+      "status": "completed",
+      "paymentStatus": "unpaid",
+      "createdAt": "2026-02-11T08:00:00.000Z",
+      "updatedAt": "2026-02-11T08:00:00.000Z"
+    },
+    {
+      "id": "1771651971838",
+      "customerId": "1771651870411",
+      "workerId": "1754417303780",
+      "serviceType": "General Maintenance",
+      "description": "fast",
+      "duration": "1",
+      "totalAmount": "10",
+      "status": "pending",
+      "paymentStatus": "unpaid",
+      "createdAt": "2026-02-21T05:32:51.838Z"
     }
   ],
   "payments": [
@@ -715,6 +968,328 @@
       "status": "success",
       "screenshot": null,
       "createdAt": "2025-12-19T09:07:44.465Z"
+    },
+    {
+      "id": "1766653851185",
+      "transactionId": "TXN-mjl837sh-e93",
+      "orderId": "1766649800884",
+      "customerId": "1765815764259",
+      "workerId": "1754383280269",
+      "amount": "2000",
+      "method": "upi",
+      "status": "success",
+      "screenshot": null,
+      "createdAt": "2025-12-25T09:10:51.185Z"
+    },
+    {
+      "id": "1770630762485",
+      "transactionId": "TXN-mlezu86t-a3e",
+      "orderId": "1770367963974",
+      "customerId": "1765815764259",
+      "workerId": "1754383280269",
+      "amount": "20000",
+      "method": "cash",
+      "status": "success",
+      "screenshot": null,
+      "createdAt": "2026-02-09T09:52:42.485Z"
+    },
+    {
+      "id": "pay_1770704633333",
+      "orderId": "1770368718722",
+      "amount": "1500",
+      "method": "upi",
+      "transactionId": "pay_cd4a1l6o8",
+      "status": "success",
+      "razorpayOrderId": "sim_17dcyyrdv",
+      "createdAt": "2026-02-10T06:23:53.333Z"
+    },
+    {
+      "id": "pay_1770704802545",
+      "orderId": "1770704720464",
+      "amount": "2000",
+      "method": "upi",
+      "transactionId": "pay_vvq9zhtj0",
+      "status": "success",
+      "razorpayOrderId": "sim_2en5f4bji",
+      "createdAt": "2026-02-10T06:26:42.545Z"
+    }
+  ],
+  "supportTickets": [
+    {
+      "id": "1766651904216",
+      "userId": "test_user",
+      "username": "test_user",
+      "role": "customer",
+      "subject": "Test Ticket",
+      "message": "Test message verify",
+      "status": "resolved",
+      "adminReply": "Issue verified and resolved.",
+      "createdAt": "2025-12-25T08:38:24.216Z",
+      "updatedAt": "2025-12-25T09:13:17.544Z"
+    },
+    {
+      "id": "1766651602012",
+      "userId": "1765815764259",
+      "username": "Vicky1183",
+      "role": "customer",
+      "subject": "vssd",
+      "message": "dacdc",
+      "status": "resolved",
+      "adminReply": "Issue verified and resolved.",
+      "createdAt": "2025-12-25T08:33:22.012Z",
+      "updatedAt": "2025-12-25T09:13:21.542Z"
+    }
+  ],
+  "notifications": [
+    {
+      "id": "1771651971843",
+      "recipientId": "1754417303780",
+      "message": "New request for General Maintenance",
+      "type": "info",
+      "read": false,
+      "relatedId": "1771651971838",
+      "link": "/worker-orders.html",
+      "createdAt": "2026-02-21T05:32:51.843Z"
+    },
+    {
+      "id": "1771524867024",
+      "recipientId": "1754420198483",
+      "message": "Your account status has been updated to: approved",
+      "type": "success",
+      "read": false,
+      "relatedId": null,
+      "link": "/worker-profile.html",
+      "createdAt": "2026-02-19T18:14:27.024Z"
+    },
+    {
+      "id": "1771524849925",
+      "recipientId": "1754420198483",
+      "message": "Your account status has been updated to: rejected",
+      "type": "error",
+      "read": false,
+      "relatedId": null,
+      "link": null,
+      "createdAt": "2026-02-19T18:14:09.925Z"
+    },
+    {
+      "id": "1771524841609",
+      "recipientId": "1754420198483",
+      "message": "Your account status has been updated to: rejected",
+      "type": "error",
+      "read": false,
+      "relatedId": null,
+      "link": null,
+      "createdAt": "2026-02-19T18:14:01.609Z"
+    },
+    {
+      "id": "1770705126100",
+      "recipientId": "1765815764259",
+      "message": "Order 104187 is now completed",
+      "type": "success",
+      "read": true,
+      "relatedId": "1770705104187",
+      "link": "/customer-orders.html",
+      "createdAt": "2026-02-10T06:32:06.100Z"
+    },
+    {
+      "id": "1770705126099",
+      "recipientId": "1754383280269",
+      "message": "Order 104187 updated to completed",
+      "type": "info",
+      "read": true,
+      "relatedId": "1770705104187",
+      "link": "/worker-orders.html",
+      "createdAt": "2026-02-10T06:32:06.099Z"
+    },
+    {
+      "id": "1770705122963",
+      "recipientId": "1765815764259",
+      "message": "Order 104187 is now accepted",
+      "type": "info",
+      "read": true,
+      "relatedId": "1770705104187",
+      "link": "/customer-orders.html",
+      "createdAt": "2026-02-10T06:32:02.963Z"
+    },
+    {
+      "id": "1770705122962",
+      "recipientId": "1754383280269",
+      "message": "Order 104187 updated to accepted",
+      "type": "info",
+      "read": true,
+      "relatedId": "1770705104187",
+      "link": "/worker-orders.html",
+      "createdAt": "2026-02-10T06:32:02.962Z"
+    },
+    {
+      "id": "1770705104189",
+      "recipientId": "1754383280269",
+      "message": "New request for test",
+      "type": "info",
+      "read": true,
+      "relatedId": "1770705104187",
+      "link": "/worker-orders.html",
+      "createdAt": "2026-02-10T06:31:44.189Z"
+    },
+    {
+      "id": "1770704761259",
+      "recipientId": "1765815764259",
+      "message": "Order 720464 is now completed",
+      "type": "success",
+      "read": true,
+      "relatedId": "1770704720464",
+      "link": "/customer-orders.html",
+      "createdAt": "2026-02-10T06:26:01.259Z"
+    },
+    {
+      "id": "1770704761258",
+      "recipientId": "1754383280269",
+      "message": "Order 720464 updated to completed",
+      "type": "info",
+      "read": true,
+      "relatedId": "1770704720464",
+      "link": "/worker-orders.html",
+      "createdAt": "2026-02-10T06:26:01.258Z"
+    },
+    {
+      "id": "1770704746996",
+      "recipientId": "1765815764259",
+      "message": "Order 720464 is now accepted",
+      "type": "info",
+      "read": true,
+      "relatedId": "1770704720464",
+      "link": "/customer-orders.html",
+      "createdAt": "2026-02-10T06:25:46.996Z"
+    },
+    {
+      "id": "1770704746994",
+      "recipientId": "1754383280269",
+      "message": "Order 720464 updated to accepted",
+      "type": "info",
+      "read": true,
+      "relatedId": "1770704720464",
+      "link": "/worker-orders.html",
+      "createdAt": "2026-02-10T06:25:46.994Z"
+    },
+    {
+      "id": "1770704720472",
+      "recipientId": "1754383280269",
+      "message": "New request for painter",
+      "type": "info",
+      "read": true,
+      "relatedId": "1770704720464",
+      "link": "/worker-orders.html",
+      "createdAt": "2026-02-10T06:25:20.472Z"
+    },
+    {
+      "id": "1770630762487",
+      "recipientId": "1754383280269",
+      "message": "Payment of ₹20000 received for Order #963974",
+      "type": "success",
+      "read": true,
+      "relatedId": "1770367963974",
+      "link": "/worker-payments.html",
+      "createdAt": "2026-02-09T09:52:42.487Z"
+    },
+    {
+      "id": "1770368755004",
+      "recipientId": "1765815764259",
+      "message": "Order 718722 is now completed",
+      "type": "success",
+      "read": true,
+      "relatedId": "1770368718722",
+      "link": "/customer-orders.html",
+      "createdAt": "2026-02-06T09:05:55.004Z"
+    },
+    {
+      "id": "1770368754994",
+      "recipientId": "1754383280269",
+      "message": "Order 718722 updated to completed",
+      "type": "info",
+      "read": true,
+      "relatedId": "1770368718722",
+      "link": "/worker-orders.html",
+      "createdAt": "2026-02-06T09:05:54.994Z"
+    },
+    {
+      "id": "1770368752155",
+      "recipientId": "1765815764259",
+      "message": "Order 718722 is now accepted",
+      "type": "info",
+      "read": true,
+      "relatedId": "1770368718722",
+      "link": "/customer-orders.html",
+      "createdAt": "2026-02-06T09:05:52.155Z"
+    },
+    {
+      "id": "1770368752153",
+      "recipientId": "1754383280269",
+      "message": "Order 718722 updated to accepted",
+      "type": "info",
+      "read": true,
+      "relatedId": "1770368718722",
+      "link": "/worker-orders.html",
+      "createdAt": "2026-02-06T09:05:52.153Z"
+    },
+    {
+      "id": "1770368718726",
+      "recipientId": "1754383280269",
+      "message": "New request for test",
+      "type": "info",
+      "read": true,
+      "relatedId": "1770368718722",
+      "link": "/worker-orders.html",
+      "createdAt": "2026-02-06T09:05:18.726Z"
+    },
+    {
+      "id": "1770368031392",
+      "recipientId": "1765815764259",
+      "message": "Order 963974 is now completed",
+      "type": "success",
+      "read": true,
+      "relatedId": "1770367963974",
+      "link": "/customer-orders.html",
+      "createdAt": "2026-02-06T08:53:51.392Z"
+    },
+    {
+      "id": "1770368031390",
+      "recipientId": "1754383280269",
+      "message": "Order 963974 updated to completed",
+      "type": "info",
+      "read": true,
+      "relatedId": "1770367963974",
+      "link": "/worker-orders.html",
+      "createdAt": "2026-02-06T08:53:51.390Z"
+    },
+    {
+      "id": "1770368024237",
+      "recipientId": "1765815764259",
+      "message": "Order 963974 is now accepted",
+      "type": "info",
+      "read": true,
+      "relatedId": "1770367963974",
+      "link": "/customer-orders.html",
+      "createdAt": "2026-02-06T08:53:44.237Z"
+    },
+    {
+      "id": "1770368024235",
+      "recipientId": "1754383280269",
+      "message": "Order 963974 updated to accepted",
+      "type": "info",
+      "read": true,
+      "relatedId": "1770367963974",
+      "link": "/worker-orders.html",
+      "createdAt": "2026-02-06T08:53:44.235Z"
+    },
+    {
+      "id": "1770367963995",
+      "recipientId": "1754383280269",
+      "message": "New request for test",
+      "type": "info",
+      "read": true,
+      "relatedId": "1770367963974",
+      "link": "/worker-orders.html",
+      "createdAt": "2026-02-06T08:52:43.995Z"
     }
   ]
 }

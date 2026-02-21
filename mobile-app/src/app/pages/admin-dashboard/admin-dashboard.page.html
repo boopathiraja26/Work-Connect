@@ -1,0 +1,162 @@
+<ion-header [translucent]="true">
+  <ion-toolbar color="primary">
+    <ion-title>Admin Panel</ion-title>
+    <ion-buttons slot="end">
+      <ion-button (click)="logout()">
+        <ion-icon slot="icon-only" name="log-out-outline"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content [fullscreen]="true" class="admin-bg">
+  <div class="stats-grid">
+    <div class="stat-card">
+      <span class="label">Total Earnings</span>
+      <span class="value">${{stats?.totalRevenue || 0}}</span>
+      <ion-icon name="wallet-outline" color="success"></ion-icon>
+    </div>
+    <div class="stat-card">
+      <span class="label">Total Orders</span>
+      <span class="value">{{stats?.totalOrders || 0}}</span>
+      <ion-icon name="cart-outline" color="primary"></ion-icon>
+    </div>
+    <div class="stat-card">
+      <span class="label">Pending Approvals</span>
+      <span class="value">{{pendingWorkers.length}}</span>
+      <ion-icon name="time-outline" color="warning"></ion-icon>
+    </div>
+    <div class="stat-card">
+      <span class="label">Total Users</span>
+      <span class="value">{{stats?.totalUsers || 0}}</span>
+      <ion-icon name="people-outline" color="tertiary"></ion-icon>
+    </div>
+    <div class="stat-card">
+      <span class="label">System Rating</span>
+      <span class="value">{{stats?.avgRating?.toFixed(1) || '4.8'}}</span>
+      <ion-icon name="star-outline" color="warning"></ion-icon>
+    </div>
+  </div>
+
+  <ion-segment [(ngModel)]="activeTab" mode="md">
+    <ion-segment-button value="approvals">
+      <ion-label>Approvals</ion-label>
+    </ion-segment-button>
+    <ion-segment-button value="workers">
+      <ion-label>Manage Workers</ion-label>
+    </ion-segment-button>
+    <ion-segment-button value="orders">
+      <ion-label>All Orders</ion-label>
+    </ion-segment-button>
+    <ion-segment-button value="tickets">
+      <ion-label>Support</ion-label>
+    </ion-segment-button>
+  </ion-segment>
+
+  <div [ngSwitch]="activeTab" class="tab-content">
+    <!-- Approvals Tab -->
+    <div *ngSwitchCase="'approvals'" class="anim-fade">
+      <div *ngIf="pendingWorkers.length === 0" class="empty-state">
+        <ion-icon name="checkmark-done-circle-outline"></ion-icon>
+        <p>No pending approvals. All workers verified!</p>
+      </div>
+
+      <ion-card *ngFor="let worker of pendingWorkers" class="approval-card">
+        <ion-item lines="none">
+          <ion-avatar slot="start">
+            <img [src]="worker.profileImage || 'assets/default-avatar.png'"
+              (onerror)="$any($event.target).src='https://placehold.co/100x100?text=Avatar'">
+          </ion-avatar>
+          <ion-label>
+            <h2><strong>{{worker.name || worker.username}}</strong></h2>
+            <p><ion-icon name="mail-outline"></ion-icon> {{worker.email}}</p>
+            <p><ion-icon name="call-outline"></ion-icon> {{worker.phone}}</p>
+            <p><ion-icon name="briefcase-outline"></ion-icon> Skill: {{worker.skills?.[0] || 'General'}}</p>
+            <p><ion-icon name="card-outline"></ion-icon> Aadhaar: {{worker.aadhaarNumber || 'Not provided'}}</p>
+          </ion-label>
+        </ion-item>
+        <div class="actions">
+          <ion-button color="success" size="small" (click)="approve(worker, 'approved')">
+            <ion-icon name="checkmark-outline" slot="start"></ion-icon>
+            Approve
+          </ion-button>
+          <ion-button color="danger" size="small" fill="clear" (click)="approve(worker, 'rejected')">
+            <ion-icon name="close-outline" slot="start"></ion-icon>
+            Reject
+          </ion-button>
+        </div>
+      </ion-card>
+    </div>
+
+    <!-- Workers Management Tab -->
+    <div *ngSwitchCase="'workers'" class="anim-fade">
+      <ion-list lines="inset" class="custom-list">
+        <ion-item *ngFor="let worker of allWorkers">
+          <ion-avatar slot="start">
+            <img [src]="worker.profileImage || 'assets/default-avatar.png'"
+              (onerror)="$any($event.target).src='https://placehold.co/100x100?text=Avatar'">
+          </ion-avatar>
+          <ion-label>
+            <h2>{{worker.name || worker.username}}</h2>
+            <p>{{worker.skills?.[0] || 'Worker'}} - {{worker.averageRating || '0.0'}} ★</p>
+          </ion-label>
+          <ion-badge [color]="worker.approved === 'approved' ? 'success' : 'warning'" slot="end">
+            {{worker.approved}}
+          </ion-badge>
+        </ion-item>
+      </ion-list>
+    </div>
+
+    <!-- Orders Management Tab -->
+    <div *ngSwitchCase="'orders'" class="anim-fade">
+      <ion-card *ngFor="let order of allOrders" class="order-card">
+        <ion-card-header>
+          <div class="header-row">
+            <ion-badge [color]="getStatusColor(order.status)">{{order.status}}</ion-badge>
+            <span class="date">{{order.createdAt | date:'short'}}</span>
+          </div>
+          <ion-card-title>{{order.workerName}} &larr; {{order.customerName}}</ion-card-title>
+          <ion-card-subtitle>{{order.serviceType}}</ion-card-subtitle>
+        </ion-card-header>
+        <ion-card-content>
+          <p>Amount: <strong>${{order.totalAmount}}</strong></p>
+          <p>Payment: {{order.paymentStatus}}</p>
+        </ion-card-content>
+      </ion-card>
+    </div>
+
+    <!-- Support Tickets Management Tab -->
+    <div *ngSwitchCase="'tickets'" class="anim-fade">
+      <div *ngIf="allTickets.length === 0" class="empty-state">
+        <ion-icon name="mail-open-outline"></ion-icon>
+        <p>No support tickets found.</p>
+      </div>
+
+      <ion-card *ngFor="let ticket of allTickets" class="ticket-card-admin">
+        <ion-card-header>
+          <div class="header-row">
+            <ion-badge [color]="ticket.status === 'resolved' ? 'success' : 'warning'">{{ticket.status}}</ion-badge>
+            <span class="user-info">{{ticket.userInfo?.name}} ({{ticket.role}})</span>
+          </div>
+          <ion-card-title>{{ticket.subject}}</ion-card-title>
+        </ion-card-header>
+        <ion-card-content>
+          <p class="desc">{{ticket.description}}</p>
+          <div *ngIf="ticket.status === 'pending'" class="resolve-form">
+            <ion-item class="custom-input">
+              <ion-textarea label="Admin Reply" labelPlacement="floating" [(ngModel)]="ticket.reply"
+                placeholder="Type resolution here..."></ion-textarea>
+            </ion-item>
+            <ion-button expand="block" size="small" (click)="resolveTicket(ticket)" [disabled]="!ticket.reply">
+              Resolve Ticket
+            </ion-button>
+          </div>
+          <div *ngIf="ticket.status === 'resolved'" class="resolved-info">
+            <strong>My Reply:</strong>
+            <p>{{ticket.adminReply}}</p>
+          </div>
+        </ion-card-content>
+      </ion-card>
+    </div>
+  </div>
+</ion-content>

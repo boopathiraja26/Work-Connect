@@ -1,0 +1,183 @@
+<ion-header [translucent]="true">
+  <ion-toolbar color="primary">
+    <ion-buttons slot="start">
+      <ion-back-button defaultHref="/login"></ion-back-button>
+    </ion-buttons>
+    <ion-title>Create Account</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content [fullscreen]="true" class="register-bg">
+  <div class="progress-bar-container">
+    <div class="progress-bar" [style.width.%]="(step / totalSteps) * 100"></div>
+  </div>
+
+  <div class="register-container">
+    <!-- Step 1: Account Details -->
+    <div *ngIf="step === 1" class="form-step anim-fade">
+      <div class="step-header">
+        <h2>Basic Info</h2>
+        <p>Start your journey with us</p>
+      </div>
+
+      <ion-list lines="none">
+        <ion-item class="custom-input">
+          <ion-icon name="person-outline" slot="start"></ion-icon>
+          <ion-input label="Username" labelPlacement="floating" [(ngModel)]="userData.username"
+            placeholder="john_doe"></ion-input>
+        </ion-item>
+
+        <ion-item class="custom-input">
+          <ion-icon name="mail-outline" slot="start"></ion-icon>
+          <ion-input label="Email" labelPlacement="floating" [(ngModel)]="userData.email" type="email"
+            placeholder="john@example.com"></ion-input>
+        </ion-item>
+
+        <ion-item class="custom-input">
+          <ion-icon name="call-outline" slot="start"></ion-icon>
+          <ion-input label="Phone" labelPlacement="floating" [(ngModel)]="userData.phone" type="tel"
+            placeholder="10-digit number"></ion-input>
+        </ion-item>
+
+        <ion-item class="custom-input">
+          <ion-icon name="lock-closed-outline" slot="start"></ion-icon>
+          <ion-input label="Password" labelPlacement="floating" [(ngModel)]="userData.password" type="password"
+            placeholder="Create strong password"></ion-input>
+        </ion-item>
+      </ion-list>
+
+      <ion-button expand="block" (click)="nextStep()" class="next-btn">
+        Next Step
+        <ion-icon name="arrow-forward-outline" slot="end"></ion-icon>
+      </ion-button>
+    </div>
+
+    <!-- Step 2: Role Selection -->
+    <div *ngIf="step === 2" class="form-step anim-fade">
+      <div class="step-header">
+        <h2>Select Role</h2>
+        <p>How will you use WorkConnect?</p>
+      </div>
+
+      <div class="role-grid">
+        <div class="role-card" [class.selected]="userData.role === 'worker'" (click)="userData.role = 'worker'">
+          <ion-icon name="briefcase-outline"></ion-icon>
+          <h3>Worker</h3>
+          <p>I want to offer my skills</p>
+        </div>
+        <div class="role-card" [class.selected]="userData.role === 'customer'" (click)="userData.role = 'customer'">
+          <ion-icon name="people-outline"></ion-icon>
+          <h3>Customer</h3>
+          <p>I want to hire workers</p>
+        </div>
+      </div>
+
+      <div class="btn-group">
+        <ion-button fill="clear" (click)="prevStep()" color="medium">Back</ion-button>
+        <ion-button expand="block" (click)="nextStep()" [disabled]="!userData.role">Continue</ion-button>
+      </div>
+    </div>
+
+    <!-- Step 3: Identity Verification (Email & Phone) -->
+    <div *ngIf="step === 3" class="form-step anim-fade">
+      <div class="step-header">
+        <h2>Verification</h2>
+        <p>Confirm your contact details</p>
+      </div>
+
+      <div *ngIf="!emailVerified" class="verification-card">
+        <ion-icon name="mail-unread-outline" color="primary"></ion-icon>
+        <h3>Email OTP</h3>
+        <p>Code sent to {{userData.email}}</p>
+        <ion-item class="custom-input">
+          <ion-input label="Enter 6-digit OTP" labelPlacement="floating" [(ngModel)]="otp.email" maxlength="6"
+            type="number"></ion-input>
+        </ion-item>
+        <ion-button (click)="verifyEmail()" expand="block" mode="ios">Verify Email</ion-button>
+        <p class="resend" (click)="sendOTPs()">Resend Code</p>
+      </div>
+
+      <div *ngIf="emailVerified && !phoneVerified" class="verification-card">
+        <ion-icon name="chatbubbles-outline" color="success"></ion-icon>
+        <h3>Phone OTP</h3>
+        <p>Code sent to {{userData.phone}}</p>
+        <ion-item class="custom-input">
+          <ion-input label="Enter 6-digit OTP" labelPlacement="floating" [(ngModel)]="otp.phone" maxlength="6"
+            type="number"></ion-input>
+        </ion-item>
+        <ion-button (click)="verifyPhone()" expand="block" mode="ios">Verify Phone</ion-button>
+        <p class="resend" (click)="sendOTPs()">Resend Code</p>
+      </div>
+
+      <div class="btn-group">
+        <ion-button fill="clear" (click)="prevStep()" color="medium">Back</ion-button>
+      </div>
+    </div>
+
+    <!-- Step 3.5: Aadhaar Number (For Workers Only) -->
+    <div *ngIf="step === 4 && userData.role === 'worker'" class="form-step anim-fade">
+      <div class="step-header">
+        <h2>Government ID</h2>
+        <p>Enter your Aadhaar number to register as a worker</p>
+      </div>
+
+      <div class="verification-card">
+        <ion-icon name="id-card-outline" color="warning"></ion-icon>
+        <h3>Aadhaar Number</h3>
+
+        <ion-item class="custom-input">
+          <ion-input label="12-digit Aadhaar Number" labelPlacement="floating" [(ngModel)]="userData.aadhaarNumber"
+            maxlength="12" type="number" placeholder="1234 5678 9012"></ion-input>
+        </ion-item>
+
+        <ion-button expand="block" (click)="confirmAadhaar()"
+          [disabled]="!userData.aadhaarNumber || userData.aadhaarNumber.toString().length !== 12">
+          Continue
+        </ion-button>
+      </div>
+
+      <div class="btn-group">
+        <ion-button fill="clear" (click)="prevStep()" color="medium">Back</ion-button>
+      </div>
+    </div>
+
+    <!-- Step 4: Final Details (Address & Location) -->
+    <div *ngIf="(userData.role === 'customer' && step === 4) || (userData.role === 'worker' && step === 5)"
+      class="form-step anim-fade">
+      <div class="step-header">
+        <h2>Final Details</h2>
+        <p>Complete your profile</p>
+      </div>
+
+      <ion-list lines="none">
+        <ion-item class="custom-input">
+          <ion-input label="Address" labelPlacement="floating" [(ngModel)]="userData.address.street"
+            placeholder="Street/Area"></ion-input>
+        </ion-item>
+        <div class="row">
+          <ion-item class="custom-input half">
+            <ion-input label="City" labelPlacement="floating" [(ngModel)]="userData.address.city"></ion-input>
+          </ion-item>
+          <ion-item class="custom-input half">
+            <ion-input label="Pincode" labelPlacement="floating" [(ngModel)]="userData.address.pincode"
+              type="number"></ion-input>
+          </ion-item>
+        </div>
+
+        <div class="image-upload" (click)="selectImage()">
+          <ion-icon name="camera-outline"></ion-icon>
+          <p>{{profileImageName || 'Upload Profile Photo'}}</p>
+        </div>
+      </ion-list>
+
+      <ion-button expand="block" (click)="finishRegistration()" class="finish-btn" [disabled]="loading">
+        <ion-spinner *ngIf="loading" name="crescent"></ion-spinner>
+        <span *ngIf="!loading">Create My Account</span>
+      </ion-button>
+
+      <div class="btn-group">
+        <ion-button fill="clear" (click)="prevStep()" color="medium">Back</ion-button>
+      </div>
+    </div>
+  </div>
+</ion-content>

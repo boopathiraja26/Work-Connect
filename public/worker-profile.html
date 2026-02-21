@@ -1,770 +1,987 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>WorkConnect - Worker Profile</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0">
+    <title>WorkConnect · Worker Profile (Live API)</title>
+    <!-- Tailwind + Font Awesome + Google Fonts (no mock data, all real API calls) -->
+    <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&display=swap"
+        rel="stylesheet">
     <style>
         body {
+            font-family: 'Outfit', sans-serif;
+            background: radial-gradient(circle at top right, #1e293b, #0f172a, #020617);
             min-height: 100vh;
-            background: linear-gradient(135deg, #0f172a 0%, #1e293b 40%, #020617 100%);
-            color: #e5e7eb;
-            font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-        }
-        
-        .navbar {
-            background: rgba(15, 23, 42, 0.95);
-            border-bottom: 1px solid rgba(148, 163, 184, 0.2);
-            backdrop-filter: blur(16px);
-        }
-        
-        .worker-profile {
-            max-width: 1200px;
-            margin: 2rem auto;
-            padding: 0 20px;
-        }
-        
-        .profile-header {
-            background: radial-gradient(circle at top left, rgba(56,189,248,0.12), transparent 55%),
-                        radial-gradient(circle at bottom right, rgba(96,165,250,0.12), transparent 55%),
-                        rgba(15,23,42,0.9);
-            border-radius: 1.25rem;
-            border: 1px solid rgba(148,163,184,0.3);
-            box-shadow: 0 24px 60px rgba(15,23,42,0.8);
-            padding: 30px;
-            margin-bottom: 30px;
-            text-align: center;
-        }
-        
-        .profile-header h1 {
-            margin: 0 0 10px 0;
-            font-size: 2.5rem;
-            color: #e5e7eb;
-        }
-        
-        .profile-header p {
-            margin: 0;
-            opacity: 0.9;
-            font-size: 1.1rem;
-            color: #9ca3af;
-        }
-        
-        .profile-content {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 30px;
-            margin-bottom: 30px;
-        }
-        
-        .glass-card {
-            background: radial-gradient(circle at top left, rgba(56,189,248,0.12), transparent 55%),
-                        radial-gradient(circle at bottom right, rgba(96,165,250,0.12), transparent 55%),
-                        rgba(15,23,42,0.9);
-            border-radius: 1.25rem;
-            border: 1px solid rgba(148,163,184,0.3);
-            box-shadow: 0 24px 60px rgba(15,23,42,0.8);
-            padding: 25px;
-        }
-        
-        .profile-section {
-            background: radial-gradient(circle at top left, rgba(56,189,248,0.12), transparent 55%),
-                        radial-gradient(circle at bottom right, rgba(96,165,250,0.12), transparent 55%),
-                        rgba(15,23,42,0.9);
-            border-radius: 1.25rem;
-            border: 1px solid rgba(148,163,184,0.3);
-            box-shadow: 0 24px 60px rgba(15,23,42,0.8);
-            padding: 25px;
-        }
-        
-        .profile-section h2 {
-            color: #e5e7eb;
-            margin-bottom: 20px;
-            border-bottom: 2px solid rgba(56,189,248,0.5);
-            padding-bottom: 10px;
-            font-size: 1.3rem;
-        }
-        
-        .form-group {
-            margin-bottom: 20px;
-        }
-        
-        .form-group label {
-            display: block;
-            margin-bottom: 8px;
-            font-weight: 600;
-            color: #e5e7eb;
-        }
-        
-        .form-group input,
-        .form-group textarea,
-        .form-group select {
-            width: 100%;
-            padding: 12px;
-            background: rgba(15,23,42,0.8);
-            border: 1px solid rgba(148,163,184,0.3);
-            border-radius: 8px;
-            font-size: 16px;
-            color: #e5e7eb;
-            transition: all 0.3s ease;
-            box-sizing: border-box;
-        }
-        
-        .form-group input:focus,
-        .form-group textarea:focus,
-        .form-group select:focus {
-            outline: none;
-            border-color: #38bdf8;
-            box-shadow: 0 0 0 3px rgba(56,189,248,0.1);
-        }
-        
-        .form-group input::placeholder,
-        .form-group textarea::placeholder {
-            color: #6b7280;
-        }
-        
-        .skills-container {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 10px;
-            margin-top: 10px;
-        }
-        
-        .skill-tag {
-            background: linear-gradient(135deg, #38bdf8 0%, #60a5fa 100%);
-            color: white;
-            padding: 5px 12px;
-            border-radius: 20px;
-            font-size: 14px;
-            display: flex;
-            align-items: center;
-            gap: 5px;
-        }
-        
-        .skill-tag .remove-skill {
-            cursor: pointer;
-            font-weight: bold;
-        }
-        
-        .add-skill-btn {
-            background: #28a745;
-            color: white;
-            border: none;
-            padding: 8px 15px;
-            border-radius: 5px;
-            cursor: pointer;
-            font-size: 14px;
-            margin-top: 10px;
-        }
-        
-        .add-skill-btn:hover {
-            background: #218838;
-        }
-        
-        .save-btn {
-            background: linear-gradient(135deg, #38bdf8 0%, #60a5fa 100%);
-            color: white;
-            padding: 15px 30px;
-            border: none;
-            border-radius: 8px;
-            font-size: 18px;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            width: 100%;
-            font-weight: 600;
-        }
-        
-        .save-btn:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 10px 30px rgba(56,189,248,0.4);
-        }
-        
-        .orders-section {
-            background: radial-gradient(circle at top left, rgba(56,189,248,0.12), transparent 55%),
-                        radial-gradient(circle at bottom right, rgba(96,165,250,0.12), transparent 55%),
-                        rgba(15,23,42,0.9);
-            border-radius: 1.25rem;
-            border: 1px solid rgba(148,163,184,0.3);
-            box-shadow: 0 24px 60px rgba(15,23,42,0.8);
-            padding: 25px;
-            margin-bottom: 30px;
-        }
-        
-        .orders-section h2 {
-            color: #e5e7eb;
-            margin-bottom: 20px;
-            border-bottom: 2px solid rgba(56,189,248,0.5);
-            padding-bottom: 10px;
-        }
-        
-        .order-item {
-            background: rgba(31,41,55,0.6);
-            border-radius: 10px;
-            padding: 20px;
-            margin-bottom: 15px;
-            border-left: 4px solid #38bdf8;
-            transition: all 0.3s ease;
-        }
-        
-        .order-item:hover {
-            background: rgba(31,41,55,0.8);
-            transform: translateX(5px);
-        }
-        
-        .order-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 10px;
-        }
-        
-        .order-status {
-            padding: 5px 12px;
-            border-radius: 20px;
-            font-size: 12px;
-            font-weight: 600;
-        }
-        
-        .status-pending {
-            background: #fff3cd;
-            color: #856404;
-        }
-        
-        .status-accepted {
-            background: #d4edda;
-            color: #155724;
-        }
-        
-        .status-completed {
-            background: #cce5ff;
-            color: #004085;
-        }
-        
-        .order-details {
-            color: #9ca3af;
-            font-size: 14px;
-        }
-        
-        .order-details strong {
-            color: #e5e7eb;
         }
 
-        .nav-notifications {
-            position: relative;
-            margin-right: 0.75rem;
+        /* glassmorphism base */
+        .glass-card {
+            background: rgba(15, 23, 42, 0.6);
+            backdrop-filter: blur(12px) saturate(180%);
+            -webkit-backdrop-filter: blur(12px) saturate(180%);
+            border: 1px solid rgba(148, 163, 184, 0.15);
+            transition: all 0.25s ease;
         }
-        .nav-notifications button {
-            background: transparent;
-            border: none;
-            color: #9ca3af;
-            position: relative;
+
+        .glass-card:hover {
+            background: rgba(30, 41, 59, 0.8);
+            border-color: rgba(56, 189, 248, 0.4);
+            transform: translateY(-3px);
+            box-shadow: 0 20px 30px -10px rgba(0, 0, 0, 0.5), 0 0 0 1px rgba(56, 189, 248, 0.2);
         }
-        .nav-notifications button:hover {
-            color: #e5e7eb;
-        }
-        .nav-notifications .badge {
-            position: absolute;
-            top: -4px;
-            right: -4px;
-            background: #facc15;
-            color: #111827;
-            border-radius: 999px;
-            font-size: 10px;
-            padding: 0 4px;
-        }
-        .notifications-dropdown {
-            position: absolute;
-            right: 0;
-            top: 125%;
-            width: 280px;
-            background: rgba(15,23,42,0.98);
-            border-radius: 0.75rem;
-            border: 1px solid rgba(148,163,184,0.4);
-            box-shadow: 0 18px 45px rgba(15,23,42,0.95);
-            padding: 0.5rem 0;
+
+        /* notification dropdown */
+        .notif-dropdown {
             display: none;
-            z-index: 30;
+            position: absolute;
+            top: calc(100% + 8px);
+            right: 0;
+            width: 320px;
+            background: #1e293b;
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(148, 163, 184, 0.2);
+            border-radius: 24px;
+            box-shadow: 0 20px 40px -15px black;
+            z-index: 50;
         }
-        .notifications-dropdown.show {
+
+        .notif-dropdown.show {
             display: block;
         }
-        .notifications-dropdown h6 {
-            font-size: 0.8rem;
-            text-transform: uppercase;
-            letter-spacing: 0.08em;
-            padding: 0.4rem 0.9rem;
-            margin-bottom: 0.25rem;
-            border-bottom: 1px solid rgba(148,163,184,0.3);
-            color: #9ca3af;
-        }
-        .notifications-dropdown .notif-item {
-            padding: 0.35rem 0.9rem;
-            font-size: 0.8rem;
-            border-bottom: 1px solid rgba(30,41,59,0.9);
-        }
-        .notifications-dropdown .notif-item:last-child {
-            border-bottom: none;
-        }
-        .notifications-dropdown .notif-title {
+
+        /* skill tags */
+        .skill-tag {
+            background: rgba(56, 189, 248, 0.1);
+            border: 1px solid rgba(56, 189, 248, 0.3);
+            padding: 0.3rem 0.9rem;
+            border-radius: 9999px;
+            font-size: 0.85rem;
             font-weight: 600;
-            color: #e5e7eb;
-        }
-        .notifications-dropdown .notif-meta {
-            color: #9ca3af;
-            font-size: 0.72rem;
-        }
-        
-        .help-center {
-            background: radial-gradient(circle at top left, rgba(56,189,248,0.12), transparent 55%),
-                        radial-gradient(circle at bottom right, rgba(96,165,250,0.12), transparent 55%),
-                        rgba(15,23,42,0.9);
-            border-radius: 1.25rem;
-            border: 1px solid rgba(148,163,184,0.3);
-            box-shadow: 0 24px 60px rgba(15,23,42,0.8);
-            padding: 25px;
-            margin-bottom: 30px;
-        }
-        
-        .help-center h2 {
-            color: #e5e7eb;
-            margin-bottom: 20px;
-            border-bottom: 2px solid rgba(56,189,248,0.5);
-            padding-bottom: 10px;
-        }
-        
-        .help-item {
-            background: rgba(31,41,55,0.6);
-            border-radius: 0.9rem;
-            border: 1px solid rgba(55,65,81,0.9);
-            padding: 15px;
-            margin-bottom: 15px;
-            font-size: 0.9rem;
-        }
-        
-        .help-item h5 {
-            color: #e5e7eb;
-            margin-bottom: 10px;
-        }
-        
-        .help-item p {
-            color: #9ca3af;
-            margin: 5px 0;
-        }
-        
-        .whatsapp-btn {
-            background: linear-gradient(135deg, #25D366 0%, #128C7E 100%);
-            color: white;
-            padding: 12px 24px;
-            border: none;
-            border-radius: 8px;
-            font-size: 16px;
-            cursor: pointer;
-            transition: all 0.3s ease;
+            color: #38bdf8;
             display: inline-flex;
             align-items: center;
-            gap: 8px;
-            text-decoration: none;
-            font-weight: 600;
+            gap: 6px;
         }
-        
-        .whatsapp-btn:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 10px 30px rgba(37,211,102,0.4);
+
+        .remove-skill {
+            cursor: pointer;
+            width: 18px;
+            height: 18px;
+            background: rgba(239, 68, 68, 0.1);
+            border-radius: 50%;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            color: #ef4444;
+            font-size: 12px;
+            transition: 0.2s;
+        }
+
+        .remove-skill:hover {
+            background: #ef4444;
             color: white;
         }
-        
-        .action-buttons {
+
+        /* floating help button */
+        .floating-help {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            width: 60px;
+            height: 60px;
+            background: linear-gradient(145deg, #38bdf8, #818cf8);
+            border-radius: 9999px;
             display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 26px;
+            box-shadow: 0 12px 24px -8px rgba(56, 189, 248, 0.5);
+            transition: all 0.25s;
+            z-index: 1000;
+        }
+
+        .floating-help:hover {
+            transform: scale(1.1) rotate(5deg);
+            background: linear-gradient(145deg, #38bdf8, #a78bfa);
+            box-shadow: 0 20px 30px -5px #38bdf8;
+        }
+
+        /* order items */
+        .order-item {
+            background: rgba(15, 23, 42, 0.5);
+            backdrop-filter: blur(8px);
+            border: 1px solid rgba(148, 163, 184, 0.1);
+            border-radius: 24px;
+            padding: 1.5rem;
+            transition: all 0.25s;
+        }
+
+        .order-item:hover {
+            border-color: #38bdf8;
+            background: rgba(15, 23, 42, 0.8);
+            box-shadow: 0 20px 30px -15px black;
+        }
+
+        .review-item {
+            background: rgba(15, 23, 42, 0.4);
+            border-left: 4px solid #38bdf8;
+            border-radius: 16px;
+            padding: 1rem;
+        }
+
+        /* Welcome Animation Overlay */
+        #welcomeOverlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: #020617;
+            z-index: 10000;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            transition: opacity 1s ease-out, visibility 1s;
+        }
+
+        .welcome-video-container {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+            z-index: -1;
+        }
+
+        .welcome-video {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            opacity: 0.5;
+            filter: grayscale(30%) contrast(110%);
+        }
+
+        .welcome-content {
+            text-align: center;
+            animation: welcomeTitleScale 1.5s ease-out forwards;
+        }
+
+        @keyframes welcomeTitleScale {
+            0% {
+                transform: scale(0.8);
+                opacity: 0;
+                filter: blur(10px);
+            }
+
+            100% {
+                transform: scale(1);
+                opacity: 1;
+                filter: blur(0);
+            }
+        }
+
+        .welcome-title {
+            font-size: 4rem;
+            font-weight: 800;
+            margin-bottom: 1rem;
+            background: linear-gradient(to right, #38bdf8, #818cf8);
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+            letter-spacing: -2px;
+        }
+
+        .welcome-subtitle {
+            font-size: 1.5rem;
+            color: #94a3b8;
+            font-weight: 400;
+        }
+
+        .welcome-logo {
+            font-size: 1.25rem;
+            color: #38bdf8;
+            margin-top: 2rem;
+            display: flex;
+            align-items: center;
             gap: 10px;
-            margin-top: 15px;
-        }
-        
-        .action-btn {
-            padding: 8px 15px;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-            font-size: 14px;
-            transition: all 0.3s ease;
-        }
-        
-        .accept-btn {
-            background: #28a745;
-            color: white;
-        }
-        
-        .accept-btn:hover {
-            background: #218838;
-        }
-        
-        .complete-btn {
-            background: #007bff;
-            color: white;
-        }
-        
-        .complete-btn:hover {
-            background: #0056b3;
-        }
-        
-        .logout-btn {
-            background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
-            color: white;
-            padding: 12px 25px;
-            border: none;
-            border-radius: 8px;
-            font-size: 16px;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            margin-top: 20px;
-            font-weight: 600;
-        }
-        
-        .logout-btn:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 10px 30px rgba(239,68,68,0.4);
-        }
-        
-        .section-title {
-            font-weight: 700;
-            letter-spacing: 0.03em;
-            text-transform: uppercase;
-            font-size: 0.8rem;
-            color: #9ca3af;
-        }
-        
-        .account-info {
-            background: rgba(31,41,55,0.6);
-            padding: 20px;
-            border-radius: 10px;
-            margin-bottom: 15px;
-        }
-        
-        .account-info div {
-            margin-bottom: 10px;
-            color: #9ca3af;
-        }
-        
-        .account-info strong {
-            color: #e5e7eb;
-        }
-        
-        @media (max-width: 768px) {
-            .profile-content {
-                grid-template-columns: 1fr;
-            }
-            
-            .profile-header h1 {
-                font-size: 2rem;
-            }
-            
-            .order-header {
-                flex-direction: column;
-                align-items: flex-start;
-                gap: 10px;
-            }
+            justify-content: center;
+            opacity: 0.8;
         }
     </style>
+    <script src="config.js"></script>
 </head>
-<body>
-    <!-- Navigation -->
-    <nav class="navbar navbar-expand-lg sticky-top">
-        <div class="container-fluid px-4">
-            <a class="navbar-brand fw-bold" href="worker-profile.html" style="color: #38bdf8;">
-                <i class="fas fa-tools me-2"></i>WorkConnect
+
+<body class="text-[#f1f5f9] antialiased overflow-hidden">
+    <!-- Welcome Animation Overlay -->
+    <div id="welcomeOverlay">
+        <div class="welcome-video-container">
+            <video class="welcome-video" autoplay muted playsinline id="welcomeVideo">
+                <source
+                    src="https://assets.mixkit.co/videos/preview/mixkit-software-developer-working-on-code-screen-close-up-34395-large.mp4"
+                    type="video/mp4">
+            </video>
+        </div>
+        <div class="welcome-content">
+            <h1 class="welcome-title" id="welcomeUserTitle">Welcome back</h1>
+            <p class="welcome-subtitle">Your professional dashboard is ready.</p>
+            <div class="welcome-logo">
+                <i class="fas fa-tools"></i>
+                <span>WorkConnect Business Premium</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- FULL WIDTH NAVBAR (real data, no mock) -->
+    <nav
+        class="w-full bg-[#0f172a]/80 backdrop-blur-md border-b border-white/10 sticky top-0 z-[100] px-4 sm:px-6 lg:px-8 py-2">
+        <div class="max-w-7xl mx-auto flex items-center justify-between flex-wrap">
+            <!-- logo -->
+            <a href="worker-profile.html"
+                class="flex items-center gap-2 text-2xl font-extrabold bg-gradient-to-r from-[#38bdf8] to-[#a78bfa] bg-clip-text text-transparent hover:scale-105 transition">
+                <i class="fas fa-tools text-[#38bdf8]"></i> WorkConnect
             </a>
-            <div class="navbar-nav ms-auto">
-                <div class="nav-notifications">
-                    <button type="button" id="workerNotifBtn">
-                        <i class="fas fa-bell"></i>
-                        <span class="badge" id="workerNotifCount" style="display:none;">0</span>
-                    </button>
-                    <div class="notifications-dropdown" id="workerNotifDropdown">
-                        <h6>Notifications</h6>
-                        <div id="workerNotifList"></div>
-                    </div>
-                </div>
-                <span class="nav-link" style="color: #9ca3af;" id="navUser">Worker</span>
-                <a class="nav-link" href="worker-orders.html">Orders</a>
-                <a class="nav-link" href="worker-payments.html">Payments</a>
-                <button class="btn btn-outline-light btn-sm ms-3" onclick="logout()">
-                    <i class="fas fa-sign-out-alt me-2"></i>Logout
+
+            <!-- mobile toggle -->
+            <div class="block lg:hidden">
+                <button id="mobileMenuBtn" class="text-white p-2 focus:outline-none">
+                    <i class="fas fa-bars text-2xl"></i>
                 </button>
+            </div>
+
+            <!-- nav links (hidden on mobile, toggle with js) -->
+            <div id="navLinks" class="hidden lg:flex lg:items-center lg:gap-1 w-full lg:w-auto mt-4 lg:mt-0">
+                <div class="flex flex-col lg:flex-row items-stretch lg:items-center gap-1">
+                    <a href="worker-profile.html"
+                        class="nav-link text-[#94a3b8] hover:text-white px-4 py-2 rounded-full hover:bg-white/5 transition flex items-center gap-2"><i
+                            class="fas fa-id-card"></i> Profile</a>
+                    <a href="worker-orders.html"
+                        class="nav-link text-[#94a3b8] hover:text-white px-4 py-2 rounded-full hover:bg-white/5 transition flex items-center gap-2"><i
+                            class="fas fa-clipboard-list"></i> Orders</a>
+                    <a href="worker-payments.html"
+                        class="nav-link text-[#94a3b8] hover:text-white px-4 py-2 rounded-full hover:bg-white/5 transition flex items-center gap-2"><i
+                            class="fas fa-credit-card"></i> Payments</a>
+                    <a href="worker-help.html"
+                        class="nav-link text-[#94a3b8] hover:text-white px-4 py-2 rounded-full hover:bg-white/5 transition flex items-center gap-2"><i
+                            class="fas fa-headset"></i> Help</a>
+
+                    <!-- notifications dropdown (real data) -->
+                    <div class="relative inline-block">
+                        <button id="notifToggle"
+                            class="relative text-[#94a3b8] hover:text-white px-3 py-2 rounded-full hover:bg-white/5 transition">
+                            <i class="fas fa-bell text-xl"></i>
+                            <span id="notifBadge"
+                                class="absolute -top-1 -right-1 bg-red-500 text-white text-xs rounded-full min-w-[18px] h-[18px] flex items-center justify-center px-1 hidden">0</span>
+                        </button>
+                        <div id="notifDropdown" class="notif-dropdown">
+                            <div class="p-3 border-b border-white/10 flex justify-between items-center">
+                                <span class="font-semibold">Notifications</span>
+                            </div>
+                            <div id="notifList" class="max-h-80 overflow-y-auto">
+                                <!-- loaded from API -->
+                                <div class="p-4 text-sm text-[#94a3b8] text-center">Loading...</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- worker name from live user -->
+                    <a href="#"
+                        class="flex items-center gap-2 text-[#94a3b8] hover:text-white px-3 py-2 rounded-full hover:bg-white/5 transition">
+                        <i class="fas fa-user-hard-hat text-[#38bdf8]"></i>
+                        <span id="navWorkerName">Worker</span>
+                    </a>
+
+                    <!-- logout button (real) -->
+                    <button onclick="logout()"
+                        class="ml-2 flex items-center gap-2 bg-red-500/10 hover:bg-red-500 text-red-400 hover:text-white border border-red-500/20 rounded-full px-4 py-2 text-sm font-medium transition">
+                        <i class="fas fa-sign-out-alt"></i> Logout
+                    </button>
+                </div>
             </div>
         </div>
     </nav>
 
-    <div class="worker-profile">
-        <div class="profile-header">
-            <h1><i class="fas fa-user-hard-hat me-2"></i>Worker Profile</h1>
-            <p>Manage your profile, view orders, and track payments</p>
+    <!-- MAIN CONTENT (all data from API, no mock) -->
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 md:py-12">
+        <!-- header -->
+        <div class="text-center mb-10 md:mb-14">
+            <h1
+                class="text-4xl md:text-5xl font-extrabold bg-gradient-to-r from-[#f1f5f9] to-[#94a3b8] bg-clip-text text-transparent">
+                Worker Profile</h1>
+            <p class="text-[#94a3b8] max-w-2xl mx-auto mt-4 text-base md:text-lg">Manage your professional info and get
+                more orders.</p>
         </div>
-            
-            <div class="profile-content">
-                <div class="profile-section">
-                    <h2>Personal Information</h2>
-                    <form id="profileForm">
-                        <div class="form-group">
-                            <label for="name">Full Name</label>
-                            <input type="text" id="name" name="name" placeholder="Enter your full name">
-                        </div>
-                        
-                        <div class="form-group">
-                            <label for="profileImage">Profile Image</label>
-                            <div id="profileImagePreview" style="margin-bottom:10px;"></div>
-                            <input type="file" id="profileImage" name="profileImage" accept="image/*">
-                        </div>
-                        <div class="form-group">
-                            <label>Address</label>
-                            <input type="text" id="street" placeholder="Street">
-                            <input type="text" id="city" placeholder="City">
-                            <input type="text" id="state" placeholder="State">
-                            <input type="text" id="pincode" placeholder="Pincode">
-                        </div>
-                        <div class="form-group">
-                            <label>Location</label>
-                            <input type="url" id="locationLink" placeholder="Enter Google Maps link or location URL">
-                            <small style="color: #666; display: block; margin-top: 5px;">Example: https://maps.google.com/?q=latitude,longitude or any location link</small>
-                            <div id="map" style="height: 250px; margin-top: 10px; border-radius: 8px;"></div>
-                        </div>
-                        
-                        <div class="form-group">
-                            <label for="upiId">UPI ID (for receiving payments)</label>
-                            <input type="text" id="upiId" name="upiId" placeholder="e.g. yourname@upi">
+
+        <!-- responsive grid -->
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6 lg:gap-8">
+            <!-- LEFT COL (2/3) - main form -->
+            <div class="md:col-span-2 space-y-6">
+                <!-- Personal Information Card (live data) -->
+                <div class="glass-card rounded-3xl p-6 md:p-8">
+                    <h2 class="text-2xl font-bold mb-6 flex items-center gap-3"><i
+                            class="fas fa-user-circle text-[#38bdf8]"></i> Personal Information</h2>
+                    <form id="profileForm" class="space-y-5">
+                        <div>
+                            <label class="block text-sm font-semibold text-[#94a3b8] mb-1">Full Name</label>
+                            <input type="text" id="name" name="name" placeholder="Enter your full name" required
+                                class="w-full bg-[#0f172a]/60 border border-white/10 rounded-xl px-4 py-3 text-white focus:ring-2 focus:ring-[#38bdf8]/50 outline-none transition">
                         </div>
 
-                        <div class="form-group">
-                            <label for="skills">Skills</label>
-                            <div class="skills-container" id="skillsContainer">
-                                <!-- Skills will be added here -->
+                        <div>
+                            <label class="block text-sm font-semibold text-[#94a3b8] mb-1">Profile Image</label>
+                            <div id="profileImagePreview" class="mb-3 flex items-center gap-3 flex-wrap"></div>
+                            <input type="file" id="profileImage" name="profileImage" accept="image/*"
+                                class="w-full text-sm bg-[#0f172a]/60 border border-white/10 rounded-xl py-2 px-3 file:mr-3 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-[#38bdf8]/20 file:text-[#38bdf8] hover:file:bg-[#38bdf8]/30">
+                        </div>
+
+                        <!-- address fields -->
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                            <input type="text" id="street" placeholder="Street"
+                                class="bg-[#0f172a]/60 border border-white/10 rounded-xl px-4 py-3">
+                            <input type="text" id="city" placeholder="City"
+                                class="bg-[#0f172a]/60 border border-white/10 rounded-xl px-4 py-3">
+                            <input type="text" id="state" placeholder="State"
+                                class="bg-[#0f172a]/60 border border-white/10 rounded-xl px-4 py-3">
+                            <input type="text" id="pincode" placeholder="Pincode"
+                                class="bg-[#0f172a]/60 border border-white/10 rounded-xl px-4 py-3">
+                        </div>
+
+                        <!-- location with map -->
+                        <div>
+                            <label class="block text-sm font-semibold text-[#94a3b8] mb-1">Location (Google Maps
+                                link)</label>
+                            <input type="url" id="locationLink" name="locationLink"
+                                placeholder="https://maps.google.com/?q=lat,lng"
+                                class="w-full bg-[#0f172a]/60 border border-white/10 rounded-xl px-4 py-3">
+                            <p class="text-xs text-[#94a3b8] mt-1">Drag marker or click map to update</p>
+                            <div id="map"
+                                class="w-full h-56 md:h-64 mt-3 rounded-2xl border border-white/10 bg-[#0f1a2f]"></div>
+                        </div>
+
+                        <!-- UPI ID -->
+                        <div>
+                            <label class="block text-sm font-semibold text-[#94a3b8] mb-1">UPI ID (payments)</label>
+                            <input type="text" id="upiId" name="upiId" placeholder="yourname@upi"
+                                class="w-full bg-[#0f172a]/60 border border-white/10 rounded-xl px-4 py-3">
+                        </div>
+
+                        <!-- Skills -->
+                        <div>
+                            <label class="block text-sm font-semibold text-[#94a3b8] mb-2">Skills</label>
+                            <div id="skillsContainer" class="flex flex-wrap gap-2 mb-3"></div>
+                            <div class="flex gap-2">
+                                <input type="text" id="skillInput" placeholder="e.g., Plumbing"
+                                    class="flex-1 bg-[#0f172a]/60 border border-white/10 rounded-xl px-4 py-2">
+                                <button type="button" onclick="addSkill()"
+                                    class="bg-[#38bdf8]/20 hover:bg-[#38bdf8] text-[#38bdf8] hover:text-white px-5 py-2 rounded-xl font-medium transition border border-[#38bdf8]/30">Add</button>
                             </div>
-                            <input type="text" id="skillInput" placeholder="Add a skill and press Enter">
-                            <button type="button" class="add-skill-btn" onclick="addSkill()">Add Skill</button>
                         </div>
-                        
-                        <div class="form-group">
-                            <label for="experience">Experience (years)</label>
-                            <input type="number" id="experience" name="experience" min="0" max="50" placeholder="Enter years of experience">
+
+                        <!-- experience, rate -->
+                        <div class="grid grid-cols-2 gap-4">
+                            <div><label class="text-sm text-[#94a3b8]">Experience (years)</label><input type="number"
+                                    id="experience" name="experience" min="0"
+                                    class="w-full bg-[#0f172a]/60 border rounded-xl px-4 py-3 mt-1"></div>
+                            <div><label class="text-sm text-[#94a3b8]">Hourly rate ($)</label><input type="number"
+                                    step="0.01" id="hourlyRate" name="hourlyRate"
+                                    class="w-full bg-[#0f172a]/60 border rounded-xl px-4 py-3 mt-1"></div>
                         </div>
-                        
-                        <div class="form-group">
-                            <label for="hourlyRate">Hourly Rate ($)</label>
-                            <input type="number" id="hourlyRate" name="hourlyRate" min="0" step="0.01" placeholder="Enter your hourly rate">
-                        </div>
-                        
-                        <div class="form-group">
-                            <label for="availability">Availability</label>
-                            <select id="availability" name="availability">
+
+                        <!-- availability -->
+                        <div>
+                            <label class="text-sm text-[#94a3b8]">Availability</label>
+                            <select id="availability" name="availability"
+                                class="w-full bg-[#0f172a]/60 border rounded-xl px-4 py-3 mt-1">
                                 <option value="Available">Available</option>
                                 <option value="Busy">Busy</option>
                                 <option value="Unavailable">Unavailable</option>
                             </select>
                         </div>
-                        
-                        <div class="form-group">
-                            <label for="description">Description</label>
-                            <textarea id="description" name="description" rows="4" placeholder="Describe your services and expertise"></textarea>
+
+                        <!-- description -->
+                        <div>
+                            <label class="text-sm text-[#94a3b8]">Description</label>
+                            <textarea id="description" name="description" rows="4"
+                                class="w-full bg-[#0f172a]/60 border rounded-xl px-4 py-3"
+                                placeholder="Describe your services..."></textarea>
                         </div>
-                        
-                        <button type="submit" class="save-btn">Save Profile</button>
+
+                        <button type="submit"
+                            class="w-full bg-gradient-to-r from-[#38bdf8] to-[#3b82f6] hover:from-[#38bdf8] hover:to-[#4f46e5] text-white font-bold py-4 rounded-xl shadow-lg hover:shadow-[#38bdf8]/40 transition-all transform hover:scale-[1.01]">Save
+                            Profile</button>
                     </form>
                 </div>
-                
-                <div class="profile-section">
-                    <h2>Account Information</h2>
-                    <div id="accountInfo">
-                        <!-- Account info will be populated here -->
+
+                <!-- Work Portfolio -->
+                <div class="glass-card rounded-3xl p-6 md:p-8">
+                    <h2 class="text-2xl font-bold mb-6 flex items-center gap-3">
+                        <i class="fas fa-images text-[#38bdf8]"></i> Work Portfolio
+                    </h2>
+                    <div id="portfolioGrid" class="grid grid-cols-1 sm:grid-cols-3 gap-6 mb-8">
+                        <!-- Portfolio items will be loaded here -->
+                        <div id="portfolioEmptyState"
+                            class="text-[#94a3b8] col-span-full py-12 text-center bg-[#0f172a]/40 rounded-3xl border border-white/5">
+                            <i class="fas fa-spinner fa-spin text-4xl mb-3 block opacity-20"></i>
+                            Loading your portfolio...
+                        </div>
+                    </div>
+
+                    <!-- Portfolio Pagination -->
+                    <div id="portfolioPagination" class="flex justify-center items-center gap-4 mb-8 hidden">
+                        <button onclick="changePortfolioPage(-1)" id="prevPortfolioBtn"
+                            class="w-10 h-10 rounded-full bg-white/5 border border-white/10 flex items-center justify-center hover:bg-[#38bdf8] hover:border-[#38bdf8] transition-all disabled:opacity-20 disabled:pointer-events-none">
+                            <i class="fas fa-chevron-left text-sm"></i>
+                        </button>
+                        <span id="portfolioPageInfo" class="text-sm font-medium text-[#94a3b8]">Page 1 of 1</span>
+                        <button onclick="changePortfolioPage(1)" id="nextPortfolioBtn"
+                            class="w-10 h-10 rounded-full bg-white/5 border border-white/10 flex items-center justify-center hover:bg-[#38bdf8] hover:border-[#38bdf8] transition-all disabled:opacity-20 disabled:pointer-events-none">
+                            <i class="fas fa-chevron-right text-sm"></i>
+                        </button>
+                    </div>
+
+                    <div class="pt-6 border-t border-white/5">
+                        <label class="block text-sm font-semibold text-[#94a3b8] mb-2 text-center">Add Project
+                            Photo</label>
+                        <div class="flex justify-center">
+                            <label
+                                class="cursor-pointer bg-[#38bdf8]/10 hover:bg-[#38bdf8]/20 text-[#38bdf8] border border-dashed border-[#38bdf8]/40 rounded-2xl px-8 py-6 transition flex flex-col items-center gap-2 w-full max-w-sm">
+                                <i class="fas fa-cloud-upload-alt text-2xl"></i>
+                                <span class="font-medium">Choose a photo</span>
+                                <input type="file" class="hidden" accept="image/*"
+                                    onchange="uploadPortfolioPhoto(this)">
+                            </label>
+                        </div>
                     </div>
                 </div>
-                <div class="profile-section">
-                    <h2>Ratings & Reviews</h2>
-                    <div id="averageRating" style="font-size:1.2em;margin-bottom:10px;"></div>
-                    <div id="reviewsList"></div>
-                </div>
-            </div>
-            
-            <div class="orders-section">
-                <h2><i class="fas fa-clipboard-list me-2"></i>My Orders</h2>
-                <div id="ordersList">
-                    <!-- Orders will be populated here -->
-                </div>
-            </div>
-            
-            <!-- Help Center Section -->
-            <div class="help-center">
-                <h2><i class="fas fa-question-circle me-2"></i>Help Center</h2>
-                <div class="help-item">
-                    <h5><i class="fas fa-info-circle text-info me-2"></i>Getting Started</h5>
-                    <p>Complete your profile with skills, experience, and UPI ID to start receiving orders. Make sure your availability is set to "Available" to appear in customer searches.</p>
-                </div>
-                <div class="help-item">
-                    <h5><i class="fas fa-money-bill-wave text-success me-2"></i>Payment & Earnings</h5>
-                    <p>Customers will pay you directly via UPI using your UPI ID. Once payment is received, you'll see a green success message with the payment screenshot (if uploaded by customer) in your orders list.</p>
-                </div>
-                <div class="help-item">
-                    <h5><i class="fas fa-star text-warning me-2"></i>Ratings & Reviews</h5>
-                    <p>Maintain high ratings by completing orders on time and providing quality service. Good ratings help you get more orders from customers.</p>
-                </div>
-                <div class="help-item">
-                    <h5><i class="fas fa-headset text-primary me-2"></i>Need Support?</h5>
-                    <p>If you have any questions or face issues, contact our support team:</p>
-                    <div class="mt-3">
-                        <a href="https://wa.me/919524785164?text=Hello%20WorkConnect%20Support,%20I%20need%20help%20with%20my%20worker%20account" 
-                           target="_blank" 
-                           class="whatsapp-btn">
-                            <i class="fab fa-whatsapp"></i>Contact via WhatsApp
+
+                <!-- Work History (real orders) -->
+                <div class="glass-card rounded-3xl p-6 md:p-8">
+                    <h2 class="text-2xl font-bold mb-5 flex items-center gap-2"><i
+                            class="fas fa-briefcase text-[#38bdf8]"></i> Work History</h2>
+                    <div id="ordersList" class="space-y-4">
+                        <!-- dynamic from API -->
+                        <div class="text-center py-8 text-[#94a3b8]">Loading orders...</div>
+                    </div>
+                    <div class="mt-6 text-center">
+                        <a href="worker-orders.html" id="viewAllOrdersBtn"
+                            class="inline-flex items-center gap-2 text-[#38bdf8] hover:text-white font-medium transition-colors"
+                            style="display:none;">
+                            <span>View All Orders</span> <i class="fas fa-arrow-right"></i>
                         </a>
                     </div>
-                    <p class="mt-3 mb-0">
-                        <strong>Email:</strong> <a href="mailto:support@workconnect.local" style="color: #38bdf8;">support@workconnect.local</a><br>
-                        <strong>Phone:</strong> +91-95247-85164<br>
-                        <strong>Support Hours:</strong> 9 AM – 7 PM (Mon–Sat)
-                    </p>
                 </div>
             </div>
-            
-            <div style="text-align: center;">
-                <button class="logout-btn" onclick="logout()">
-                    <i class="fas fa-sign-out-alt me-2"></i>Logout
-                </button>
+
+            <!-- RIGHT COL (1/3) - account, reviews, help -->
+            <div class="space-y-6">
+                <!-- Account Info (live) -->
+                <div class="glass-card rounded-3xl p-6">
+                    <h2 class="text-xl font-bold mb-4 flex items-center gap-2"><i
+                            class="fas fa-shield-alt text-[#38bdf8]"></i> Account</h2>
+                    <div id="accountInfo" class="space-y-3 text-sm">
+                        <!-- filled by API -->
+                        <div class="text-[#94a3b8]">Loading...</div>
+                    </div>
+                </div>
+
+                <!-- Ratings & Reviews (live) -->
+                <div class="glass-card rounded-3xl p-6">
+                    <h2 class="text-xl font-bold mb-4 flex items-center gap-2"><i
+                            class="fas fa-star text-yellow-400"></i> Reviews</h2>
+                    <div id="averageRating" class="mb-3"></div>
+                    <div id="reviewsList" class="space-y-3 max-h-80 overflow-auto pr-1">
+                        <!-- from API -->
+                    </div>
+                </div>
+
+                <!-- Help Center snippet (static, but links to real help) -->
+                <div class="glass-card rounded-3xl p-6 bg-gradient-to-br from-[#1e293b]/80 to-[#0f172a]/80">
+                    <h3 class="font-bold flex items-center gap-2"><i class="fas fa-circle-info text-[#38bdf8]"></i>
+                        Quick tips</h3>
+                    <ul class="mt-3 space-y-2 text-sm text-[#94a3b8]">
+                        <li class="flex gap-2"><i class="fas fa-check-circle text-[#10b981] mt-1"></i> Set availability
+                            to "Available" to get orders</li>
+                        <li class="flex gap-2"><i class="fas fa-check-circle text-[#10b981] mt-1"></i> Add your UPI ID
+                            to receive payments</li>
+                        <li class="flex gap-2"><i class="fas fa-check-circle text-[#10b981] mt-1"></i> Update skills to
+                            appear in more searches</li>
+                    </ul>
+                    <div class="mt-5">
+                        <a href="https://wa.me/919524785164" target="_blank"
+                            class="flex items-center justify-center gap-2 bg-emerald-600/80 hover:bg-emerald-600 text-white rounded-full py-3 transition"><i
+                                class="fab fa-whatsapp"></i> WhatsApp support</a>
+                    </div>
+                </div>
             </div>
+        </div>
+
+        <!-- bottom logout (optional) -->
+        <div class="text-center mt-12">
+            <button onclick="logout()"
+                class="bg-red-500/10 hover:bg-red-500 text-red-400 hover:text-white border border-red-500/20 rounded-full px-8 py-3 font-medium transition inline-flex items-center gap-2"><i
+                    class="fas fa-sign-out-alt"></i> Logout from WorkConnect</button>
         </div>
     </div>
 
-    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyB41DRUbKWJHPxaFjMAwdrzWzbVKartNGg&callback=initMap" async defer></script>
+    <!-- Floating Help -->
+    <a href="worker-help.html" class="floating-help"><i class="fas fa-headset"></i></a>
+
+    <!-- Leaflet Local Search (Alternative to Google Maps) -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+
     <script>
+        // ---------- REAL API INTEGRATION (NO MOCK DATA) ----------
         let currentUser = null;
         let skills = [];
         let map, marker;
+        let liveLocationInterval = null;
+        let currentPortfolioPage = 1;
+        let allPortfolioItems = [];
+        const itemsPerPage = 3;
 
-        // Check if user is logged in and is a worker
-        document.addEventListener('DOMContentLoaded', function() {
-            let user;
+        // Authentication check & load everything
+        document.addEventListener('DOMContentLoaded', async function () {
             try {
                 const userStr = localStorage.getItem('user');
-                user = userStr ? JSON.parse(userStr) : null;
+                if (!userStr) throw new Error('No user');
+                currentUser = JSON.parse(userStr);
+                if (currentUser.role !== 'worker') window.location.href = 'dashboard.html';
             } catch (e) {
-                user = null;
-            }
-            if (!user) {
                 window.location.href = 'login.html';
                 return;
             }
-            
-            if (user.role !== 'worker') {
-                window.location.href = 'dashboard.html';
-                return;
+
+            // update navbar name
+            const firstName = (currentUser.name || currentUser.username).split(' ')[0];
+            const navName = document.getElementById('navWorkerName');
+            if (navName) navName.textContent = firstName;
+
+            // Personalize welcome animation
+            const welcomeTitle = document.getElementById('welcomeUserTitle');
+            if (welcomeTitle) {
+                welcomeTitle.textContent = `Welcome back, ${firstName}`;
             }
-            
-            currentUser = user;
-            loadProfile();
-            loadOrders();
-            displayAccountInfo();
-            initMap(); // Initialize map on page load
+
+            // Hide welcome overlay after animation
+            const welcomeOverlay = document.getElementById('welcomeOverlay');
+            if (welcomeOverlay) {
+                setTimeout(() => {
+                    welcomeOverlay.style.opacity = '0';
+                    welcomeOverlay.style.visibility = 'hidden';
+                    document.body.style.overflow = 'auto'; // Restore scrolling
+                }, 3500);
+            }
+
+            // load all real data
+            await Promise.all([
+                loadProfile(),
+                loadOrders(),
+                loadNotifications(),
+                displayAccountInfo()
+            ]);
+
+            // init map after profile load
+            initMap();
+
+            // notification toggle
+            const notifBtn = document.getElementById('notifToggle');
+            const notifDrop = document.getElementById('notifDropdown');
+            if (notifBtn) {
+                notifBtn.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    notifDrop.classList.toggle('show');
+                });
+                document.addEventListener('click', () => notifDrop.classList.remove('show'));
+            }
+
+            // mobile menu toggle
+            document.getElementById('mobileMenuBtn')?.addEventListener('click', function () {
+                document.getElementById('navLinks').classList.toggle('hidden');
+            });
+
+            // refresh notifications every 10s (real)
+            setInterval(loadNotifications, 10000);
         });
-        
+
+        // Display account info from currentUser (real)
         function displayAccountInfo() {
-            const accountInfo = document.getElementById('accountInfo');
-            accountInfo.innerHTML = `
-                <div class="account-info">
-                    <div><strong>Username:</strong> ${currentUser.username}</div>
-                    <div><strong>Email:</strong> ${currentUser.email}</div>
-                    <div><strong>Phone:</strong> ${currentUser.phone}</div>
-                    <div><strong>Role:</strong> ${currentUser.role.charAt(0).toUpperCase() + currentUser.role.slice(1)}</div>
-                    ${currentUser.aadhaarNumber ? `<div><strong>Aadhaar:</strong> ${currentUser.aadhaarNumber}</div>` : ''}
-                    <div><strong>Member Since:</strong> ${new Date(currentUser.createdAt).toLocaleDateString()}</div>
-                </div>
+            const acc = document.getElementById('accountInfo');
+            if (!acc || !currentUser) return;
+            acc.innerHTML = `
+                <div><span class="text-[#94a3b8]">Username:</span> <span class="text-white">${currentUser.username || ''}</span></div>
+                <div><span class="text-[#94a3b8]">Email:</span> ${currentUser.email || ''}</div>
+                <div><span class="text-[#94a3b8]">Phone:</span> ${currentUser.phone || ''}</div>
+                <div><span class="text-[#94a3b8]">Aadhaar:</span> ${currentUser.aadhaarNumber || '—'}</div>
+                <div><span class="text-[#94a3b8]">Member since:</span> ${currentUser.createdAt ? new Date(currentUser.createdAt).toLocaleDateString() : ''}</div>
             `;
-            
-            // Update navbar user display
-            document.getElementById('navUser').textContent = 
-                (currentUser.name || currentUser.username) + ' (Worker)';
         }
-        
+
+        // Load worker profile from API (GET /api/worker/{id})
         async function loadProfile() {
             try {
-                const response = await fetch(`/api/worker/${currentUser.id}`);
-                if (response.ok) {
-                    const worker = await response.json();
-                    // Populate form fields
-                    document.getElementById('name').value = worker.name || '';
-                    document.getElementById('experience').value = worker.experience || '';
-                    document.getElementById('hourlyRate').value = worker.hourlyRate || '';
-                    document.getElementById('availability').value = worker.availability || 'Available';
-                    document.getElementById('description').value = worker.description || '';
-                    document.getElementById('upiId').value = worker.upiId || '';
-                    // Load skills
-                    skills = worker.skills || [];
-                    displaySkills();
-                    // Profile image preview
-                    const previewDiv = document.getElementById('profileImagePreview');
-                    if (worker.profileImage) {
-                        previewDiv.innerHTML = `<img src="${worker.profileImage}" alt="Profile Image" style="max-width:120px;max-height:120px;border-radius:50%;border:2px solid rgba(56,189,248,0.5);">`;
-                    } else {
-                        previewDiv.innerHTML = '<span style="color:#6b7280;">No image</span>';
-                    }
-                    // Address
-                    if (worker.address) {
-                        document.getElementById('street').value = worker.address.street || '';
-                        document.getElementById('city').value = worker.address.city || '';
-                        document.getElementById('state').value = worker.address.state || '';
-                        document.getElementById('pincode').value = worker.address.pincode || '';
-                    }
-                    // Location
-                    if (worker.location) {
-                        document.getElementById('locationLink').value = worker.location.link || '';
-                        // Set marker position on load if lat/lng are present
-                        if (worker.location.latitude && worker.location.longitude) {
-                            marker.setPosition({ lat: parseFloat(worker.location.latitude), lng: parseFloat(worker.location.longitude) });
-                            map.setCenter({ lat: parseFloat(worker.location.latitude), lng: parseFloat(worker.location.longitude) });
-                        }
-                    }
-                    // Show average rating
-                    document.getElementById('averageRating').innerHTML = worker.averageRating ? 
-                        `<div style="background: rgba(31,41,55,0.6); padding: 15px; border-radius: 8px; border-left: 3px solid #fbbf24;">
-                            <span style="color:#fbbf24;font-size:1.5em;font-weight:bold;">${'★'.repeat(Math.round(worker.averageRating))}</span>
-                            <span style="color:#e5e7eb;margin-left:10px;font-size:1.2em;"><strong>${worker.averageRating}</strong></span>
-                            <span style="color:#9ca3af;margin-left:5px;">(${worker.reviewsCount} reviews)</span>
-                        </div>` : 
-                        '<p style="color:#6b7280;">No ratings yet.</p>';
-                    // Load and display reviews
-                    loadReviews(worker.id);
+                const res = await fetch(getApiUrl(`/api/worker/${currentUser.id}`));
+                if (!res.ok) throw new Error('Failed to load profile');
+                const worker = await res.json();
+
+                // fill form fields
+                document.getElementById('name').value = worker.name || '';
+                document.getElementById('experience').value = worker.experience || '';
+                document.getElementById('hourlyRate').value = worker.hourlyRate || '';
+                document.getElementById('availability').value = worker.availability || 'Available';
+                document.getElementById('description').value = worker.description || '';
+                document.getElementById('upiId').value = worker.upiId || '';
+
+                // skills
+                skills = worker.skills || [];
+                displaySkills();
+
+                // profile image preview
+                const previewDiv = document.getElementById('profileImagePreview');
+                if (worker.profileImage) {
+                    previewDiv.innerHTML = `<img src="${worker.profileImage || 'https://placehold.co/100x100?text=Avatar'}" alt="Profile" class="w-16 h-16 rounded-full border-2 border-[#38bdf8]/50 object-cover">`;
+                } else {
+                    previewDiv.innerHTML = '<span class="text-[#6b7280] text-sm">No image</span>';
                 }
-            } catch (error) {
-                console.error('Error loading profile:', error);
+
+                // address
+                if (worker.address) {
+                    document.getElementById('street').value = worker.address.street || '';
+                    document.getElementById('city').value = worker.address.city || '';
+                    document.getElementById('state').value = worker.address.state || '';
+                    document.getElementById('pincode').value = worker.address.pincode || '';
+                }
+
+                // location link & map marker
+                if (worker.location) {
+                    document.getElementById('locationLink').value = worker.location.link || '';
+                    if (worker.location.latitude && worker.location.longitude && map && marker) {
+                        const pos = [parseFloat(worker.location.latitude), parseFloat(worker.location.longitude)];
+                        marker.setLatLng(pos);
+                        map.setView(pos, 15);
+                    }
+                }
+
+                // average rating display
+                const avgRatingDiv = document.getElementById('averageRating');
+                if (worker.averageRating) {
+                    avgRatingDiv.innerHTML = `<div class="text-yellow-400 text-xl font-bold">★ ${worker.averageRating.toFixed(1)} <span class="text-sm text-[#94a3b8]">(${worker.reviewsCount || 0} reviews)</span></div>`;
+                } else {
+                    avgRatingDiv.innerHTML = '<div class="text-[#94a3b8]">No ratings yet</div>';
+                }
+
+                // load reviews
+                loadReviews(worker.id);
+
+                // portfolio
+                console.log('API Response Portfolio:', worker.portfolio);
+                displayPortfolio(worker.portfolio);
+            } catch (err) {
+                console.error('loadProfile error:', err);
             }
         }
-        
-        function displaySkills() {
-            const container = document.getElementById('skillsContainer');
-            container.innerHTML = skills.map(skill => `
-                <div class="skill-tag">
-                    ${skill}
-                    <span class="remove-skill" onclick="removeSkill('${skill}')">&times;</span>
+
+        function displayPortfolio(portfolio) {
+            if (portfolio && Array.isArray(portfolio)) {
+                allPortfolioItems = portfolio;
+            }
+            const grid = document.getElementById('portfolioGrid');
+            const pagination = document.getElementById('portfolioPagination');
+            if (!grid) return;
+
+            if (!allPortfolioItems || !Array.isArray(allPortfolioItems) || allPortfolioItems.length === 0) {
+                grid.innerHTML = `
+                    <div class="text-[#94a3b8] col-span-full py-12 text-center bg-[#0f172a]/40 rounded-3xl border border-white/5">
+                        <i class="fas fa-images text-4xl mb-3 block opacity-20"></i>
+                        No portfolio photos yet
+                    </div>`;
+                if (pagination) pagination.classList.add('hidden');
+                return;
+            }
+
+            // Pagination logic
+            const totalPages = Math.ceil(allPortfolioItems.length / itemsPerPage);
+            if (currentPortfolioPage > totalPages) currentPortfolioPage = totalPages || 1;
+            if (currentPortfolioPage < 1) currentPortfolioPage = 1;
+
+            const start = (currentPortfolioPage - 1) * itemsPerPage;
+            const end = start + itemsPerPage;
+
+            // Show newest items first
+            const recentItems = [...allPortfolioItems].reverse();
+            const paginatedItems = recentItems.slice(start, end);
+
+            grid.innerHTML = paginatedItems.map(url => `
+                <div class="relative group aspect-square rounded-2xl overflow-hidden glass-card border border-white/5 shadow-xl bg-[#0f172a]">
+                    <img src="${url}" class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110" 
+                         onerror="this.onerror=null; this.src='https://images.unsplash.com/photo-1595853035070-59a39fe84de1?auto=format&fit=crop&q=80&w=300'">
+                    <div class="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity"></div>
+                    <button onclick="deletePortfolioPhoto('${url}')" 
+                            class="absolute top-3 right-3 w-10 h-10 bg-red-500/20 backdrop-blur-md rounded-full flex items-center justify-center text-red-400 opacity-0 group-hover:opacity-100 transition-all hover:bg-red-500 hover:text-white border border-red-500/30">
+                        <i class="fas fa-trash-alt text-sm"></i>
+                    </button>
+                </div>
+            `).join('');
+
+            // Update pagination UI
+            if (allPortfolioItems.length > itemsPerPage) {
+                if (pagination) {
+                    pagination.classList.remove('hidden');
+                    document.getElementById('portfolioPageInfo').innerText = `Page ${currentPortfolioPage} of ${totalPages}`;
+                    document.getElementById('prevPortfolioBtn').disabled = currentPortfolioPage === 1;
+                    document.getElementById('nextPortfolioBtn').disabled = currentPortfolioPage === totalPages;
+                }
+            } else {
+                if (pagination) pagination.classList.add('hidden');
+            }
+        }
+
+        window.changePortfolioPage = function (delta) {
+            currentPortfolioPage += delta;
+            displayPortfolio();
+        };
+
+        async function deletePortfolioPhoto(url) {
+            if (!confirm('Are you sure you want to delete this photo?')) return;
+
+            try {
+                const response = await fetch(getApiUrl(`/api/worker-portfolio/${currentUser.id}`), {
+                    method: 'DELETE',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ photoUrl: url })
+                });
+
+                if (response.ok) {
+                    const data = await response.json();
+                    currentPortfolioPage = 1; // Reset to first page
+                    displayPortfolio(data.portfolio);
+                    alert('Photo removed from portfolio!');
+                } else {
+                    const err = await response.json();
+                    alert('Delete failed: ' + (err.message || 'Error occurred'));
+                }
+            } catch (error) {
+                console.error('Error deleting photo:', error);
+                alert('Error deleting photo');
+            }
+        }
+
+        async function uploadPortfolioPhoto(input) {
+            if (!input.files || !input.files[0]) return;
+            const formData = new FormData();
+            formData.append('photo', input.files[0]);
+
+            const btn = input.parentElement;
+            const originalHTML = btn.innerHTML;
+            btn.innerHTML = '<i class="fas fa-spinner fa-spin text-2xl"></i><span class="font-medium">Uploading...</span>';
+            btn.classList.add('opacity-50', 'pointer-events-none');
+
+            try {
+                const url = `/api/worker-portfolio/${currentUser.id}`;
+                const response = await fetch(url, {
+                    method: 'POST',
+                    body: formData
+                });
+
+                if (response.ok) {
+                    const data = await response.json();
+                    currentPortfolioPage = 1; // Reset to first page
+                    displayPortfolio(data.portfolio);
+                    alert('Photo added to portfolio!');
+                } else {
+                    let errorMessage = 'Upload failed';
+                    try {
+                        const err = await response.json();
+                        errorMessage = err.message || errorMessage;
+                    } catch (e) {
+                        errorMessage = `Server error (${response.status}): ${response.statusText}\nURL: ${url}`;
+                    }
+                    alert(errorMessage);
+                }
+            } catch (error) {
+                console.error('Error uploading photo:', error);
+                alert('Connection error. Please ensure the server is running.\nDetails: ' + error.message);
+            } finally {
+                btn.innerHTML = originalHTML;
+                btn.classList.remove('opacity-50', 'pointer-events-none');
+                input.value = ''; // clear input
+            }
+        }
+
+        // load reviews from API
+        async function loadReviews(workerId) {
+            try {
+                const res = await fetch(getApiUrl(`/api/worker/${workerId}/reviews`));
+                if (!res.ok) throw new Error();
+                const reviews = await res.json();
+                const reviewsList = document.getElementById('reviewsList');
+                if (!reviews || reviews.length === 0) {
+                    reviewsList.innerHTML = '<p class="text-[#6b7280] text-sm">No reviews yet.</p>';
+                    return;
+                }
+                reviewsList.innerHTML = reviews.map(r => `
+                    <div class="review-item">
+                        <div class="flex justify-between"><span class="text-yellow-400">${'★'.repeat(r.rating)}${'☆'.repeat(5 - r.rating)}</span><span class="text-xs text-[#94a3b8]">${new Date(r.createdAt).toLocaleDateString()}</span></div>
+                        ${r.comment ? `<p class="text-sm mt-1 italic">"${r.comment}"</p>` : ''}
+                        <div class="text-xs text-[#94a3b8] mt-2">— ${r.customerName || 'Customer'}</div>
+                    </div>
+                `).join('');
+            } catch {
+                document.getElementById('reviewsList').innerHTML = '<p class="text-[#6b7280]">Error loading reviews.</p>';
+            }
+        }
+
+        // load orders for this worker (GET /api/orders/{workerId})
+        async function loadOrders() {
+            try {
+                const res = await fetch(getApiUrl(`/api/orders/${currentUser.id}`));
+                if (!res.ok) throw new Error();
+                const orders = await res.json();
+
+                // sort by recent
+                const myOrders = orders
+                    .filter(o => o.workerId === currentUser.id)
+                    .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+
+                // show only top 5
+                displayOrders(myOrders.slice(0, 5));
+
+                // show view all button if needed
+                const btn = document.getElementById('viewAllOrdersBtn');
+                if (btn) btn.style.display = myOrders.length > 0 ? 'inline-flex' : 'none';
+
+            } catch {
+                document.getElementById('ordersList').innerHTML = '<div class="text-center py-8 text-[#94a3b8]">Could not load orders</div>';
+            }
+        }
+
+        function displayOrders(orders) {
+            const list = document.getElementById('ordersList');
+            if (!orders || orders.length === 0) {
+                list.innerHTML = '<div class="text-center py-8 text-[#94a3b8]"><i class="fas fa-box-open text-3xl mb-2"></i><p>No orders yet</p></div>';
+                return;
+            }
+            list.innerHTML = orders.map(o => `
+                <div class="order-item">
+                    <div class="flex justify-between items-start">
+                        <div><span class="font-bold">#${o.id.slice(-6)}</span> <span class="text-[#38bdf8] text-sm">${o.serviceType || 'Service'}</span></div>
+                        <span class="text-xs rounded-full px-3 py-1 ${o.status === 'completed' ? 'bg-green-500/20 text-green-300' : o.status === 'accepted' ? 'bg-blue-500/20 text-blue-300' : o.status === 'pending' ? 'bg-yellow-500/20 text-yellow-300' : 'bg-gray-500/20'}">${o.status}</span>
+                    </div>
+                    <div class="grid grid-cols-2 gap-2 mt-2 text-sm">
+                        <span>Amount: ₹${o.totalAmount || 0}</span>
+                        <span>${o.paymentStatus === 'paid' ? '✅ Paid' : '⏳ Unpaid'}</span>
+                    </div>
+                    ${o.description ? `<p class="text-xs text-[#94a3b8] mt-1">${o.description}</p>` : ''}
+                    <div class="flex gap-2 mt-3">
+                        ${o.status === 'pending' ? `<button class="bg-[#38bdf8]/30 hover:bg-[#38bdf8] text-white rounded-full px-4 py-1 text-sm w-full transition" onclick="updateOrderStatus('${o.id}','accepted')">Accept</button>` : ''}
+                        ${o.status === 'accepted' ? `<button class="bg-green-600/30 hover:bg-green-600 text-white rounded-full px-4 py-1 text-sm w-full" onclick="updateOrderStatus('${o.id}','completed')">Mark Completed</button>` : ''}
+                    </div>
                 </div>
             `).join('');
         }
-        
-        function addSkill() {
-            const skillInput = document.getElementById('skillInput');
-            const skill = skillInput.value.trim();
-            
-            if (skill && !skills.includes(skill)) {
-                skills.push(skill);
-                displaySkills();
-                skillInput.value = '';
+
+        // update order status (PUT /api/orders/{id})
+        window.updateOrderStatus = async function (orderId, status) {
+            try {
+                const res = await fetch(getApiUrl(`/api/orders/${orderId}`), {
+                    method: 'PUT',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ status })
+                });
+                if (!res.ok) throw new Error();
+                if (status === 'accepted') startSharingLocation(orderId);
+                if (status === 'completed' && liveLocationInterval) clearInterval(liveLocationInterval);
+                loadOrders(); // refresh
+            } catch (err) {
+                alert('Error updating order');
+            }
+        };
+
+        // live location sharing (only when order accepted)
+        function startSharingLocation(orderId) {
+            if (!navigator.geolocation) return;
+            if (liveLocationInterval) clearInterval(liveLocationInterval);
+            liveLocationInterval = setInterval(() => {
+                navigator.geolocation.getCurrentPosition(async (pos) => {
+                    const { latitude, longitude } = pos.coords;
+                    try {
+                        await fetch(getApiUrl(`/api/orders/${orderId}/worker-location`), {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify({ latitude, longitude })
+                        });
+                    } catch (e) { }
+                }, () => { }, { enableHighAccuracy: true });
+            }, 10000);
+        }
+
+        // load real notifications
+        async function loadNotifications() {
+            if (!currentUser) return;
+            try {
+                const res = await fetch(getApiUrl(`/api/notifications/${currentUser.id}`));
+                if (!res.ok) throw new Error();
+                const notifs = await res.json();
+                renderNotifications(notifs);
+            } catch {
+                document.getElementById('notifList').innerHTML = '<div class="p-4 text-center text-[#94a3b8]">Unable to load</div>';
             }
         }
-        
-        function removeSkill(skillToRemove) {
-            skills = skills.filter(skill => skill !== skillToRemove);
-            displaySkills();
+
+        function renderNotifications(notifications) {
+            const list = document.getElementById('notifList');
+            const badge = document.getElementById('notifBadge');
+            const unread = notifications.filter(n => !n.read).length;
+            if (unread > 0) {
+                badge.classList.remove('hidden');
+                badge.innerText = unread > 9 ? '9+' : unread;
+            } else {
+                badge.classList.add('hidden');
+            }
+
+            if (!notifications.length) {
+                list.innerHTML = '<div class="p-4 text-center text-[#94a3b8]">No notifications</div>';
+                return;
+            }
+
+            list.innerHTML = notifications.map(n => `
+                <div class="p-3 border-b border-white/5 hover:bg-white/5 cursor-pointer ${n.read ? '' : 'bg-[#38bdf8]/5'}" onclick="markAsRead('${n._id || n.id}','${n.link || ''}')">
+                    <div class="text-sm">${n.message}</div>
+                    <div class="text-xs text-[#94a3b8]">${new Date(n.createdAt).toLocaleString()}</div>
+                </div>
+            `).join('');
         }
-        
-        // Handle form submission
-        document.getElementById('profileForm').addEventListener('submit', async function(e) {
+
+        window.markAsRead = async function (id, link) {
+            try { await fetch(getApiUrl(`/api/notifications/${id}/read`), { method: 'PUT' }); } catch (e) { }
+            if (link && link !== 'null') window.location.href = link;
+            else loadNotifications();
+        };
+
+        // skills management
+        function displaySkills() {
+            const container = document.getElementById('skillsContainer');
+            container.innerHTML = skills.map(s => `<span class="skill-tag">${s} <span class="remove-skill" onclick="removeSkill('${s}')">✕</span></span>`).join('');
+        }
+        window.addSkill = function () {
+            const inp = document.getElementById('skillInput');
+            if (inp.value.trim() && !skills.includes(inp.value.trim())) {
+                skills.push(inp.value.trim());
+                displaySkills();
+                inp.value = '';
+            }
+        };
+        window.removeSkill = function (s) { skills = skills.filter(v => v !== s); displaySkills(); };
+
+        // profile form submit (PUT /api/worker/{id}) with FormData
+        document.getElementById('profileForm').addEventListener('submit', async function (e) {
             e.preventDefault();
-            
             const formData = new FormData();
             formData.append('name', document.getElementById('name').value);
             formData.append('experience', document.getElementById('experience').value);
@@ -774,353 +991,67 @@
             formData.append('upiId', document.getElementById('upiId').value);
             formData.append('skills', JSON.stringify(skills));
 
-            // Handle file upload
-            const profileImageInput = document.getElementById('profileImage');
-            if (profileImageInput.files.length > 0) {
-                formData.append('profileImage', profileImageInput.files[0]);
-            }
+            const imgFile = document.getElementById('profileImage').files[0];
+            if (imgFile) formData.append('profileImage', imgFile);
 
-            // Handle address and location
             formData.append('address', JSON.stringify({
                 street: document.getElementById('street').value,
                 city: document.getElementById('city').value,
                 state: document.getElementById('state').value,
                 pincode: document.getElementById('pincode').value
             }));
-            
-            // Handle location link and extract coordinates if possible
+
             const locationLink = document.getElementById('locationLink').value;
             let locationData = { link: locationLink };
-            
-            // Try to extract coordinates from Google Maps link
             if (locationLink) {
-                const googleMapsRegex = /[?&]q=([^&]+)/;
-                const match = locationLink.match(googleMapsRegex);
-                if (match) {
-                    const coords = match[1].split(',');
-                    if (coords.length === 2) {
-                        const lat = parseFloat(coords[0]);
-                        const lng = parseFloat(coords[1]);
-                        if (!isNaN(lat) && !isNaN(lng)) {
-                            locationData.latitude = lat;
-                            locationData.longitude = lng;
-                        }
-                    }
+                const match = locationLink.match(/[?&]q=([^&]+)/);
+                if (match && match[1].split(',').length === 2) {
+                    const [lat, lng] = match[1].split(',').map(Number);
+                    if (!isNaN(lat) && !isNaN(lng)) { locationData.latitude = lat; locationData.longitude = lng; }
                 }
             }
-            
             formData.append('location', JSON.stringify(locationData));
-            
+
             try {
-                const response = await fetch(`/api/worker/${currentUser.id}`, {
-                    method: 'PUT',
-                    body: formData
-                });
-                
-                if (response.ok) {
-                    alert('Profile updated successfully!');
-                } else {
-                    const error = await response.json();
-                    alert('Error updating profile: ' + error.message);
-                }
-            } catch (error) {
-                console.error('Error updating profile:', error);
-                alert('Error updating profile');
-            }
-        });
-        
-        async function loadOrders() {
-            try {
-                const response = await fetch(`/api/orders/${currentUser.id}`);
-                if (response.ok) {
-                    const orders = await response.json();
-                    const workerOrders = orders.filter(order => order.workerId === currentUser.id);
-                    displayOrders(workerOrders);
-                    updateWorkerNotifications(workerOrders);
-                }
-            } catch (error) {
-                console.error('Error loading orders:', error);
-            }
-        }
-        
-        function displayOrders(orders) {
-            const ordersList = document.getElementById('ordersList');
-            
-            if (orders.length === 0) {
-                ordersList.innerHTML = '<p style="text-align: center; color: #666;">No orders yet</p>';
-                return;
-            }
-            
-            ordersList.innerHTML = orders.map(order => {
-                const paymentStatus = order.paymentStatus || 'unpaid';
-                const isPaid = paymentStatus === 'paid';
-                const paymentLine = `<div><strong>Payment:</strong> ${isPaid ? '<span style="color: #28a745;">Paid</span>' : '<span style="color: #dc3545;">Not paid</span>'}</div>`;
-                
-                return `
-                    <div class="order-item">
-                        <div class="order-header">
-                            <div>
-                                <strong>Order #${order.id.slice(-6)}</strong>
-                                <div class="order-details">Service: ${order.serviceType}</div>
-                            </div>
-                            <span class="order-status status-${order.status}">${order.status.charAt(0).toUpperCase() + order.status.slice(1)}</span>
-                        </div>
-                        <div class="order-details">
-                            <div><strong>Description:</strong> ${order.description}</div>
-                            <div><strong>Duration:</strong> ${order.duration} hours</div>
-                            <div><strong>Amount:</strong> ₹${order.totalAmount}</div>
-                            ${paymentLine}
-                            <div><strong>Customer:</strong> ${order.customer.username}</div>
-                            ${order.customer && order.customer.address ? `
-                            <div><strong>Customer Address:</strong> ${[
-                                order.customer.address.street,
-                                order.customer.address.city,
-                                order.customer.address.state,
-                                order.customer.address.pincode
-                            ].filter(Boolean).join(', ')}</div>
-                            ` : ''}
-                            ${order.customer && order.customer.location && order.customer.location.link ? `
-                            <div><strong>Customer Location:</strong> <a href="${order.customer.location.link}" target="_blank">View on map</a></div>
-                            ` : ''}
-                            <div><strong>Date:</strong> ${new Date(order.createdAt).toLocaleDateString()}</div>
-                        </div>
-                        <div class="action-buttons">
-                            ${order.status === 'pending' ? `
-                                <button class="action-btn accept-btn" onclick="updateOrderStatus('${order.id}', 'accepted')">Accept</button>
-                            ` : ''}
-                            ${order.status === 'accepted' ? `
-                                <button class="action-btn complete-btn" onclick="updateOrderStatus('${order.id}', 'completed')">Mark Complete</button>
-                            ` : ''}
-                        </div>
-                    </div>
-                `;
-            }).join('');
-        }
-        
-        async function updateOrderStatus(orderId, status) {
-            try {
-                const response = await fetch(`/api/orders/${orderId}`, {
-                    method: 'PUT',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify({ status })
-                });
-                
-                if (response.ok) {
-                    loadOrders();
-                } else {
-                    const error = await response.json();
-                    alert('Error updating order: ' + error.message);
-                }
-            } catch (error) {
-                console.error('Error updating order:', error);
-                alert('Error updating order');
-            }
-        }
-
-        // Live location sharing while an order is accepted
-        let liveLocationInterval = null;
-        async function startSharingLocation(orderId) {
-            if (!navigator.geolocation) return;
-            if (liveLocationInterval) clearInterval(liveLocationInterval);
-            liveLocationInterval = setInterval(() => {
-                navigator.geolocation.getCurrentPosition(async (pos) => {
-                    const { latitude, longitude } = pos.coords;
-                    const mapsUrl = `https://maps.google.com/?q=${latitude},${longitude}`;
-                    console.log('[Worker Live Location]', { orderId, latitude, longitude, mapsUrl, at: new Date().toISOString() });
-                    try {
-                        await fetch(`/api/orders/${orderId}/worker-location`, {
-                            method: 'POST',
-                            headers: { 'Content-Type': 'application/json' },
-                            body: JSON.stringify({ latitude, longitude })
-                        });
-                    } catch (e) {
-                        console.warn('[Worker Live Location] Failed to send location', e);
-                    }
-                }, (err) => {
-                    console.warn('[Worker Live Location] Geolocation error', err);
-                }, { enableHighAccuracy: true });
-            }, 10000); // every 10s
-        }
-
-        async function updateOrderStatus(orderId, status) {
-            try {
-                const response = await fetch(`/api/orders/${orderId}`, {
-                    method: 'PUT',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify({ status })
-                });
-                
-                if (response.ok) {
-                    if (status === 'accepted') startSharingLocation(orderId);
-                    if (status === 'completed' && liveLocationInterval) {
-                        clearInterval(liveLocationInterval);
-                        liveLocationInterval = null;
-                    }
-                    loadOrders();
-                } else {
-                    const error = await response.json();
-                    alert('Error updating order: ' + error.message);
-                }
-            } catch (error) {
-                console.error('Error updating order:', error);
-                alert('Error updating order');
-            }
-        }
-
-        // Simple worker notifications based on orders
-        function updateWorkerNotifications(orders) {
-            const listEl = document.getElementById('workerNotifList');
-            const countEl = document.getElementById('workerNotifCount');
-            if (!listEl || !countEl) return;
-
-            if (!orders || orders.length === 0) {
-                listEl.innerHTML = '<div class="notif-item"><span class="notif-meta">No recent activity.</span></div>';
-                countEl.style.display = 'none';
-                return;
-            }
-
-            const sorted = [...orders].sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
-            const latest = sorted.slice(0, 5);
-            const pendingCount = sorted.filter(o => o.status === 'pending').length;
-            const activeCount = sorted.filter(o => o.status === 'accepted').length;
-            const notifTotal = pendingCount + activeCount;
-
-            countEl.textContent = notifTotal > 9 ? '9+' : notifTotal;
-            countEl.style.display = notifTotal > 0 ? 'inline-block' : 'none';
-
-            listEl.innerHTML = latest.map(o => {
-                const statusText = o.status.charAt(0).toUpperCase() + o.status.slice(1);
-                return `
-                    <div class="notif-item">
-                        <div class="notif-title">Order #${o.id.slice(-6)} - ${statusText}</div>
-                        <div class="notif-meta">${o.serviceType} • ${new Date(o.createdAt).toLocaleDateString()}</div>
-                    </div>
-                `;
-            }).join('');
-        }
-
-        (function initWorkerNotifToggle() {
-            const btn = document.getElementById('workerNotifBtn');
-            const dropdown = document.getElementById('workerNotifDropdown');
-            if (!btn || !dropdown) return;
-            btn.addEventListener('click', (e) => {
-                e.stopPropagation();
-                dropdown.classList.toggle('show');
-            });
-            document.addEventListener('click', () => {
-                dropdown.classList.remove('show');
-            });
-        })();
-        
-        async function loadReviews(workerId) {
-            try {
-                const res = await fetch(`/api/worker/${workerId}/reviews`);
-                const reviews = await res.json();
-                const reviewsList = document.getElementById('reviewsList');
-                if (!reviews || reviews.length === 0) {
-                    reviewsList.innerHTML = '<p style="color:#6b7280;">No reviews yet.</p>';
-                    return;
-                }
-                reviewsList.innerHTML = reviews.map(r => `
-                    <div style="background: rgba(31,41,55,0.6); border-radius: 8px; padding: 15px; margin-bottom: 10px; border-left: 3px solid #38bdf8;">
-                        <div style="margin-bottom: 8px;">
-                            <span style="color:#fbbf24;font-weight:bold;font-size:1.1em;">${'★'.repeat(r.rating)}${'☆'.repeat(5-r.rating)}</span>
-                        </div>
-                        ${r.comment ? `<p style="color:#e5e7eb;margin-bottom:8px;">${r.comment}</p>` : ''}
-                        <div style="color:#9ca3af;font-size:0.85em;">
-                            <i class="fas fa-user me-1"></i>by ${r.customerName || 'Customer'} 
-                            <span class="mx-2">•</span>
-                            <i class="fas fa-calendar me-1"></i>${new Date(r.createdAt).toLocaleDateString()}
-                        </div>
-                    </div>
-                `).join('');
-            } catch (err) {
-                document.getElementById('reviewsList').innerHTML = '<p style="color:#6b7280;">Error loading reviews.</p>';
-            }
-        }
-        
-        function logout() {
-            localStorage.removeItem('user');
-            window.location.href = 'index.html';
-        }
-        
-        // Handle Enter key for adding skills
-        document.getElementById('skillInput').addEventListener('keypress', function(e) {
-            if (e.key === 'Enter') {
-                e.preventDefault();
-                addSkill();
-            }
-        });
-        // Image preview on file select
-        document.getElementById('profileImage').addEventListener('change', function(e) {
-            const file = e.target.files[0];
-            const previewDiv = document.getElementById('profileImagePreview');
-            if (file) {
-                const reader = new FileReader();
-                reader.onload = function(evt) {
-                    previewDiv.innerHTML = `<img src="${evt.target.result}" alt="Profile Image" style="max-width:120px;max-height:120px;border-radius:50%;border:2px solid #eee;">`;
-                };
-                reader.readAsDataURL(file);
-            }
+                const res = await fetch(getApiUrl(`/api/worker/${currentUser.id}`), { method: 'PUT', body: formData });
+                if (res.ok) alert('Profile updated successfully');
+                else alert('Error updating profile');
+            } catch (err) { alert('Update failed'); }
         });
 
-        function initMap() {
-            let lat = 20.5937; // Default to India
-            let lng = 78.9629;
-            
-            const mapOptions = {
-                center: { lat, lng },
-                zoom: 5
-            };
-            map = new google.maps.Map(document.getElementById('map'), mapOptions);
-            marker = new google.maps.Marker({
-                position: { lat, lng },
-                map: map,
-                draggable: true
+        // map initialization (Replaced Google Maps with Leaflet for zero-key reliability)
+        window.initMap = function () {
+            const mapContainer = document.getElementById('map');
+            if (!mapContainer) return;
+
+            // Clear previous map instance if any
+            if (map && map.remove) {
+                map.remove();
+            }
+
+            const defaultPos = [20.5937, 78.9629];
+            map = L.map('map').setView(defaultPos, 5);
+
+            L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+            }).addTo(map);
+
+            marker = L.marker(defaultPos, { draggable: true }).addTo(map);
+
+            marker.on('dragend', function (e) {
+                const pos = marker.getLatLng();
+                document.getElementById('locationLink').value = `https://maps.google.com/?q=${pos.lat.toFixed(6)},${pos.lng.toFixed(6)}`;
             });
-            
-            // Update location link on marker drag
-            marker.addListener('dragend', function(e) {
-                const lat = e.latLng.lat().toFixed(6);
-                const lng = e.latLng.lng().toFixed(6);
-                const locationLink = `https://maps.google.com/?q=${lat},${lng}`;
-                document.getElementById('locationLink').value = locationLink;
+
+            map.on('click', function (e) {
+                marker.setLatLng(e.latlng);
+                document.getElementById('locationLink').value = `https://maps.google.com/?q=${e.latlng.lat.toFixed(6)},${e.latlng.lng.toFixed(6)}`;
             });
-            
-            // Update marker on map click
-            map.addListener('click', function(e) {
-                marker.setPosition(e.latLng);
-                const lat = e.latLng.lat().toFixed(6);
-                const lng = e.latLng.lng().toFixed(6);
-                const locationLink = `https://maps.google.com/?q=${lat},${lng}`;
-                document.getElementById('locationLink').value = locationLink;
-            });
-            
-            // Update marker when location link is changed
-            document.getElementById('locationLink').addEventListener('change', function() {
-                const locationLink = this.value;
-                if (locationLink) {
-                    const googleMapsRegex = /[?&]q=([^&]+)/;
-                    const match = locationLink.match(googleMapsRegex);
-                    if (match) {
-                        const coords = match[1].split(',');
-                        if (coords.length === 2) {
-                            const newLat = parseFloat(coords[0]);
-                            const newLng = parseFloat(coords[1]);
-                            if (!isNaN(newLat) && !isNaN(newLng)) {
-                                marker.setPosition({ lat: newLat, lng: newLng });
-                                map.setCenter({ lat: newLat, lng: newLng });
-                                map.setZoom(15);
-                            }
-                        }
-                    }
-                }
-            });
-        }
+        };
+
+        // logout
+        window.logout = function () { localStorage.removeItem('user'); window.location.href = 'login.html'; };
     </script>
 </body>
-</html> 
+
+</html>

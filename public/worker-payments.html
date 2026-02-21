@@ -2,107 +2,1281 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>WorkConnect - Worker Payments</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=yes">
+    <title>WorkConnect - Worker Payments (fully responsive)</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/apexcharts@3.41.0/dist/apexcharts.css">
     <style>
+        :root {
+            --primary: #38bdf8;
+            --primary-dark: #0ea5e9;
+            --success: #10b981;
+            --warning: #f59e0b;
+            --danger: #ef4444;
+            --purple: #8b5cf6;
+            --dark-bg: #0f172a;
+            --darker-bg: #020617;
+            --card-bg: rgba(15, 23, 42, 0.95);
+            --border-color: rgba(148, 163, 184, 0.25);
+            --text-primary: #f1f5f9;
+            --text-secondary: #94a3b8;
+            --text-tertiary: #64748b;
+        }
+
         body {
             min-height: 100vh;
             background: linear-gradient(135deg, #0f172a 0%, #1e293b 40%, #020617 100%);
-            color: #e5e7eb;
-            font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+            color: var(--text-primary);
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            line-height: 1.5;
+            overflow-x: hidden;
         }
+
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: rgba(15, 23, 42, 0.5);
+            border-radius: 4px;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: var(--primary);
+            border-radius: 4px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: var(--primary-dark);
+        }
+
+        /* ===== FIXED NAVIGATION - FULL WIDTH ===== */
         .navbar {
-            background: rgba(15, 23, 42, 0.95);
-            border-bottom: 1px solid rgba(148, 163, 184, 0.2);
-            backdrop-filter: blur(16px);
+            background: rgba(15, 23, 42, 0.98);
+            backdrop-filter: blur(20px);
+            border-bottom: 1px solid var(--border-color);
+            padding: 0.75rem 0;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+            width: 100%;
         }
+
+        .navbar .container-fluid {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 0 20px;
+            width: 100%;
+        }
+
         .navbar-brand {
             font-weight: 700;
             background: linear-gradient(135deg, #38bdf8, #60a5fa);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
             background-clip: text;
+            font-size: 1.5rem;
+            text-decoration: none;
+            display: flex;
+            align-items: center;
         }
-        .navbar .nav-link {
-            color: #9ca3af;
-        }
-        .navbar .nav-link:hover,
-        .navbar .nav-link.active {
-            color: #e5e7eb;
-        }
-        .page-header {
-            padding: 2.5rem 0 1.5rem;
-        }
-        .page-title {
-            font-size: 1.75rem;
-            font-weight: 700;
-        }
-        .page-subtitle {
-            color: #9ca3af;
+
+        .nav-link {
+            color: #cbd5e1 !important;
+            text-decoration: none;
+            font-weight: 500;
             font-size: 0.95rem;
+            transition: all 0.3s ease;
+            padding: 0.5rem 1rem !important;
+            border-radius: 8px;
         }
-        .card.payment-card {
-            background: rgba(15, 23, 42, 0.95);
-            border-radius: 1.25rem;
-            border: 1px solid rgba(148, 163, 184, 0.35);
-            box-shadow: 0 18px 45px rgba(15,23,42,0.85);
-            padding: 16px 18px;
+
+        .nav-link:hover,
+        .nav-link.active {
+            color: #fff !important;
+            background: rgba(56, 189, 248, 0.1);
         }
-        .badge-success-soft {
-            background: rgba(16,185,129,0.18);
-            color: #6ee7b7;
-            border-radius: 999px;
-            padding: 4px 10px;
-            font-size: 0.75rem;
+
+        .nav-link.active {
+            font-weight: 700;
+            color: var(--primary) !important;
+        }
+
+        .navbar-toggler {
+            border: 1px solid rgba(148, 163, 184, 0.3);
+            padding: 0.5rem;
+            border-radius: 8px;
+        }
+
+        .navbar-toggler:focus {
+            box-shadow: none;
+            border-color: var(--primary);
+        }
+
+        .navbar-toggler-icon {
+            background-image: none !important;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #fff;
+        }
+
+        /* ===== NOTIFICATIONS DROPDOWN - MOBILE FIXED ===== */
+        .notifications-dropdown {
+            position: absolute;
+            top: 100%;
+            right: 0;
+            width: 350px;
+            max-width: 90vw;
+            background: rgba(15, 23, 42, 0.98);
+            border: 1px solid var(--border-color);
+            border-radius: 0.75rem;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5);
+            margin-top: 10px;
+            display: none;
+            z-index: 1000;
+            overflow: hidden;
+            backdrop-filter: blur(12px);
+        }
+
+        .notifications-dropdown.show {
+            display: block;
+        }
+
+        /* Page Header */
+        .page-header {
+            padding: 2rem 0 1.5rem;
+            text-align: center;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .page-title {
+            font-size: clamp(1.5rem, 5vw, 2rem);
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+            background: linear-gradient(135deg, var(--text-primary) 0%, var(--primary) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .page-subtitle {
+            color: var(--text-secondary);
+            font-size: clamp(0.9rem, 3vw, 1rem);
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 0 15px;
+        }
+
+        /* Main Container */
+        .main-container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        /* Stats Cards - Responsive Grid */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .stats-card {
+            background: linear-gradient(135deg, rgba(30, 41, 59, 0.5), rgba(15, 23, 42, 0.7));
+            border: 1px solid var(--border-color);
+            border-radius: 1rem;
+            padding: 1.5rem;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .stats-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 1px;
+            background: linear-gradient(90deg, transparent, var(--primary), transparent);
+            opacity: 0.3;
+        }
+
+        .stats-card:hover {
+            border-color: var(--primary);
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(56, 189, 248, 0.15);
+        }
+
+        .stats-value {
+            font-size: clamp(1.5rem, 4vw, 2rem);
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+            background: linear-gradient(135deg, var(--text-primary) 0%, var(--primary) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .stats-label {
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+            margin-bottom: 0.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            flex-wrap: wrap;
+        }
+
+        /* Charts - Responsive */
+        .chart-container {
+            background: rgba(15, 23, 42, 0.7);
+            border: 1px solid var(--border-color);
+            border-radius: 1rem;
+            padding: 1.5rem;
+            height: 300px;
+            position: relative;
+            margin-bottom: 1.5rem;
+        }
+
+        .chart-title {
+            font-size: 1.1rem;
             font-weight: 600;
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            color: var(--text-primary);
+            flex-wrap: wrap;
+            gap: 1rem;
         }
-        .text-secondary {
-            color: #9ca3af !important;
+
+        /* Filter Section - Responsive */
+        .filter-section {
+            background: rgba(15, 23, 42, 0.7);
+            border: 1px solid var(--border-color);
+            border-radius: 1rem;
+            padding: 1.5rem;
+            margin-bottom: 2rem;
+            max-width: 1200px;
+            margin-left: auto;
+            margin-right: auto;
         }
-        .pill {
+
+        .filter-group {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 1rem;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .filter-btn {
+            padding: 0.5rem 1.25rem;
+            border-radius: 50px;
+            background: rgba(30, 41, 59, 0.5);
+            border: 1px solid var(--border-color);
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+            transition: all 0.3s ease;
             display: inline-flex;
             align-items: center;
-            gap: 0.35rem;
-            padding: 0.25rem 0.6rem;
-            border-radius: 999px;
-            font-size: 0.75rem;
-            background: rgba(15,23,42,0.8);
-            border: 1px solid rgba(148,163,184,0.45);
+            gap: 0.5rem;
+            cursor: pointer;
+            white-space: nowrap;
+        }
+
+        .filter-btn:hover {
+            border-color: var(--primary);
+            color: var(--primary);
+            background: rgba(56, 189, 248, 0.1);
+        }
+
+        .filter-btn.active {
+            background: rgba(56, 189, 248, 0.15);
+            border-color: var(--primary);
+            color: var(--primary);
+        }
+
+        /* Search Box - Responsive */
+        .search-box {
+            position: relative;
+            flex: 1;
+            min-width: 250px;
+            max-width: 500px;
+            width: 100%;
+        }
+
+        .search-box input {
+            width: 100%;
+            padding: 0.75rem 1rem 0.75rem 2.75rem;
+            background: rgba(30, 41, 59, 0.5);
+            border: 1px solid var(--border-color);
+            border-radius: 50px;
+            color: var(--text-primary);
+            font-size: 0.95rem;
+            transition: all 0.3s ease;
+        }
+
+        .search-box input:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 2px rgba(56, 189, 248, 0.1);
+        }
+
+        .search-box i {
+            position: absolute;
+            left: 1rem;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--text-secondary);
+        }
+
+        /* Payments Grid - Fully Responsive */
+        .payments-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 1.5rem;
+            justify-items: center;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .payment-card {
+            background: rgba(15, 23, 42, 0.95);
+            border: 1px solid var(--border-color);
+            border-radius: 1rem;
+            padding: 1.5rem;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+            width: 100%;
+        }
+
+        .payment-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 1px;
+            background: linear-gradient(90deg, transparent, rgba(56, 189, 248, 0.3), transparent);
+        }
+
+        .payment-card:hover {
+            border-color: rgba(56, 189, 248, 0.4);
+            transform: translateY(-5px);
+            box-shadow: 0 15px 40px rgba(15, 23, 42, 0.8);
+        }
+
+        /* Quick Actions - Responsive */
+        .quick-actions {
+            display: flex;
+            gap: 1rem;
+            flex-wrap: wrap;
+            justify-content: center;
+            margin: 1.5rem 0;
+        }
+
+        .action-btn {
+            padding: 0.75rem 1.5rem;
+            border-radius: 50px;
+            background: rgba(56, 189, 248, 0.1);
+            border: 1px solid rgba(56, 189, 248, 0.3);
+            color: var(--primary);
+            font-size: 0.95rem;
+            transition: all 0.3s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.75rem;
+            cursor: pointer;
+            white-space: nowrap;
+        }
+
+        /* Analytics Tabs - Responsive */
+        .analytics-container {
+            max-width: 1400px;
+            margin: 0 auto 2rem;
+        }
+
+        .nav-tabs {
+            border-bottom: 1px solid var(--border-color);
+            justify-content: center;
+            gap: 0.5rem;
+            flex-wrap: wrap;
+        }
+
+        .nav-tabs .nav-link {
+            border: 1px solid transparent;
+            border-radius: 8px 8px 0 0;
+            background: rgba(30, 41, 59, 0.5);
+            color: var(--text-secondary);
+            padding: 0.75rem 1.5rem;
+            white-space: nowrap;
+        }
+
+        .nav-tabs .nav-link:hover {
+            border-color: var(--border-color);
+            color: var(--text-primary);
+        }
+
+        .nav-tabs .nav-link.active {
+            background: var(--card-bg);
+            border-color: var(--border-color) var(--border-color) transparent;
+            color: var(--primary);
+            font-weight: 600;
+        }
+
+        /* Amount Display */
+        .amount-display {
+            font-size: clamp(1.5rem, 4vw, 2rem);
+            font-weight: 700;
+            color: var(--text-primary);
+            margin: 1rem 0;
+            background: linear-gradient(135deg, var(--success) 0%, #6ee7b7 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            text-align: center;
+        }
+
+        /* Pagination - Responsive */
+        .pagination {
+            justify-content: center;
+            margin: 2rem 0;
+            flex-wrap: wrap;
+        }
+
+        .page-link {
+            background: rgba(30, 41, 59, 0.5);
+            border: 1px solid var(--border-color);
+            color: var(--text-secondary);
+            margin: 0.25rem;
+        }
+
+        .page-link:hover {
+            background: rgba(56, 189, 248, 0.1);
+            border-color: var(--primary);
+            color: var(--primary);
+        }
+
+        .page-item.active .page-link {
+            background: rgba(56, 189, 248, 0.15);
+            border-color: var(--primary);
+            color: var(--primary);
+        }
+
+        /* Empty State - Centered */
+        .empty-state {
+            text-align: center;
+            padding: 4rem 2rem;
+            grid-column: 1 / -1;
+        }
+
+        .empty-state-icon {
+            font-size: 4rem;
+            color: var(--text-secondary);
+            opacity: 0.5;
+            margin-bottom: 1.5rem;
+        }
+
+        /* Loading State */
+        .loading-state {
+            text-align: center;
+            padding: 3rem 1rem;
+            grid-column: 1 / -1;
+        }
+
+        .loading-spinner {
+            display: inline-block;
+            width: 40px;
+            height: 40px;
+            border: 3px solid rgba(56, 189, 248, 0.3);
+            border-radius: 50%;
+            border-top-color: var(--primary);
+            animation: spin 1s linear infinite;
+            margin-bottom: 1rem;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        /* ===== RESPONSIVE BREAKPOINTS ===== */
+        @media (max-width: 1200px) {
+            .main-container {
+                padding: 0 15px;
+            }
+
+            .payments-grid {
+                grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+                gap: 1rem;
+            }
+        }
+
+        @media (max-width: 992px) {
+            .stats-grid {
+                grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+                gap: 1rem;
+            }
+
+            .filter-group {
+                flex-direction: column;
+                align-items: stretch;
+            }
+
+            .filter-group .d-flex {
+                width: 100%;
+                justify-content: center;
+            }
+
+            .search-box {
+                min-width: 100%;
+                max-width: 100%;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .navbar-collapse {
+                background: rgba(15, 23, 42, 0.98);
+                backdrop-filter: blur(24px);
+                border: 1px solid var(--border-color);
+                border-radius: 1rem;
+                padding: 1.5rem;
+                margin-top: 1rem;
+                box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5);
+            }
+
+            .navbar-nav {
+                gap: 0.5rem;
+                align-items: flex-start;
+                width: 100%;
+            }
+
+            .nav-link {
+                width: 100%;
+                padding: 0.75rem 1rem !important;
+            }
+
+            .nav-item {
+                width: 100%;
+            }
+
+            .nav-notifications {
+                width: 100%;
+            }
+
+            .nav-notifications .notifications-dropdown {
+                position: static;
+                width: 100%;
+                margin-top: 0.5rem;
+            }
+
+            .page-header {
+                padding: 1.5rem 0;
+            }
+
+            .stats-grid {
+                grid-template-columns: 1fr;
+                gap: 1rem;
+            }
+
+            .quick-actions {
+                flex-direction: column;
+                align-items: stretch;
+                padding: 0 15px;
+            }
+
+            .action-btn {
+                width: 100%;
+                justify-content: center;
+            }
+
+            .chart-container {
+                height: 250px;
+                padding: 1rem;
+            }
+
+            .filter-btn {
+                width: 100%;
+                justify-content: center;
+            }
+
+            .d-flex.flex-wrap.gap-2 {
+                width: 100%;
+            }
+        }
+
+        @media (max-width: 576px) {
+            .navbar .container-fluid {
+                padding: 0 15px;
+            }
+
+            .navbar-brand {
+                font-size: 1.3rem;
+            }
+
+            .payment-card {
+                padding: 1.25rem;
+            }
+
+            .stats-card {
+                padding: 1.25rem;
+            }
+
+            .notifications-dropdown {
+                width: 280px;
+                right: -20px;
+            }
+
+            .nav-tabs .nav-link {
+                padding: 0.5rem 1rem;
+                font-size: 0.85rem;
+            }
+
+            .nav-tabs .nav-link i {
+                margin-right: 0.25rem;
+            }
+
+            .chart-title {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+
+            .year-selector {
+                width: 100%;
+                justify-content: flex-start;
+            }
+        }
+
+        @media (max-width: 400px) {
+            .main-container {
+                padding: 0 12px;
+            }
+
+            .filter-section {
+                padding: 1rem;
+            }
+
+            .stats-card {
+                padding: 1rem;
+            }
+        }
+
+        /* Animations */
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .fade-in {
+            animation: fadeInUp 0.5s ease-out;
+        }
+
+        /* Card Content Layout */
+        .card-content {
+            display: flex;
+            flex-direction: column;
+            height: 100%;
+        }
+
+        .card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 1rem;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+        }
+
+        .card-body {
+            flex: 1;
+        }
+
+        .card-footer {
+            margin-top: auto;
+            padding-top: 1rem;
+            border-top: 1px solid rgba(148, 163, 184, 0.1);
+        }
+
+        .card-footer .d-flex {
+            flex-wrap: wrap;
+            gap: 0.5rem;
+        }
+
+        /* Info Pills */
+        .info-pill {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.5rem 1rem;
+            border-radius: 50px;
+            font-size: 0.85rem;
+            background: rgba(30, 41, 59, 0.5);
+            border: 1px solid rgba(148, 163, 184, 0.2);
+            color: var(--text-secondary);
+            margin: 0.25rem;
+        }
+
+        /* Status Badges */
+        .badge-success-soft {
+            background: rgba(16, 185, 129, 0.15);
+            color: #6ee7b7;
+            border: 1px solid rgba(16, 185, 129, 0.3);
+            border-radius: 50px;
+            padding: 0.5rem 1rem;
+            font-size: 0.85rem;
+            font-weight: 600;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            white-space: nowrap;
+        }
+
+        .badge-pending {
+            background: rgba(245, 158, 11, 0.15);
+            color: #fbbf24;
+            border: 1px solid rgba(245, 158, 11, 0.3);
+            border-radius: 50px;
+            padding: 0.5rem 1rem;
+            font-size: 0.85rem;
+            font-weight: 600;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            white-space: nowrap;
         }
     </style>
+    <script src="config.js"></script>
 </head>
+
 <body>
+    <!-- Navigation -->
     <nav class="navbar navbar-expand-lg sticky-top">
-        <div class="container-fluid px-4">
-            <a class="navbar-brand fw-bold" href="worker-profile.html">
+        <div class="container-fluid">
+            <a class="navbar-brand" href="worker-profile.html">
                 <i class="fas fa-tools me-2"></i>WorkConnect
             </a>
-            <div class="navbar-nav ms-auto">
-                <a class="nav-link" href="worker-profile.html" id="navUserLink">Profile</a>
-                <a class="nav-link" href="worker-orders.html">Orders</a>
-                <a class="nav-link active" href="worker-payments.html">Payments</a>
-                <button class="btn btn-outline-light btn-sm ms-3" onclick="logout()">
-                    <i class="fas fa-sign-out-alt me-2"></i>Logout
-                </button>
+
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon">
+                    <i class="fas fa-bars"></i>
+                </span>
+            </button>
+
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto align-items-lg-center">
+                    <li class="nav-item">
+                        <a href="worker-profile.html" class="nav-link">Profile</a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="worker-orders.html" class="nav-link">My Orders</a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="worker-payments.html" class="nav-link active">Payments</a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="worker-help.html" class="nav-link">Help</a>
+                    </li>
+
+                    <li class="nav-item ms-lg-3">
+                        <div class="nav-notifications" style="position: relative;">
+                            <button type="button" id="workerNotifBtn" class="btn btn-link nav-link p-0 border-0"
+                                style="background:none;">
+                                <i class="fas fa-bell"></i>
+                                <span id="workerNotifCount"
+                                    style="display: none; position: absolute; top: -5px; right: -5px; background: #ef4444; color: white; border-radius: 50%; padding: 2px 5px; font-size: 0.65rem; font-weight: bold;">0</span>
+                            </button>
+                            <div id="workerNotifDropdown" class="notifications-dropdown">
+                                <h6
+                                    style="padding: 0.75rem 1rem; border-bottom: 1px solid rgba(148, 163, 184, 0.2); color: #94a3b8; font-size: 0.85rem; text-transform: uppercase; margin: 0;">
+                                    Notifications
+                                </h6>
+                                <div id="workerNotifList" style="max-height: 300px; overflow-y: auto;"></div>
+                            </div>
+                        </div>
+                    </li>
+
+                    <li class="nav-item ms-lg-2">
+                        <div class="dropdown">
+                            <a href="worker-profile.html" class="nav-link d-flex align-items-center gap-2">
+                                <i class="fas fa-user-hard-hat" style="font-size: 1.2rem; color: var(--primary);"></i>
+                                <span id="navWorkerName">Worker</span>
+                            </a>
+                        </div>
+                    </li>
+
+                    <li class="nav-item ms-lg-2">
+                        <button class="btn btn-outline-danger btn-sm" onclick="logout()"
+                            style="border-radius: 8px; padding: 0.4rem 0.8rem;">
+                            <i class="fas fa-sign-out-alt"></i>
+                        </button>
+                    </li>
+                </ul>
             </div>
         </div>
     </nav>
 
-    <div class="container py-4">
-        <header class="page-header">
+    <!-- Main Content -->
+    <div class="main-container py-4 fade-in">
+        <!-- Header Section -->
+        <header class="page-header mb-4">
             <h1 class="page-title">My Payments</h1>
-            <p class="page-subtitle">See all payments you have received from customers.</p>
+            <p class="page-subtitle">Track all payments received from customers for your services</p>
+
+            <div class="quick-actions">
+                <button class="action-btn" onclick="refreshPayments()">
+                    <i class="fas fa-sync-alt"></i>
+                    Refresh
+                </button>
+                <button class="action-btn" onclick="showExportModal()">
+                    <i class="fas fa-file-export"></i>
+                    Export
+                </button>
+                <button class="action-btn" onclick="showAnalytics()">
+                    <i class="fas fa-chart-line"></i>
+                    Analytics
+                </button>
+            </div>
         </header>
 
-        <section id="paymentsSection">
-            <div id="paymentsList" class="row g-3"></div>
+        <!-- Analytics Tabs -->
+        <div class="analytics-container mb-5" id="analyticsTabs" style="display: none;">
+            <ul class="nav nav-tabs" id="analyticsTab" role="tablist">
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link active" id="overview-tab" data-bs-toggle="tab" data-bs-target="#overview"
+                        type="button">
+                        <i class="fas fa-chart-pie me-2"></i>Overview
+                    </button>
+                </li>
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link" id="monthly-tab" data-bs-toggle="tab" data-bs-target="#monthly"
+                        type="button">
+                        <i class="fas fa-calendar-alt me-2"></i>Monthly
+                    </button>
+                </li>
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link" id="methods-tab" data-bs-toggle="tab" data-bs-target="#methods"
+                        type="button">
+                        <i class="fas fa-credit-card me-2"></i>Methods
+                    </button>
+                </li>
+            </ul>
+
+            <div class="tab-content mt-4">
+                <div class="tab-pane fade show active" id="overview" role="tabpanel">
+                    <div class="row g-4">
+                        <div class="col-lg-8">
+                            <div class="chart-container">
+                                <div class="chart-title">
+                                    <span>Earnings Trend</span>
+                                    <div class="year-selector" style="display: flex; gap: 0.5rem; flex-wrap: wrap;">
+                                        <button class="filter-btn active"
+                                            onclick="changeChartYear('2024')">2024</button>
+                                        <button class="filter-btn" onclick="changeChartYear('2023')">2023</button>
+                                        <button class="filter-btn" onclick="changeChartYear('all')">All Time</button>
+                                    </div>
+                                </div>
+                                <div id="earningsChart"></div>
+                            </div>
+                        </div>
+                        <div class="col-lg-4">
+                            <div class="chart-container">
+                                <div class="chart-title">Payment Methods Distribution</div>
+                                <div id="methodsChart"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="tab-pane fade" id="monthly" role="tabpanel">
+                    <div class="chart-container" style="height: 350px;">
+                        <div class="chart-title">
+                            <span>Monthly Performance</span>
+                            <select class="form-select form-select-sm bg-dark border-secondary text-light"
+                                style="width: auto; background: rgba(30, 41, 59, 0.5);"
+                                onchange="updateMonthlyChart(this.value)">
+                                <option value="2024">2024</option>
+                                <option value="2023">2023</option>
+                            </select>
+                        </div>
+                        <div id="monthlyChart"></div>
+                    </div>
+                </div>
+
+                <div class="tab-pane fade" id="methods" role="tabpanel">
+                    <div class="row g-4">
+                        <div class="col-md-6">
+                            <div class="chart-container">
+                                <div class="chart-title">Payment Methods Over Time</div>
+                                <div id="methodsTrendChart"></div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="chart-container">
+                                <div class="chart-title">Success Rate by Method</div>
+                                <div id="successRateChart"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Stats Section -->
+        <section class="mb-5">
+            <div class="stats-grid">
+                <div class="stats-card">
+                    <div class="stats-icon total"
+                        style="width: 48px; height: 48px; border-radius: 12px; background: rgba(56, 189, 248, 0.15); display: flex; align-items: center; justify-content: center; margin-bottom: 1rem; color: var(--primary);">
+                        <i class="fas fa-wallet fa-lg"></i>
+                    </div>
+                    <div class="stats-label">
+                        <i class="fas fa-indian-rupee-sign"></i>
+                        Total Earnings
+                    </div>
+                    <div class="stats-value" id="totalEarnings">₹0</div>
+                    <div class="stats-change neutral"
+                        style="display: inline-flex; align-items: center; gap: 0.5rem; padding: 0.25rem 0.75rem; border-radius: 50px; font-size: 0.85rem; background: rgba(148, 163, 184, 0.15); color: var(--text-secondary);">
+                        <i class="fas fa-calendar"></i>
+                        <span>All time</span>
+                    </div>
+                </div>
+
+                <div class="stats-card">
+                    <div class="stats-icon pending"
+                        style="width: 48px; height: 48px; border-radius: 12px; background: rgba(245, 158, 11, 0.15); display: flex; align-items: center; justify-content: center; margin-bottom: 1rem; color: var(--warning);">
+                        <i class="fas fa-clock fa-lg"></i>
+                    </div>
+                    <div class="stats-label">
+                        <i class="fas fa-hourglass-half"></i>
+                        Pending Payments
+                    </div>
+                    <div class="stats-value" id="pendingPayments">0</div>
+                    <div class="stats-change negative"
+                        style="display: inline-flex; align-items: center; gap: 0.5rem; padding: 0.25rem 0.75rem; border-radius: 50px; font-size: 0.85rem; background: rgba(239, 68, 68, 0.15); color: var(--danger);">
+                        <i class="fas fa-exclamation-circle"></i>
+                        <span>Awaiting clearance</span>
+                    </div>
+                </div>
+
+                <div class="stats-card">
+                    <div class="stats-icon month"
+                        style="width: 48px; height: 48px; border-radius: 12px; background: rgba(16, 185, 129, 0.15); display: flex; align-items: center; justify-content: center; margin-bottom: 1rem; color: var(--success);">
+                        <i class="fas fa-calendar-alt fa-lg"></i>
+                    </div>
+                    <div class="stats-label">
+                        <i class="fas fa-chart-line"></i>
+                        This Month
+                    </div>
+                    <div class="stats-value" id="thisMonthEarnings">₹0</div>
+                    <div class="progress"
+                        style="height: 6px; background: rgba(30, 41, 59, 0.5); border-radius: 3px; margin: 1rem 0;">
+                        <div class="progress-bar" id="monthProgress"
+                            style="background: linear-gradient(90deg, var(--primary), var(--success)); border-radius: 3px; width: 0%;">
+                        </div>
+                    </div>
+                    <div class="stats-change positive mt-2" id="monthlyChange"
+                        style="display: inline-flex; align-items: center; gap: 0.5rem; padding: 0.25rem 0.75rem; border-radius: 50px; font-size: 0.85rem; background: rgba(16, 185, 129, 0.15); color: var(--success);">
+                        <i class="fas fa-arrow-up"></i>
+                        <span>0% from last month</span>
+                    </div>
+                </div>
+
+                <div class="stats-card">
+                    <div class="stats-icon average"
+                        style="width: 48px; height: 48px; border-radius: 12px; background: rgba(168, 85, 247, 0.15); display: flex; align-items: center; justify-content: center; margin-bottom: 1rem; color: #a855f7;">
+                        <i class="fas fa-calculator fa-lg"></i>
+                    </div>
+                    <div class="stats-label">
+                        <i class="fas fa-balance-scale"></i>
+                        Average Payment
+                    </div>
+                    <div class="stats-value" id="averagePayment">₹0</div>
+                    <div class="stats-change neutral" id="avgChange"
+                        style="display: inline-flex; align-items: center; gap: 0.5rem; padding: 0.25rem 0.75rem; border-radius: 50px; font-size: 0.85rem; background: rgba(148, 163, 184, 0.15); color: var(--text-secondary);">
+                        <i class="fas fa-chart-bar"></i>
+                        <span>Per transaction</span>
+                    </div>
+                </div>
+            </div>
         </section>
+
+        <!-- Filter Section -->
+        <section class="filter-section">
+            <div class="filter-group">
+                <div class="search-box">
+                    <i class="fas fa-search"></i>
+                    <input type="text" id="searchInput" placeholder="Search by transaction ID, amount, or order..."
+                        oninput="filterPayments()">
+                </div>
+                <div class="d-flex flex-wrap gap-2 justify-content-center w-100">
+                    <button class="filter-btn active" onclick="setFilter('all')">
+                        <i class="fas fa-list"></i> All
+                    </button>
+                    <button class="filter-btn" onclick="setFilter('upi')">
+                        <i class="fas fa-mobile-alt"></i> UPI
+                    </button>
+                    <button class="filter-btn" onclick="setFilter('card')">
+                        <i class="far fa-credit-card"></i> Card
+                    </button>
+                    <button class="filter-btn" onclick="setFilter('cash')">
+                        <i class="fas fa-money-bill-wave"></i> Cash
+                    </button>
+                    <button class="filter-btn" onclick="setFilter('recent')">
+                        <i class="fas fa-clock"></i> Recent
+                    </button>
+                </div>
+                <div class="d-flex flex-wrap gap-2 justify-content-center w-100">
+                    <button class="filter-btn" onclick="sortPayments('amount_desc')">
+                        <i class="fas fa-sort-amount-down"></i> High to Low
+                    </button>
+                    <button class="filter-btn" onclick="sortPayments('date_desc')">
+                        <i class="fas fa-calendar-alt"></i> Newest
+                    </button>
+                    <button class="filter-btn" onclick="sortPayments('date_asc')">
+                        <i class="fas fa-history"></i> Oldest
+                    </button>
+                </div>
+            </div>
+        </section>
+
+        <!-- Payments List -->
+        <section id="paymentsSection" class="mt-5">
+            <div class="d-flex flex-column flex-md-row justify-content-between align-items-center mb-4">
+                <h5 class="mb-3 mb-md-0">
+                    Payment History
+                    <span class="text-secondary" id="paymentCount">(0 payments)</span>
+                </h5>
+                <div class="d-flex align-items-center gap-3 flex-wrap justify-content-center">
+                    <div class="text-secondary">
+                        <i class="fas fa-info-circle me-2"></i>
+                        <span id="totalAmount">Total: ₹0</span>
+                    </div>
+                    <div class="dropdown">
+                        <button class="btn btn-outline-secondary dropdown-toggle" type="button"
+                            data-bs-toggle="dropdown">
+                            <i class="fas fa-eye me-2"></i>View
+                        </button>
+                        <ul class="dropdown-menu dropdown-menu-dark">
+                            <li><a class="dropdown-item" href="#" onclick="changeView('grid')"><i
+                                        class="fas fa-th-large me-2"></i>Grid View</a></li>
+                            <li><a class="dropdown-item" href="#" onclick="changeView('list')"><i
+                                        class="fas fa-list me-2"></i>List View</a></li>
+                            <li><a class="dropdown-item" href="#" onclick="changeView('compact')"><i
+                                        class="fas fa-compress me-2"></i>Compact View</a></li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <div id="paymentsList" class="payments-grid">
+                <div class="loading-state">
+                    <div class="loading-spinner"></div>
+                    <div class="text-secondary mt-3">Loading payments...</div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Pagination -->
+        <nav class="mt-5" id="paginationContainer" style="display: none;">
+            <ul class="pagination">
+                <li class="page-item disabled">
+                    <button class="page-link" onclick="changePage(currentPage - 1)">
+                        <i class="fas fa-chevron-left"></i>
+                    </button>
+                </li>
+                <li class="page-item active">
+                    <button class="page-link">1</button>
+                </li>
+                <li class="page-item">
+                    <button class="page-link" onclick="changePage(2)">2</button>
+                </li>
+                <li class="page-item">
+                    <button class="page-link" onclick="changePage(currentPage + 1)">
+                        <i class="fas fa-chevron-right"></i>
+                    </button>
+                </li>
+            </ul>
+        </nav>
     </div>
 
+    <!-- Modals -->
+    <div class="modal fade" id="exportModal" tabindex="-1">
+        <div class="modal-dialog modal-lg modal-dialog-centered">
+            <div class="modal-content"
+                style="background: var(--card-bg); color: var(--text-primary); border: 1px solid var(--border-color);">
+                <div class="modal-header" style="border-bottom: 1px solid var(--border-color);">
+                    <h5 class="modal-title">Export Payments Data</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="export-option active" onclick="selectExportOption('csv')"
+                                style="padding: 1rem; border: 1px solid var(--border-color); border-radius: 0.75rem; margin-bottom: 1rem; cursor: pointer;">
+                                <div class="d-flex align-items-center mb-2">
+                                    <div class="rounded-circle bg-success bg-opacity-10 p-2 me-3">
+                                        <i class="fas fa-file-csv text-success"></i>
+                                    </div>
+                                    <div>
+                                        <h6 class="mb-0">CSV Export</h6>
+                                        <small class="text-secondary">Comma-separated values</small>
+                                    </div>
+                                </div>
+                                <p class="small text-secondary mb-0">Best for spreadsheets and data analysis</p>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="export-option" onclick="selectExportOption('pdf')"
+                                style="padding: 1rem; border: 1px solid var(--border-color); border-radius: 0.75rem; margin-bottom: 1rem; cursor: pointer;">
+                                <div class="d-flex align-items-center mb-2">
+                                    <div class="rounded-circle bg-danger bg-opacity-10 p-2 me-3">
+                                        <i class="fas fa-file-pdf text-danger"></i>
+                                    </div>
+                                    <div>
+                                        <h6 class="mb-0">PDF Report</h6>
+                                        <small class="text-secondary">Printable document</small>
+                                    </div>
+                                </div>
+                                <p class="small text-secondary mb-0">Best for printing and sharing</p>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="export-option" onclick="selectExportOption('excel')"
+                                style="padding: 1rem; border: 1px solid var(--border-color); border-radius: 0.75rem; margin-bottom: 1rem; cursor: pointer;">
+                                <div class="d-flex align-items-center mb-2">
+                                    <div class="rounded-circle bg-success bg-opacity-10 p-2 me-3">
+                                        <i class="fas fa-file-excel text-success"></i>
+                                    </div>
+                                    <div>
+                                        <h6 class="mb-0">Excel Export</h6>
+                                        <small class="text-secondary">Microsoft Excel format</small>
+                                    </div>
+                                </div>
+                                <p class="small text-secondary mb-0">Best for advanced Excel users</p>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="export-option" onclick="selectExportOption('json')"
+                                style="padding: 1rem; border: 1px solid var(--border-color); border-radius: 0.75rem; margin-bottom: 1rem; cursor: pointer;">
+                                <div class="d-flex align-items-center mb-2">
+                                    <div class="rounded-circle bg-warning bg-opacity-10 p-2 me-3">
+                                        <i class="fas fa-code text-warning"></i>
+                                    </div>
+                                    <div>
+                                        <h6 class="mb-0">JSON Data</h6>
+                                        <small class="text-secondary">Raw data format</small>
+                                    </div>
+                                </div>
+                                <p class="small text-secondary mb-0">Best for developers and APIs</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="mt-4">
+                        <h6 class="mb-3">Export Options</h6>
+                        <div class="row g-3">
+                            <div class="col-md-6">
+                                <label class="form-label small">Date Range</label>
+                                <div class="input-group">
+                                    <input type="date" class="form-control"
+                                        style="background: rgba(30, 41, 59, 0.5); border: 1px solid var(--border-color); color: var(--text-primary);"
+                                        id="exportStartDate">
+                                    <span class="input-group-text"
+                                        style="background: rgba(30, 41, 59, 0.5); border: 1px solid var(--border-color); color: var(--text-secondary);">to</span>
+                                    <input type="date" class="form-control"
+                                        style="background: rgba(30, 41, 59, 0.5); border: 1px solid var(--border-color); color: var(--text-primary);"
+                                        id="exportEndDate">
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label small">Payment Status</label>
+                                <select class="form-select"
+                                    style="background: rgba(30, 41, 59, 0.5); border: 1px solid var(--border-color); color: var(--text-primary);"
+                                    id="exportStatus">
+                                    <option value="all">All Statuses</option>
+                                    <option value="success">Successful Only</option>
+                                    <option value="pending">Pending Only</option>
+                                </select>
+                            </div>
+                            <div class="col-12">
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" id="includeCustomerInfo" checked
+                                        style="background-color: rgba(30, 41, 59, 0.5); border-color: var(--border-color);">
+                                    <label class="form-check-label small" for="includeCustomerInfo">Include Customer
+                                        Information</label>
+                                </div>
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" id="includeTransactionDetails"
+                                        checked
+                                        style="background-color: rgba(30, 41, 59, 0.5); border-color: var(--border-color);">
+                                    <label class="form-check-label small" for="includeTransactionDetails">Include
+                                        Transaction Details</label>
+                                </div>
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" id="includeAnalytics"
+                                        style="background-color: rgba(30, 41, 59, 0.5); border-color: var(--border-color);">
+                                    <label class="form-check-label small" for="includeAnalytics">Include Analytics
+                                        Summary</label>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer" style="border-top: 1px solid var(--border-color);">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="button" class="btn btn-primary" onclick="exportData()">
+                        <i class="fas fa-download me-2"></i>Export Data
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Payment Details Modal -->
+    <div class="modal fade" id="paymentDetailsModal" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content"
+                style="background: var(--card-bg); color: var(--text-primary); border: 1px solid var(--border-color);">
+                <div class="modal-header" style="border-bottom: 1px solid var(--border-color);">
+                    <h5 class="modal-title">Payment Details</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body" id="paymentDetailsContent">
+                    <!-- Details will be loaded here -->
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/apexcharts@3.41.0/dist/apexcharts.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+
     <script>
+        // ALL JAVASCRIPT CODE - COMPLETE AND INTACT
         let currentUser = null;
+        let allPayments = [];
+        let filteredPayments = [];
+        let currentFilter = 'all';
+        let currentSort = 'date_desc';
+        let currentPage = 1;
+        let currentView = 'grid';
+        const itemsPerPage = 10;
+        let charts = {};
+        let exportFormat = 'csv';
 
         document.addEventListener('DOMContentLoaded', () => {
             try {
@@ -121,78 +1295,1445 @@
                 return;
             }
 
-            const navUserLink = document.getElementById('navUserLink');
-            if (navUserLink) {
-                navUserLink.textContent = (currentUser.name || currentUser.username) + ' (Profile)';
-            }
-
             loadPayments();
+            loadNotifications();
+            setInterval(loadNotifications, 10000);
+            initWorkerNotifToggle();
+
+            // Set nav info
+            const navWorkerName = document.getElementById('navWorkerName');
+            if (navWorkerName) navWorkerName.textContent = (currentUser.name || currentUser.username).split(' ')[0];
         });
 
+        // Load payments from API
         async function loadPayments() {
             const listEl = document.getElementById('paymentsList');
             try {
-                const res = await fetch(`/api/payments/worker/${currentUser.id}`);
+                listEl.innerHTML = `
+                    <div class="loading-state">
+                        <div class="loading-spinner"></div>
+                        <div class="text-secondary mt-3">Loading payments...</div>
+                    </div>
+                `;
+
+                const res = await fetch(getApiUrl(`/api/payments/worker/${currentUser.id}`));
+
                 if (!res.ok) {
-                    listEl.innerHTML = '<div class="col-12 text-center text-secondary">Unable to load payments.</div>';
-                    return;
+                    throw new Error('Unable to load payments');
                 }
-                const payments = await res.json() || [];
-                if (!payments.length) {
-                    listEl.innerHTML = '<div class="col-12 text-center text-secondary py-5"><i class="fas fa-receipt fa-3x mb-3"></i><p class="mb-0">No payments found yet.</p></div>';
-                    return;
+
+                allPayments = await res.json() || [];
+
+                // Calculate stats from actual data
+                calculateStats(allPayments);
+
+                // Apply initial filter and sort
+                filterAndSortPayments();
+
+                // Display payments
+                displayPayments();
+
+                // Initialize analytics if shown
+                if (document.getElementById('analyticsTabs').style.display !== 'none') {
+                    initializeCharts();
                 }
-                listEl.innerHTML = payments
-                    .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))
-                    .map(p => {
-                        const dateStr = new Date(p.createdAt).toLocaleString();
-                        const orderCode = p.orderId ? p.orderId.slice(-6) : '—';
-                        return `
-                            <div class="col-lg-6 col-md-12">
-                                <div class="card payment-card">
-                                    <div class="d-flex justify-content-between align-items-center mb-2">
-                                        <div>
-                                            <div class="small text-secondary">Transaction</div>
-                                            <div class="fw-semibold">${p.transactionId || 'N/A'}</div>
+
+            } catch (e) {
+                console.error('Error loading payments:', e);
+                listEl.innerHTML = `
+                    <div class="empty-state">
+                        <div class="empty-state-icon">
+                            <i class="fas fa-exclamation-circle"></i>
+                        </div>
+                        <h4 class="mb-3">Unable to Load Payments</h4>
+                        <p class="text-secondary mb-4">Please check your connection and try again.</p>
+                        <div class="d-flex gap-2 justify-content-center">
+                            <button class="btn btn-primary" onclick="loadPayments()">
+                                <i class="fas fa-redo me-2"></i>Retry
+                            </button>
+                            <button class="btn btn-outline-light" onclick="window.location.href='worker-profile.html'">
+                                <i class="fas fa-home me-2"></i>Go to Profile
+                            </button>
+                        </div>
+                    </div>
+                `;
+            }
+        }
+
+        function calculateStats(payments) {
+            if (!payments || payments.length === 0) {
+                document.getElementById('totalEarnings').textContent = '₹0';
+                document.getElementById('pendingPayments').textContent = '0';
+                document.getElementById('thisMonthEarnings').textContent = '₹0';
+                document.getElementById('averagePayment').textContent = '₹0';
+                document.getElementById('totalAmount').textContent = 'Total: ₹0';
+                document.getElementById('monthProgress').style.width = '0%';
+                document.getElementById('monthlyChange').innerHTML = '<i class="fas fa-minus"></i><span>No data</span>';
+                document.getElementById('monthlyChange').className = 'stats-change positive';
+                document.getElementById('monthlyChange').style.background = 'rgba(148, 163, 184, 0.15)';
+                document.getElementById('monthlyChange').style.color = 'var(--text-secondary)';
+                return;
+            }
+
+            const now = new Date();
+            const currentMonth = now.getMonth();
+            const currentYear = now.getFullYear();
+
+            // 1. Total Earnings
+            const totalEarnings = payments
+                .filter(p => p.status === 'success' || p.status === 'paid' || !p.status)
+                .reduce((sum, p) => sum + (parseFloat(p.amount) || 0), 0);
+
+            // 2. Pending Payments
+            const pendingPayments = payments.filter(p => p.status === 'pending').length;
+
+            // 3. This Month Earnings
+            const thisMonthEarnings = payments
+                .filter(p => {
+                    const paymentDate = new Date(p.createdAt);
+                    return paymentDate.getMonth() === currentMonth &&
+                        paymentDate.getFullYear() === currentYear &&
+                        (p.status === 'success' || p.status === 'paid' || !p.status);
+                })
+                .reduce((sum, p) => sum + (parseFloat(p.amount) || 0), 0);
+
+            // 4. Last Month Earnings
+            const lastMonth = currentMonth === 0 ? 11 : currentMonth - 1;
+            const lastMonthYear = currentMonth === 0 ? currentYear - 1 : currentYear;
+
+            const lastMonthEarnings = payments
+                .filter(p => {
+                    const paymentDate = new Date(p.createdAt);
+                    return paymentDate.getMonth() === lastMonth &&
+                        paymentDate.getFullYear() === lastMonthYear &&
+                        (p.status === 'success' || p.status === 'paid' || !p.status);
+                })
+                .reduce((sum, p) => sum + (parseFloat(p.amount) || 0), 0);
+
+            // 5. Average Payment
+            const successfulPayments = payments.filter(p =>
+                p.status === 'success' || p.status === 'paid' || !p.status
+            );
+            const averagePayment = successfulPayments.length > 0
+                ? totalEarnings / successfulPayments.length
+                : 0;
+
+            // Calculate monthly change percentage
+            let monthlyChangePercentage = 0;
+            if (lastMonthEarnings > 0) {
+                monthlyChangePercentage = ((thisMonthEarnings - lastMonthEarnings) / lastMonthEarnings) * 100;
+            } else if (thisMonthEarnings > 0) {
+                monthlyChangePercentage = 100;
+            }
+
+            // Calculate month progress
+            const monthlyTarget = 50000;
+            const monthProgress = Math.min((thisMonthEarnings / monthlyTarget) * 100, 100);
+
+            // Update UI
+            document.getElementById('totalEarnings').textContent = formatCurrency(totalEarnings);
+            document.getElementById('pendingPayments').textContent = pendingPayments;
+            document.getElementById('thisMonthEarnings').textContent = formatCurrency(thisMonthEarnings);
+            document.getElementById('averagePayment').textContent = formatCurrency(averagePayment);
+            document.getElementById('totalAmount').textContent = `Total: ${formatCurrency(totalEarnings)}`;
+
+            // Update progress bar
+            const progressBar = document.getElementById('monthProgress');
+            progressBar.style.width = `${monthProgress}%`;
+
+            // Update monthly change indicator
+            const changeElement = document.getElementById('monthlyChange');
+            if (monthlyChangePercentage > 0) {
+                changeElement.innerHTML = `<i class="fas fa-arrow-up"></i><span>+${monthlyChangePercentage.toFixed(1)}% from last month</span>`;
+                changeElement.style.background = 'rgba(16, 185, 129, 0.15)';
+                changeElement.style.color = 'var(--success)';
+            } else if (monthlyChangePercentage < 0) {
+                changeElement.innerHTML = `<i class="fas fa-arrow-down"></i><span>${monthlyChangePercentage.toFixed(1)}% from last month</span>`;
+                changeElement.style.background = 'rgba(239, 68, 68, 0.15)';
+                changeElement.style.color = 'var(--danger)';
+            } else {
+                changeElement.innerHTML = `<i class="fas fa-minus"></i><span>No change from last month</span>`;
+                changeElement.style.background = 'rgba(148, 163, 184, 0.15)';
+                changeElement.style.color = 'var(--text-secondary)';
+            }
+        }
+
+        function formatCurrency(amount) {
+            if (isNaN(amount)) return '₹0';
+            return '₹' + Math.round(amount).toLocaleString('en-IN');
+        }
+
+        function filterAndSortPayments() {
+            filteredPayments = [...allPayments];
+
+            switch (currentFilter) {
+                case 'upi':
+                    filteredPayments = allPayments.filter(p => p.method === 'upi');
+                    break;
+                case 'card':
+                    filteredPayments = allPayments.filter(p => p.method === 'card');
+                    break;
+                case 'cash':
+                    filteredPayments = allPayments.filter(p => p.method === 'cash');
+                    break;
+                case 'recent':
+                    const sevenDaysAgo = new Date();
+                    sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7);
+                    filteredPayments = allPayments.filter(p => new Date(p.createdAt) > sevenDaysAgo);
+                    break;
+            }
+
+            const searchTerm = document.getElementById('searchInput').value.toLowerCase();
+            if (searchTerm) {
+                filteredPayments = filteredPayments.filter(p =>
+                    (p.transactionId && p.transactionId.toLowerCase().includes(searchTerm)) ||
+                    (p.amount && p.amount.toString().includes(searchTerm)) ||
+                    (p.orderId && p.orderId.toLowerCase().includes(searchTerm)) ||
+                    (p.method && p.method.toLowerCase().includes(searchTerm))
+                );
+            }
+
+            switch (currentSort) {
+                case 'amount_desc':
+                    filteredPayments.sort((a, b) => (parseFloat(b.amount) || 0) - (parseFloat(a.amount) || 0));
+                    break;
+                case 'date_desc':
+                    filteredPayments.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+                    break;
+                case 'date_asc':
+                    filteredPayments.sort((a, b) => new Date(a.createdAt) - new Date(b.createdAt));
+                    break;
+            }
+
+            document.getElementById('paymentCount').textContent = `(${filteredPayments.length} payment${filteredPayments.length !== 1 ? 's' : ''})`;
+        }
+
+        function setFilter(filter) {
+            currentFilter = filter;
+            document.querySelectorAll('.filter-btn').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            event.target.classList.add('active');
+            filterAndSortPayments();
+            displayPayments();
+        }
+
+        function filterPayments() {
+            filterAndSortPayments();
+            displayPayments();
+        }
+
+        function sortPayments(sortType) {
+            currentSort = sortType;
+            filterAndSortPayments();
+            displayPayments();
+        }
+
+        function changeView(view) {
+            currentView = view;
+            displayPayments();
+
+            // Update active dropdown item
+            document.querySelectorAll('.dropdown-item').forEach(item => {
+                item.classList.remove('active');
+            });
+            event.target.classList.add('active');
+        }
+
+        function displayPayments() {
+            const listEl = document.getElementById('paymentsList');
+
+            if (filteredPayments.length === 0) {
+                listEl.innerHTML = `
+                    <div class="empty-state">
+                        <div class="empty-state-icon">
+                            <i class="fas fa-search"></i>
+                        </div>
+                        <h4 class="mb-3">No Payments Found</h4>
+                        <p class="text-secondary mb-4">Try changing your search or filter criteria.</p>
+                        <button class="btn btn-primary" onclick="setFilter('all')">
+                            <i class="fas fa-filter me-2"></i>Clear Filters
+                        </button>
+                    </div>
+                `;
+                return;
+            }
+
+            const totalPages = Math.ceil(filteredPayments.length / itemsPerPage);
+            const startIndex = (currentPage - 1) * itemsPerPage;
+            const endIndex = Math.min(startIndex + itemsPerPage, filteredPayments.length);
+            const pagePayments = filteredPayments.slice(startIndex, endIndex);
+
+            let paymentsHtml = '';
+
+            if (currentView === 'list') {
+                paymentsHtml = pagePayments.map((p, index) => {
+                    const date = new Date(p.createdAt);
+                    const dateStr = date.toLocaleDateString('en-IN', {
+                        day: '2-digit',
+                        month: 'short',
+                        year: 'numeric'
+                    });
+                    const timeStr = date.toLocaleTimeString('en-IN', {
+                        hour: '2-digit',
+                        minute: '2-digit',
+                        hour12: true
+                    });
+                    const orderCode = p.orderId ? p.orderId.slice(-6) : '—';
+
+                    let methodIcon = 'fa-money-bill-wave';
+                    let methodText = 'Cash';
+                    let methodColor = 'text-warning';
+
+                    if (p.method === 'upi') {
+                        methodIcon = 'fa-mobile-alt';
+                        methodText = 'UPI';
+                        methodColor = 'text-success';
+                    } else if (p.method === 'card') {
+                        methodIcon = 'fa-credit-card';
+                        methodText = 'Card';
+                        methodColor = 'text-info';
+                    }
+
+                    let statusBadge = '';
+                    if (p.status === 'pending') {
+                        statusBadge = '<span class="badge-pending"><i class="fas fa-clock"></i>Pending</span>';
+                    } else {
+                        statusBadge = '<span class="badge-success-soft"><i class="fas fa-check-circle"></i>Success</span>';
+                    }
+
+                    return `
+                        <div class="payment-card d-flex align-items-center" style="animation-delay: ${index * 0.05}s">
+                            <div class="flex-grow-1">
+                                <div class="d-flex align-items-center gap-3">
+                                    <div class="amount-display" style="font-size: 1.25rem; min-width: 100px;">₹${p.amount || 0}</div>
+                                    <div>
+                                        <div class="fw-semibold">${p.transactionId || 'N/A'}</div>
+                                        <div class="text-tertiary small">
+                                            <i class="fas ${methodIcon} me-1 ${methodColor}"></i>${methodText} • 
+                                            <i class="fas fa-calendar me-1"></i>${dateStr} • 
+                                            <i class="fas fa-clock me-1"></i>${timeStr}
                                         </div>
-                                        <span class="badge-success-soft">
-                                            <i class="fas fa-check-circle me-1"></i>Success
-                                        </span>
-                                    </div>
-                                    <div class="mb-2">
-                                        <div class="small text-secondary">Amount</div>
-                                        <div class="h5 mb-0">₹${p.amount}</div>
-                                    </div>
-                                    <div class="d-flex flex-wrap gap-2 mb-2">
-                                        <span class="pill">
-                                            <i class="fas fa-file-invoice-dollar"></i>
-                                            Order #${orderCode}
-                                        </span>
-                                        <span class="pill">
-                                            <i class="fas fa-credit-card"></i>
-                                            ${p.method || 'Online'}
-                                        </span>
-                                        <span class="pill">
-                                            <i class="fas fa-clock"></i>
-                                            ${dateStr}
-                                        </span>
                                     </div>
                                 </div>
                             </div>
+                            <div class="d-flex align-items-center gap-2">
+                                ${statusBadge}
+                                <button class="btn btn-sm btn-outline-secondary" onclick="showPaymentDetails('${p.id}')">
+                                    <i class="fas fa-eye"></i>
+                                </button>
+                            </div>
+                        </div>
+                    `;
+                }).join('');
+            } else if (currentView === 'compact') {
+                paymentsHtml = pagePayments.map((p, index) => {
+                    const date = new Date(p.createdAt);
+                    const dateStr = date.toLocaleDateString('en-IN', {
+                        day: '2-digit',
+                        month: 'short'
+                    });
+
+                    let methodIcon = 'fa-money-bill-wave';
+                    let methodColor = 'text-warning';
+
+                    if (p.method === 'upi') {
+                        methodIcon = 'fa-mobile-alt';
+                        methodColor = 'text-success';
+                    } else if (p.method === 'card') {
+                        methodIcon = 'fa-credit-card';
+                        methodColor = 'text-info';
+                    }
+
+                    return `
+                        <div class="payment-card" style="animation-delay: ${index * 0.05}s">
+                            <div class="d-flex align-items-center justify-content-between">
+                                <div>
+                                    <div class="amount-display" style="font-size: 1.25rem;">₹${p.amount || 0}</div>
+                                    <div class="text-tertiary small">
+                                        <i class="fas ${methodIcon} ${methodColor} me-1"></i>
+                                        ${dateStr}
+                                    </div>
+                                </div>
+                                <button class="btn btn-sm btn-outline-secondary" onclick="showPaymentDetails('${p.id}')">
+                                    <i class="fas fa-chevron-right"></i>
+                                </button>
+                            </div>
+                        </div>
+                    `;
+                }).join('');
+            } else {
+                // Grid view (default)
+                paymentsHtml = pagePayments.map((p, index) => {
+                    const date = new Date(p.createdAt);
+                    const dateStr = date.toLocaleDateString('en-IN', {
+                        day: '2-digit',
+                        month: 'short',
+                        year: 'numeric'
+                    });
+                    const timeStr = date.toLocaleTimeString('en-IN', {
+                        hour: '2-digit',
+                        minute: '2-digit',
+                        hour12: true
+                    });
+                    const orderCode = p.orderId ? p.orderId.slice(-6) : '—';
+
+                    let methodIcon = 'fa-money-bill-wave';
+                    let methodText = 'Cash';
+                    let methodColor = 'text-warning';
+
+                    if (p.method === 'upi') {
+                        methodIcon = 'fa-mobile-alt';
+                        methodText = 'UPI';
+                        methodColor = 'text-success';
+                    } else if (p.method === 'card') {
+                        methodIcon = 'fa-credit-card';
+                        methodText = 'Card';
+                        methodColor = 'text-info';
+                    }
+
+                    let statusBadge = '';
+                    if (p.status === 'pending') {
+                        statusBadge = '<span class="badge-pending"><i class="fas fa-clock"></i>Pending</span>';
+                    } else {
+                        statusBadge = '<span class="badge-success-soft"><i class="fas fa-check-circle"></i>Success</span>';
+                    }
+
+                    return `
+                        <div class="payment-card" style="animation-delay: ${index * 0.05}s">
+                            <div class="card-content">
+                                <div class="card-header">
+                                    <div>
+                                        <div class="text-secondary small mb-1">Transaction ID</div>
+                                        <div class="fw-semibold font-monospace" style="font-size: 0.9rem;">
+                                            ${p.transactionId || 'N/A'}
+                                        </div>
+                                    </div>
+                                    ${statusBadge}
+                                </div>
+                                
+                                <div class="card-body">
+                                    <div class="amount-display" style="font-size: 1.75rem; margin: 1rem 0;">₹${p.amount || 0}</div>
+                                    
+                                    <div class="d-flex flex-wrap gap-2 mb-3">
+                                        <span class="info-pill">
+                                            <i class="fas fa-file-invoice-dollar"></i>
+                                            Order #${orderCode}
+                                        </span>
+                                        <span class="info-pill ${methodColor}">
+                                            <i class="fas ${methodIcon}"></i>
+                                            ${methodText}
+                                        </span>
+                                        <span class="info-pill">
+                                            <i class="fas fa-calendar"></i>
+                                            ${dateStr}
+                                        </span>
+                                    </div>
+                                    
+                                    <div class="text-secondary small">
+                                        <i class="fas fa-clock me-1"></i>
+                                        ${timeStr}
+                                        ${p.customerName ? ` • From: ${p.customerName}` : ''}
+                                    </div>
+                                </div>
+                                
+                                <div class="card-footer">
+                                    <div class="d-flex gap-2">
+                                        ${p.screenshot ? `
+                                            <a href="${p.screenshot}" target="_blank" class="btn btn-sm btn-outline-primary">
+                                                <i class="fas fa-image me-2"></i>
+                                                Proof
+                                            </a>
+                                        ` : ''}
+                                        <button class="btn btn-sm btn-outline-secondary" onclick="showPaymentDetails('${p.id}')">
+                                            <i class="fas fa-eye me-2"></i>
+                                            Details
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    `;
+                }).join('');
+            }
+
+            listEl.innerHTML = paymentsHtml;
+            updatePagination(totalPages);
+        }
+
+        function updatePagination(totalPages) {
+            const paginationContainer = document.getElementById('paginationContainer');
+            if (totalPages > 1) {
+                paginationContainer.style.display = 'block';
+
+                let paginationHTML = `
+                    <ul class="pagination justify-content-center">
+                        <li class="page-item ${currentPage === 1 ? 'disabled' : ''}">
+                            <button class="page-link" onclick="changePage(${currentPage - 1})">
+                                <i class="fas fa-chevron-left"></i>
+                            </button>
+                        </li>
+                `;
+
+                for (let i = 1; i <= totalPages; i++) {
+                    if (i === 1 || i === totalPages || (i >= currentPage - 1 && i <= currentPage + 1)) {
+                        paginationHTML += `
+                            <li class="page-item ${i === currentPage ? 'active' : ''}">
+                                <button class="page-link" onclick="changePage(${i})">${i}</button>
+                            </li>
                         `;
-                    }).join('');
+                    } else if (i === currentPage - 2 || i === currentPage + 2) {
+                        paginationHTML += `<li class="page-item disabled"><span class="page-link">...</span></li>`;
+                    }
+                }
+
+                paginationHTML += `
+                        <li class="page-item ${currentPage === totalPages ? 'disabled' : ''}">
+                            <button class="page-link" onclick="changePage(${currentPage + 1})">
+                                <i class="fas fa-chevron-right"></i>
+                            </button>
+                        </li>
+                    </ul>
+                `;
+
+                paginationContainer.innerHTML = paginationHTML;
+            } else {
+                paginationContainer.style.display = 'none';
+            }
+        }
+
+        function changePage(page) {
+            if (page < 1 || page > Math.ceil(filteredPayments.length / itemsPerPage)) return;
+            currentPage = page;
+            displayPayments();
+            window.scrollTo({ top: document.getElementById('paymentsSection').offsetTop - 100, behavior: 'smooth' });
+        }
+
+        function refreshPayments() {
+            const btn = event.target;
+            const originalHTML = btn.innerHTML;
+            btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Refreshing...';
+            btn.disabled = true;
+
+            loadPayments();
+
+            setTimeout(() => {
+                btn.innerHTML = originalHTML;
+                btn.disabled = false;
+            }, 2000);
+        }
+
+        function showAnalytics() {
+            const analyticsSection = document.getElementById('analyticsTabs');
+            if (analyticsSection.style.display === 'none') {
+                analyticsSection.style.display = 'block';
+                initializeCharts();
+            } else {
+                analyticsSection.style.display = 'none';
+                destroyCharts();
+            }
+        }
+
+        function initializeCharts() {
+            // Destroy existing charts
+            destroyCharts();
+
+            // Prepare data for charts
+            prepareChartData();
+
+            // Create charts with a slight delay to ensure DOM is ready
+            setTimeout(() => {
+                createEarningsChart();
+                createMethodsChart();
+                createMonthlyChart();
+                createMethodsTrendChart();
+                createSuccessRateChart();
+            }, 100);
+        }
+
+        function destroyCharts() {
+            Object.values(charts).forEach(chart => {
+                if (chart && chart.destroy) {
+                    chart.destroy();
+                }
+            });
+            charts = {};
+        }
+
+        function prepareChartData() {
+            // Group payments by month
+            const monthlyData = {};
+            const methodData = {};
+            const monthlyMethodData = {};
+            const successRateData = {};
+
+            allPayments.forEach(payment => {
+                const date = new Date(payment.createdAt);
+                const monthYear = `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}`;
+                const method = payment.method || 'other';
+                const status = payment.status || 'success';
+
+                // Monthly earnings
+                if (!monthlyData[monthYear]) {
+                    monthlyData[monthYear] = 0;
+                }
+                monthlyData[monthYear] += parseFloat(payment.amount) || 0;
+
+                // Method distribution
+                if (!methodData[method]) {
+                    methodData[method] = 0;
+                }
+                methodData[method] += 1;
+
+                // Monthly method data
+                if (!monthlyMethodData[monthYear]) {
+                    monthlyMethodData[monthYear] = {};
+                }
+                if (!monthlyMethodData[monthYear][method]) {
+                    monthlyMethodData[monthYear][method] = 0;
+                }
+                monthlyMethodData[monthYear][method] += 1;
+
+                // Success rate data
+                if (!successRateData[method]) {
+                    successRateData[method] = { success: 0, total: 0 };
+                }
+                successRateData[method].total += 1;
+                if (status === 'success' || status === 'paid') {
+                    successRateData[method].success += 1;
+                }
+            });
+
+            window.chartData = {
+                monthly: monthlyData,
+                methods: methodData,
+                monthlyMethods: monthlyMethodData,
+                successRate: successRateData
+            };
+        }
+
+        function createEarningsChart() {
+            const data = Object.entries(window.chartData.monthly)
+                .sort((a, b) => a[0].localeCompare(b[0]))
+                .slice(-12); // Last 12 months
+
+            const options = {
+                chart: {
+                    type: 'area',
+                    height: '100%',
+                    background: 'transparent',
+                    foreColor: '#94a3b8',
+                    toolbar: {
+                        show: true,
+                        tools: {
+                            download: true,
+                            selection: true,
+                            zoom: true,
+                            zoomin: true,
+                            zoomout: true,
+                            pan: true,
+                            reset: true
+                        }
+                    }
+                },
+                series: [{
+                    name: 'Earnings',
+                    data: data.map(item => item[1])
+                }],
+                xaxis: {
+                    categories: data.map(item => {
+                        const [year, month] = item[0].split('-');
+                        return new Date(year, month - 1).toLocaleDateString('en-US', { month: 'short', year: 'numeric' });
+                    })
+                },
+                yaxis: {
+                    labels: {
+                        formatter: function (value) {
+                            return '₹' + Math.round(value).toLocaleString();
+                        }
+                    }
+                },
+                fill: {
+                    type: 'gradient',
+                    gradient: {
+                        shadeIntensity: 1,
+                        opacityFrom: 0.7,
+                        opacityTo: 0.3,
+                        stops: [0, 90, 100]
+                    }
+                },
+                colors: ['#38bdf8'],
+                stroke: {
+                    curve: 'smooth',
+                    width: 3
+                },
+                grid: {
+                    borderColor: 'rgba(148, 163, 184, 0.1)',
+                    strokeDashArray: 3
+                }
+            };
+
+            charts.earnings = new ApexCharts(document.querySelector("#earningsChart"), options);
+            charts.earnings.render();
+        }
+
+        function createMethodsChart() {
+            const data = Object.entries(window.chartData.methods);
+
+            const options = {
+                chart: {
+                    type: 'donut',
+                    height: '100%',
+                    background: 'transparent'
+                },
+                series: data.map(item => item[1]),
+                labels: data.map(item => item[0].toUpperCase()),
+                colors: ['#10b981', '#3b82f6', '#f59e0b', '#8b5cf6'],
+                plotOptions: {
+                    pie: {
+                        donut: {
+                            size: '65%',
+                            labels: {
+                                show: true,
+                                total: {
+                                    show: true,
+                                    label: 'Total',
+                                    formatter: function (w) {
+                                        return w.globals.seriesTotals.reduce((a, b) => a + b, 0) + ' payments';
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },
+                legend: {
+                    position: 'bottom',
+                    labels: {
+                        colors: '#94a3b8'
+                    }
+                },
+                responsive: [{
+                    breakpoint: 480,
+                    options: {
+                        chart: {
+                            width: 200
+                        },
+                        legend: {
+                            position: 'bottom'
+                        }
+                    }
+                }]
+            };
+
+            charts.methods = new ApexCharts(document.querySelector("#methodsChart"), options);
+            charts.methods.render();
+        }
+
+        function createMonthlyChart() {
+            const currentYear = new Date().getFullYear();
+            const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+
+            // Prepare data for current year
+            const monthlyEarnings = months.map((month, index) => {
+                const monthKey = `${currentYear}-${String(index + 1).padStart(2, '0')}`;
+                return window.chartData.monthly[monthKey] || 0;
+            });
+
+            const options = {
+                chart: {
+                    type: 'bar',
+                    height: '100%',
+                    background: 'transparent',
+                    foreColor: '#94a3b8'
+                },
+                series: [{
+                    name: 'Earnings',
+                    data: monthlyEarnings
+                }],
+                xaxis: {
+                    categories: months,
+                    labels: {
+                        style: {
+                            colors: '#94a3b8'
+                        }
+                    }
+                },
+                yaxis: {
+                    labels: {
+                        formatter: function (value) {
+                            return '₹' + Math.round(value).toLocaleString();
+                        },
+                        style: {
+                            colors: '#94a3b8'
+                        }
+                    }
+                },
+                colors: ['#38bdf8'],
+                plotOptions: {
+                    bar: {
+                        borderRadius: 4,
+                        columnWidth: '60%'
+                    }
+                },
+                grid: {
+                    borderColor: 'rgba(148, 163, 184, 0.1)',
+                    strokeDashArray: 3
+                }
+            };
+
+            charts.monthly = new ApexCharts(document.querySelector("#monthlyChart"), options);
+            charts.monthly.render();
+        }
+
+        function createMethodsTrendChart() {
+            const data = window.chartData.monthlyMethods;
+            const months = Object.keys(data).sort().slice(-6); // Last 6 months
+            const methods = ['upi', 'card', 'cash'];
+
+            const series = methods.map(method => ({
+                name: method.toUpperCase(),
+                data: months.map(month => data[month][method] || 0)
+            }));
+
+            const options = {
+                chart: {
+                    type: 'line',
+                    height: '100%',
+                    background: 'transparent',
+                    foreColor: '#94a3b8'
+                },
+                series: series,
+                xaxis: {
+                    categories: months.map(month => {
+                        const [year, monthNum] = month.split('-');
+                        return new Date(year, monthNum - 1).toLocaleDateString('en-US', { month: 'short' });
+                    })
+                },
+                yaxis: {
+                    labels: {
+                        formatter: function (val) {
+                            return val.toFixed(0);
+                        },
+                        style: {
+                            colors: '#94a3b8'
+                        }
+                    }
+                },
+                colors: ['#10b981', '#3b82f6', '#f59e0b'],
+                stroke: {
+                    curve: 'smooth',
+                    width: 3
+                },
+                markers: {
+                    size: 5
+                },
+                grid: {
+                    borderColor: 'rgba(148, 163, 184, 0.1)',
+                    strokeDashArray: 3
+                },
+                legend: {
+                    position: 'top',
+                    labels: {
+                        colors: '#94a3b8'
+                    }
+                }
+            };
+
+            charts.methodsTrend = new ApexCharts(document.querySelector("#methodsTrendChart"), options);
+            charts.methodsTrend.render();
+        }
+
+        function createSuccessRateChart() {
+            const data = window.chartData.successRate;
+            const methods = Object.keys(data);
+
+            const successRates = methods.map(method => {
+                const rate = data[method].total > 0
+                    ? (data[method].success / data[method].total) * 100
+                    : 0;
+                return Math.round(rate);
+            });
+
+            const options = {
+                chart: {
+                    type: 'radialBar',
+                    height: '100%',
+                    background: 'transparent'
+                },
+                series: successRates,
+                labels: methods.map(m => m.toUpperCase()),
+                colors: ['#10b981', '#3b82f6', '#f59e0b', '#8b5cf6'],
+                plotOptions: {
+                    radialBar: {
+                        hollow: {
+                            size: '50%'
+                        },
+                        dataLabels: {
+                            name: {
+                                fontSize: '14px',
+                                color: '#94a3b8'
+                            },
+                            value: {
+                                fontSize: '20px',
+                                color: '#f1f5f9',
+                                formatter: function (val) {
+                                    return val + '%';
+                                }
+                            },
+                            total: {
+                                show: true,
+                                label: 'Avg Success',
+                                formatter: function (w) {
+                                    const total = w.globals.seriesTotals.reduce((a, b) => a + b, 0);
+                                    const avg = total / w.globals.series.length;
+                                    return Math.round(avg) + '%';
+                                }
+                            }
+                        }
+                    }
+                }
+            };
+
+            charts.successRate = new ApexCharts(document.querySelector("#successRateChart"), options);
+            charts.successRate.render();
+        }
+
+        function changeChartYear(year) {
+            // Update active button
+            document.querySelectorAll('.filter-btn').forEach(btn => {
+                if (btn.textContent.includes(year)) {
+                    btn.classList.add('active');
+                } else {
+                    btn.classList.remove('active');
+                }
+            });
+
+            // Here you would update the chart based on selected year
+            // For now, we'll just re-render with current data
+            if (charts.earnings) {
+                charts.earnings.destroy();
+                createEarningsChart();
+            }
+        }
+
+        function updateMonthlyChart(year) {
+            // Update monthly chart based on selected year
+            if (charts.monthly) {
+                charts.monthly.destroy();
+                createMonthlyChart();
+            }
+        }
+
+        function showExportModal() {
+            const modal = new bootstrap.Modal(document.getElementById('exportModal'));
+            modal.show();
+        }
+
+        function selectExportOption(format) {
+            exportFormat = format;
+
+            // Update active option
+            document.querySelectorAll('.export-option').forEach(option => {
+                option.classList.remove('active');
+            });
+            event.target.closest('.export-option').classList.add('active');
+        }
+
+        function exportData() {
+            // Get filter options
+            const startDate = document.getElementById('exportStartDate').value;
+            const endDate = document.getElementById('exportEndDate').value;
+            const statusFilter = document.getElementById('exportStatus').value;
+            const includeCustomer = document.getElementById('includeCustomerInfo').checked;
+            const includeTransaction = document.getElementById('includeTransactionDetails').checked;
+            const includeAnalytics = document.getElementById('includeAnalytics').checked;
+
+            // Filter payments based on export options
+            let exportPayments = allPayments;
+
+            if (startDate) {
+                const start = new Date(startDate);
+                exportPayments = exportPayments.filter(p => new Date(p.createdAt) >= start);
+            }
+
+            if (endDate) {
+                const end = new Date(endDate);
+                end.setHours(23, 59, 59, 999);
+                exportPayments = exportPayments.filter(p => new Date(p.createdAt) <= end);
+            }
+
+            if (statusFilter !== 'all') {
+                exportPayments = exportPayments.filter(p => p.status === statusFilter);
+            }
+
+            // Prepare data based on format
+            switch (exportFormat) {
+                case 'csv':
+                    exportToCSV(exportPayments, includeCustomer, includeTransaction, includeAnalytics);
+                    break;
+                case 'excel':
+                    exportToExcel(exportPayments, includeCustomer, includeTransaction, includeAnalytics);
+                    break;
+                case 'pdf':
+                    exportToPDF(exportPayments, includeCustomer, includeTransaction, includeAnalytics);
+                    break;
+                case 'json':
+                    exportToJSON(exportPayments, includeCustomer, includeTransaction, includeAnalytics);
+                    break;
+            }
+
+            // Close modal
+            bootstrap.Modal.getInstance(document.getElementById('exportModal')).hide();
+        }
+
+        function exportToCSV(payments, includeCustomer, includeTransaction, includeAnalytics) {
+            let csv = 'Date,Transaction ID,Amount,Method,Status,Order ID';
+
+            if (includeCustomer) {
+                csv += ',Customer Name';
+            }
+            if (includeTransaction) {
+                csv += ',Created At,Updated At';
+            }
+
+            csv += '\n';
+
+            payments.forEach(payment => {
+                const date = new Date(payment.createdAt).toLocaleDateString();
+                csv += `${date},"${payment.transactionId || ''}",₹${payment.amount || 0},${payment.method || 'N/A'},${payment.status || 'success'},"${payment.orderId || ''}"`;
+
+                if (includeCustomer) {
+                    csv += `,"${payment.customerName || ''}"`;
+                }
+                if (includeTransaction) {
+                    csv += `,${new Date(payment.createdAt).toISOString()},${payment.updatedAt ? new Date(payment.updatedAt).toISOString() : ''}`;
+                }
+
+                csv += '\n';
+            });
+
+            if (includeAnalytics) {
+                csv += '\n\nAnalytics Summary\n';
+                csv += `Total Payments,${payments.length}\n`;
+                csv += `Total Earnings,₹${payments.reduce((sum, p) => sum + (parseFloat(p.amount) || 0), 0)}\n`;
+                csv += `Average Payment,₹${payments.length > 0 ? payments.reduce((sum, p) => sum + (parseFloat(p.amount) || 0), 0) / payments.length : 0}\n`;
+            }
+
+            downloadFile(csv, 'payments.csv', 'text/csv');
+        }
+
+        function exportToExcel(payments, includeCustomer, includeTransaction, includeAnalytics) {
+            const wsData = [
+                ['Date', 'Transaction ID', 'Amount', 'Method', 'Status', 'Order ID'].concat(
+                    includeCustomer ? ['Customer Name'] : [],
+                    includeTransaction ? ['Created At', 'Updated At'] : []
+                )
+            ];
+
+            payments.forEach(payment => {
+                const row = [
+                    new Date(payment.createdAt).toLocaleDateString(),
+                    payment.transactionId || '',
+                    payment.amount || 0,
+                    payment.method || 'N/A',
+                    payment.status || 'success',
+                    payment.orderId || ''
+                ];
+
+                if (includeCustomer) {
+                    row.push(payment.customerName || '');
+                }
+                if (includeTransaction) {
+                    row.push(new Date(payment.createdAt).toISOString());
+                    row.push(payment.updatedAt ? new Date(payment.updatedAt).toISOString() : '');
+                }
+
+                wsData.push(row);
+            });
+
+            if (includeAnalytics) {
+                wsData.push([]);
+                wsData.push(['Analytics Summary']);
+                wsData.push(['Total Payments', payments.length]);
+                wsData.push(['Total Earnings', payments.reduce((sum, p) => sum + (parseFloat(p.amount) || 0), 0)]);
+                wsData.push(['Average Payment', payments.length > 0 ? payments.reduce((sum, p) => sum + (parseFloat(p.amount) || 0), 0) / payments.length : 0]);
+            }
+
+            const ws = XLSX.utils.aoa_to_sheet(wsData);
+            const wb = XLSX.utils.book_new();
+            XLSX.utils.book_append_sheet(wb, ws, 'Payments');
+
+            XLSX.writeFile(wb, `payments_${new Date().toISOString().split('T')[0]}.xlsx`);
+        }
+
+        function exportToPDF(payments, includeCustomer, includeTransaction, includeAnalytics) {
+            // Create a simple HTML table for PDF
+            let html = `
+                <html>
+                <head>
+                    <style>
+                        body { font-family: Arial, sans-serif; }
+                        table { width: 100%; border-collapse: collapse; margin: 20px 0; }
+                        th, td { border: 1px solid #ddd; padding: 8px; text-align: left; }
+                        th { background-color: #f2f2f2; }
+                        .total { font-weight: bold; }
+                    </style>
+                </head>
+                <body>
+                    <h1>Payments Report</h1>
+                    <p>Generated on ${new Date().toLocaleDateString()}</p>
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Date</th>
+                                <th>Transaction ID</th>
+                                <th>Amount</th>
+                                <th>Method</th>
+                                <th>Status</th>
+                                <th>Order ID</th>
+            `;
+
+            if (includeCustomer) html += '<th>Customer Name</th>';
+            if (includeTransaction) html += '<th>Created At</th><th>Updated At</th>';
+
+            html += '</tr></thead><tbody>';
+
+            payments.forEach(payment => {
+                html += `<tr>
+                    <td>${new Date(payment.createdAt).toLocaleDateString()}</td>
+                    <td>${payment.transactionId || ''}</td>
+                    <td>₹${payment.amount || 0}</td>
+                    <td>${payment.method || 'N/A'}</td>
+                    <td>${payment.status || 'success'}</td>
+                    <td>${payment.orderId || ''}</td>`;
+
+                if (includeCustomer) html += `<td>${payment.customerName || ''}</td>`;
+                if (includeTransaction) {
+                    html += `<td>${new Date(payment.createdAt).toISOString()}</td>`;
+                    html += `<td>${payment.updatedAt ? new Date(payment.updatedAt).toISOString() : ''}</td>`;
+                }
+
+                html += '</tr>';
+            });
+
+            html += '</tbody></table>';
+
+            if (includeAnalytics) {
+                const totalEarnings = payments.reduce((sum, p) => sum + (parseFloat(p.amount) || 0), 0);
+                const avgPayment = payments.length > 0 ? totalEarnings / payments.length : 0;
+
+                html += `
+                    <h2>Analytics Summary</h2>
+                    <p>Total Payments: ${payments.length}</p>
+                    <p>Total Earnings: ₹${totalEarnings.toLocaleString()}</p>
+                    <p>Average Payment: ₹${avgPayment.toFixed(2)}</p>
+                `;
+            }
+
+            html += '</body></html>';
+
+            // Open print dialog for PDF
+            const printWindow = window.open('', '_blank');
+            printWindow.document.write(html);
+            printWindow.document.close();
+            printWindow.print();
+        }
+
+        function exportToJSON(payments, includeCustomer, includeTransaction, includeAnalytics) {
+            const exportData = {
+                metadata: {
+                    exportedAt: new Date().toISOString(),
+                    totalPayments: payments.length,
+                    filters: {
+                        includeCustomer: includeCustomer,
+                        includeTransaction: includeTransaction
+                    }
+                },
+                payments: payments.map(payment => {
+                    const data = {
+                        id: payment.id,
+                        transactionId: payment.transactionId,
+                        amount: payment.amount,
+                        method: payment.method,
+                        status: payment.status,
+                        orderId: payment.orderId,
+                        createdAt: payment.createdAt,
+                        updatedAt: payment.updatedAt
+                    };
+
+                    if (includeCustomer) {
+                        data.customerName = payment.customerName;
+                    }
+
+                    return data;
+                })
+            };
+
+            if (includeAnalytics) {
+                exportData.analytics = {
+                    totalEarnings: payments.reduce((sum, p) => sum + (parseFloat(p.amount) || 0), 0),
+                    averagePayment: payments.length > 0 ? payments.reduce((sum, p) => sum + (parseFloat(p.amount) || 0), 0) / payments.length : 0,
+                    paymentMethods: {},
+                    monthlyBreakdown: {}
+                };
+
+                // Calculate method distribution
+                payments.forEach(payment => {
+                    const method = payment.method || 'other';
+                    if (!exportData.analytics.paymentMethods[method]) {
+                        exportData.analytics.paymentMethods[method] = 0;
+                    }
+                    exportData.analytics.paymentMethods[method]++;
+                });
+
+                // Calculate monthly breakdown
+                payments.forEach(payment => {
+                    const date = new Date(payment.createdAt);
+                    const monthYear = `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}`;
+                    if (!exportData.analytics.monthlyBreakdown[monthYear]) {
+                        exportData.analytics.monthlyBreakdown[monthYear] = 0;
+                    }
+                    exportData.analytics.monthlyBreakdown[monthYear] += parseFloat(payment.amount) || 0;
+                });
+            }
+
+            downloadFile(JSON.stringify(exportData, null, 2), 'payments.json', 'application/json');
+        }
+
+        function downloadFile(content, filename, mimeType) {
+            const blob = new Blob([content], { type: mimeType });
+            const url = window.URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = filename;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            window.URL.revokeObjectURL(url);
+        }
+
+        // Real-Time Notifications logic
+        async function loadNotifications() {
+            if (!currentUser) return;
+            try {
+                const res = await fetch(getApiUrl(`/api/notifications/${currentUser.id}`));
+                if (res.ok) {
+                    const notifications = await res.json();
+                    renderNotifications(notifications);
+                }
             } catch (e) {
-                console.error('Error loading worker payments:', e);
-                listEl.innerHTML = '<div class="col-12 text-center text-secondary">Error loading payments.</div>';
+                console.error('Error loading notifications', e);
+            }
+        }
+
+        function renderNotifications(notifications) {
+            const listEl = document.getElementById('workerNotifList');
+            const countEl = document.getElementById('workerNotifCount');
+            if (!listEl || !countEl) return;
+
+            const unread = notifications.filter(n => !n.read);
+            countEl.textContent = unread.length > 9 ? '9+' : unread.length;
+            countEl.style.display = unread.length > 0 ? 'inline-block' : 'none';
+
+            if (notifications.length === 0) {
+                listEl.innerHTML = '<div class="p-3 text-center text-muted small">No notifications</div>';
+                return;
+            }
+
+            listEl.innerHTML = notifications.map(n => `
+                <div class="notif-item ${n.read ? '' : 'unread'}" onclick="markAsRead('${n.id}', '${n.link}')" style="cursor: pointer; padding: 10px; border-bottom: 1px solid rgba(148, 163, 184, 0.1); ${n.read ? '' : 'background: rgba(56, 189, 248, 0.05); border-left: 3px solid #38bdf8;'}">
+                    <div class="notif-title" style="color: #e5e7eb; font-size: 0.85rem; margin-bottom: 4px; ${n.read ? '' : 'font-weight: 700;'}">${n.message}</div>
+                    <div class="notif-meta" style="color: #9ca3af; font-size: 0.7rem;">${new Date(n.createdAt).toLocaleString([], { month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' })}</div>
+                </div>
+            `).join('');
+        }
+
+        async function markAsRead(notifId, link) {
+            try {
+                await fetch(getApiUrl(`/api/notifications/${notifId}/read`), { method: 'PUT' });
+                if (link && link !== 'null' && link !== 'undefined') {
+                    window.location.href = link;
+                } else {
+                    loadNotifications();
+                }
+            } catch (e) {
+                console.error('Error marking as read', e);
+            }
+        }
+
+        function initWorkerNotifToggle() {
+            const btn = document.getElementById('workerNotifBtn');
+            const dropdown = document.getElementById('workerNotifDropdown');
+            if (!btn || !dropdown) return;
+            btn.addEventListener('click', (e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                dropdown.classList.toggle('show');
+            });
+            document.addEventListener('click', (e) => {
+                if (!dropdown.contains(e.target) && !btn.contains(e.target)) {
+                    dropdown.classList.remove('show');
+                }
+            });
+        }
+
+        async function showPaymentDetails(paymentId) {
+            const payment = allPayments.find(p => p.id === paymentId);
+            if (!payment) return;
+
+            const modal = new bootstrap.Modal(document.getElementById('paymentDetailsModal'));
+
+            const date = new Date(payment.createdAt);
+            const dateStr = date.toLocaleDateString('en-IN', {
+                weekday: 'long',
+                year: 'numeric',
+                month: 'long',
+                day: 'numeric'
+            });
+            const timeStr = date.toLocaleTimeString('en-IN', {
+                hour: '2-digit',
+                minute: '2-digit',
+                second: '2-digit',
+                hour12: true
+            });
+
+            let statusBadge = '';
+            if (payment.status === 'pending') {
+                statusBadge = '<span class="badge-pending"><i class="fas fa-clock"></i>Pending</span>';
+            } else {
+                statusBadge = '<span class="badge-success-soft"><i class="fas fa-check-circle"></i>Success</span>';
+            }
+
+            const detailsHtml = `
+                <div class="mb-4">
+                    <div class="amount-display text-center mb-3">₹${payment.amount || 0}</div>
+                    <div class="text-center mb-4">${statusBadge}</div>
+                </div>
+                
+                <div class="row g-3">
+                    <div class="col-md-6">
+                        <div class="mb-3">
+                            <div class="text-secondary small mb-1">Transaction ID</div>
+                            <div class="fw-bold font-monospace">${payment.transactionId || 'N/A'}</div>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="mb-3">
+                            <div class="text-secondary small mb-1">Order ID</div>
+                            <div class="fw-bold">${payment.orderId || 'N/A'}</div>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="mb-3">
+                            <div class="text-secondary small mb-1">Payment Method</div>
+                            <div class="fw-bold">
+                                <i class="fas fa-${payment.method === 'upi' ? 'mobile-alt' : payment.method === 'card' ? 'credit-card' : 'money-bill-wave'} me-2"></i>
+                                ${payment.method ? payment.method.toUpperCase() : 'N/A'}
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="mb-3">
+                            <div class="text-secondary small mb-1">Date & Time</div>
+                            <div class="fw-bold">
+                                <i class="fas fa-calendar me-2"></i>${dateStr}<br>
+                                <i class="fas fa-clock me-2"></i>${timeStr}
+                            </div>
+                        </div>
+                    </div>
+                    ${payment.customerName ? `
+                        <div class="col-12">
+                            <div class="mb-3">
+                                <div class="text-secondary small mb-1">Customer</div>
+                                <div class="fw-bold">
+                                    <i class="fas fa-user me-2"></i>${payment.customerName}
+                                </div>
+                            </div>
+                        </div>
+                    ` : ''}
+                    ${payment.screenshot ? `
+                        <div class="col-12">
+                            <div class="mb-3">
+                                <div class="text-secondary small mb-1">Payment Proof</div>
+                                <div class="p-2 border border-dark-600 rounded-lg bg-dark-800/50 mb-3">
+                                    <img src="${payment.screenshot}" class="img-fluid rounded cursor-pointer hover:opacity-90 transition-opacity" onclick="window.open('${payment.screenshot}', '_blank')" alt="Screenshot">
+                                </div>
+                                <a href="${payment.screenshot}" target="_blank" class="btn btn-outline-primary btn-sm w-100">
+                                    <i class="fas fa-external-link-alt me-2"></i>Full Size View
+                                </a>
+                            </div>
+                        </div>
+                    ` : ''}
+                </div>
+
+                ${payment.status === 'pending' ? `
+                    <div class="mt-4 pt-3 border-t border-dark-600">
+                        <h6 class="text-warning mb-3 small uppercase tracking-wider font-bold">Verification Required</h6>
+                        <div class="d-flex gap-2">
+                            <button class="btn btn-success flex-fill" onclick="verifyPayment('${payment._id || payment.id}', 'success')">
+                                <i class="fas fa-check-circle me-2"></i>Approve
+                            </button>
+                            <button class="btn btn-danger flex-fill" onclick="verifyPayment('${payment._id || payment.id}', 'failed')">
+                                <i class="fas fa-times-circle me-2"></i>Reject
+                            </button>
+                        </div>
+                        <p class="text-secondary small mt-2 text-center">Verify the screenshot before approving.</p>
+                    </div>
+                ` : ''}
+            `;
+
+            document.getElementById('paymentDetailsContent').innerHTML = detailsHtml;
+            modal.show();
+        }
+
+        async function verifyPayment(paymentId, status) {
+            if (!confirm(`Are you sure you want to ${status === 'success' ? 'approve' : 'reject'} this payment?`)) return;
+
+            try {
+                const res = await fetch(getApiUrl(`/api/payments/${paymentId}/verify`), {
+                    method: 'PUT',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ status })
+                });
+
+                if (res.ok) {
+                    alert(`Payment ${status === 'success' ? 'approved' : 'rejected'} successfully!`);
+                    const modal = bootstrap.Modal.getInstance(document.getElementById('paymentDetailsModal'));
+                    if (modal) modal.hide();
+                    loadPayments(); // Refresh list
+                } else {
+                    const data = await res.json();
+                    alert(data.message || 'Error updating payment');
+                }
+            } catch (e) {
+                console.error('Error verifying payment', e);
+                alert('Error updating payment');
             }
         }
 
         function logout() {
             localStorage.removeItem('user');
-            window.location.href = 'index.html';
+            window.location.href = 'login.html';
         }
+
+        // Keyboard shortcuts
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'r' && e.ctrlKey) {
+                e.preventDefault();
+                refreshPayments();
+            }
+            if (e.key === 'e' && e.ctrlKey && e.shiftKey) {
+                e.preventDefault();
+                showExportModal();
+            }
+            if (e.key === 'a' && e.ctrlKey) {
+                e.preventDefault();
+                showAnalytics();
+            }
+            if (e.key === 'Escape' && document.getElementById('analyticsTabs').style.display !== 'none') {
+                showAnalytics();
+            }
+        });
     </script>
 </body>
 </html>
-
-

@@ -1,295 +1,1595 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes">
   <title>WorkConnect - Find Skilled Workers</title>
+
+  <!-- Tailwind CSS -->
   <script src="https://cdn.tailwindcss.com"></script>
-  <link rel="stylesheet" href="styles.css">
+
+  <!-- Font Awesome -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+
+  <!-- Google Fonts -->
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap"
+    rel="stylesheet">
+
   <style>
-    body {
-      background: linear-gradient(180deg, #0e2a47 0%, #071a2f 100%);
-      min-height: 100vh;
-      min-width: 100vw;
+    * {
       margin: 0;
-      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-      position: relative;
-      overflow-x: hidden;
-      /* Prevent white background on overscroll */
-      overscroll-behavior: none;
-      -webkit-overflow-scrolling: touch;
-    }
-
-    /* Ensure the background extends beyond viewport to prevent white flash */
-    html {
-      background: linear-gradient(180deg, #0e2a47 0%, #071a2f 100%);
-      min-height: 100vh;
-      overscroll-behavior: none;
-    }
-
-    /* Oceanic wave animation background */
-    body::before,
-    body::after {
-      content: '';
-      position: fixed;
-      left: 0;
-      right: 0;
-      bottom: 0;
-      height: 32vh;
-      background-repeat: repeat-x;
-      background-size: 2000px 100%;
-      pointer-events: none;
-      z-index: 0;
-    }
-    body::before {
-      opacity: 0.5;
-      animation: waveSlide1 24s linear infinite;
-      background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1200 200' preserveAspectRatio='none'><path d='M0,120 C150,200 350,0 600,120 C850,240 1050,40 1200,120 L1200,200 L0,200 Z' fill='%23ffffff' fill-opacity='0.25'/></svg>");
-    }
-    body::after {
-      height: 38vh;
-      opacity: 0.8;
-      animation: waveSlide2 36s linear infinite;
-      background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1200 200' preserveAspectRatio='none'><path d='M0,140 C200,60 400,220 600,110 C800,0 1000,180 1200,100 L1200,200 L0,200 Z' fill='%23a8d8ff' fill-opacity='0.15'/></svg>");
-    }
-    @keyframes waveSlide1 {
-      0% { background-position-x: 0; }
-      100% { background-position-x: 2000px; }
-    }
-    @keyframes waveSlide2 {
-      0% { background-position-x: 0; }
-      100% { background-position-x: -2000px; }
-    }
-
-    /* Keep page content above the animated background */
-    body > * { position: relative; z-index: 1; }
-
-    /* Container with its own ocean wave animation */
-    .ocean-container {
-      position: relative;
-      max-width: 1100px;
-      margin: 0 auto;
-      padding: 0 20px 80px 20px; /* bottom padding for waves */
-    }
-    .ocean-container::before,
-    .ocean-container::after {
-      content: '';
-      position: absolute;
-      left: 0;
-      right: 0;
-      bottom: 0;
-      height: 120px;
-      background-repeat: repeat-x;
-      background-size: 1200px 100%;
-      pointer-events: none;
-      z-index: 0;
-    }
-    .ocean-container::before {
-      opacity: 0.5;
-      animation: waveSlide1 18s linear infinite;
-      background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1200 200' preserveAspectRatio='none'><path d='M0,120 C150,200 350,0 600,120 C850,240 1050,40 1200,120 L1200,200 L0,200 Z' fill='%23ffffff' fill-opacity='0.20'/></svg>");
-    }
-    .ocean-container::after {
-      height: 160px;
-      opacity: 0.8;
-      animation: waveSlide2 28s linear infinite;
-      background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1200 200' preserveAspectRatio='none'><path d='M0,140 C200,60 400,220 600,110 C800,0 1000,180 1200,100 L1200,200 L0,200 Z' fill='%23a8d8ff' fill-opacity='0.12'/></svg>");
-    }
-    /* Keep content inside container above its waves */
-    .ocean-container > * { position: relative; z-index: 1; }
-
-    .welcome-card {
-      background: transparent;
-      backdrop-filter: blur(10px);
-      width: 100%;
-      height: 100vh; /* Full screen height */
-      padding: 60px 40px;
+      padding: 0;
       box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Inter', sans-serif;
+      background: linear-gradient(135deg, #0a1929 0%, #1a2b3c 100%);
+      min-height: 100vh;
+      overflow-x: hidden;
+      color: #fff;
+    }
+
+    /* Professional Video-Style Animation */
+    .animation-container {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(135deg, #0a1929 0%, #1a2b3c 100%);
       display: flex;
-      flex-direction: column;
-      align-items: center;
       justify-content: center;
+      align-items: center;
+      z-index: 9999;
+      animation: fadeOut 0.8s ease-in-out 4.5s forwards;
+    }
+
+    .animation-content {
+      width: 100%;
+      max-width: 800px;
+      padding: 20px;
       text-align: center;
     }
 
-    .welcome-card::before {
-      content: '';
-      position: absolute;
+    /* Animated SVG Background */
+    .animated-svg {
+      width: 100%;
+      height: auto;
+      margin-bottom: 30px;
+    }
+
+    /* Floating Tools Animation */
+    .floating-tool {
+      animation: float 3s ease-in-out infinite;
+    }
+
+    .floating-tool-1 {
+      animation-delay: 0s;
+    }
+
+    .floating-tool-2 {
+      animation-delay: 0.5s;
+    }
+
+    .floating-tool-3 {
+      animation-delay: 1s;
+    }
+
+    @keyframes float {
+
+      0%,
+      100% {
+        transform: translateY(0);
+      }
+
+      50% {
+        transform: translateY(-15px);
+      }
+    }
+
+    /* Rotating Gear */
+    .rotating-gear {
+      animation: rotate 8s linear infinite;
+      transform-origin: center;
+    }
+
+    @keyframes rotate {
+      from {
+        transform: rotate(0deg);
+      }
+
+      to {
+        transform: rotate(360deg);
+      }
+    }
+
+    /* Pulsing Circle */
+    .pulsing-circle {
+      animation: pulse 2s ease-in-out infinite;
+    }
+
+    @keyframes pulse {
+
+      0%,
+      100% {
+        r: 15;
+        opacity: 0.8;
+      }
+
+      50% {
+        r: 25;
+        opacity: 0.4;
+      }
+    }
+
+    /* Line Drawing Animation */
+    .line-draw {
+      stroke-dasharray: 1000;
+      stroke-dashoffset: 1000;
+      animation: drawLine 3s ease-in-out forwards;
+    }
+
+    @keyframes drawLine {
+      to {
+        stroke-dashoffset: 0;
+      }
+    }
+
+    /* Fade In Text */
+    .fade-text {
+      opacity: 0;
+      animation: fadeInText 0.8s ease-in-out forwards;
+    }
+
+    .fade-text-1 {
+      animation-delay: 1s;
+    }
+
+    .fade-text-2 {
+      animation-delay: 1.5s;
+    }
+
+    .fade-text-3 {
+      animation-delay: 2s;
+    }
+
+    .fade-text-4 {
+      animation-delay: 2.5s;
+    }
+
+    @keyframes fadeInText {
+      from {
+        opacity: 0;
+        transform: translateY(20px);
+      }
+
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    /* Slide In Letters */
+    .slide-letter {
+      display: inline-block;
+      opacity: 0;
+      transform: translateX(-20px);
+      animation: slideIn 0.4s ease-in-out forwards;
+    }
+
+    @keyframes slideIn {
+      to {
+        opacity: 1;
+        transform: translateX(0);
+      }
+    }
+
+    /* Progress Bar */
+    .progress-bar {
+      width: 0%;
+      height: 4px;
+      background: linear-gradient(90deg, #3b82f6, #8b5cf6, #ec4899);
+      border-radius: 2px;
+      animation: progress 3.5s ease-in-out forwards;
+    }
+
+    @keyframes progress {
+      to {
+        width: 100%;
+      }
+    }
+
+    /* Typewriter Effect */
+    .typewriter {
+      overflow: hidden;
+      border-right: 2px solid #3b82f6;
+      white-space: nowrap;
+      margin: 0 auto;
+      animation: typing 2.5s steps(40, end), blink-caret 0.75s step-end infinite;
+    }
+
+    @keyframes typing {
+      from {
+        width: 0
+      }
+
+      to {
+        width: 100%
+      }
+    }
+
+    @keyframes blink-caret {
+
+      from,
+      to {
+        border-color: transparent
+      }
+
+      50% {
+        border-color: #3b82f6
+      }
+    }
+
+    @keyframes fadeOut {
+      from {
+        opacity: 1;
+        visibility: visible;
+      }
+
+      to {
+        opacity: 0;
+        visibility: hidden;
+      }
+    }
+
+    /* Main Content */
+    .main-content {
+      position: relative;
+      min-height: 100vh;
+      opacity: 0;
+      animation: contentFadeIn 0.8s ease-in-out 4.5s forwards;
+    }
+
+    @keyframes contentFadeIn {
+      to {
+        opacity: 1;
+      }
+    }
+
+    /* Navigation */
+    .navbar {
+      position: fixed;
       top: 0;
       left: 0;
       right: 0;
-      height: 5px;
-      background: linear-gradient(90deg, #667eea00, #ffffff00, #667eea00);
-      background-size: 200% 100%;
-      animation: gradientMove 3s ease infinite;
+      background: rgba(10, 25, 41, 0.8);
+      backdrop-filter: blur(10px);
+      border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+      z-index: 1000;
+      transition: all 0.3s ease;
     }
 
-    @keyframes gradientMove {
-      0% { background-position: 0% 50%; }
-      50% { background-position: 100% 50%; }
-      100% { background-position: 0% 50%; }
+    .navbar.scrolled {
+      background: rgba(10, 25, 41, 0.95);
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
     }
 
-    .welcome-card h1 {
-      color: #333;
-      margin-bottom: 15px;
-      font-size: 3rem;
+    .nav-container {
+      max-width: 1400px;
+      margin: 0 auto;
+      padding: 1rem 2rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .logo {
+      font-size: 1.8rem;
       font-weight: 700;
-      background: linear-gradient(135deg, #667eea, #764ba2);
+      background: linear-gradient(135deg, #3b82f6, #8b5cf6);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      text-decoration: none;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .nav-links {
+      display: flex;
+      gap: 2rem;
+      align-items: center;
+    }
+
+    .nav-links a {
+      color: #e5e7eb;
+      text-decoration: none;
+      font-weight: 500;
+      transition: color 0.3s;
+      position: relative;
+    }
+
+    .nav-links a:hover {
+      color: #3b82f6;
+    }
+
+    .nav-links a.active {
+      color: #3b82f6;
+    }
+
+    .nav-links a::after {
+      content: '';
+      position: absolute;
+      bottom: -4px;
+      left: 0;
+      width: 0;
+      height: 2px;
+      background: linear-gradient(90deg, #3b82f6, #8b5cf6);
+      transition: width 0.3s;
+    }
+
+    .nav-links a:hover::after,
+    .nav-links a.active::after {
+      width: 100%;
+    }
+
+    .mobile-menu-btn {
+      display: none;
+      background: none;
+      border: none;
+      color: white;
+      font-size: 1.5rem;
+      cursor: pointer;
+    }
+
+    /* Hero Section */
+    .hero {
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      padding: 100px 2rem 2rem;
+      max-width: 1400px;
+      margin: 0 auto;
+    }
+
+    .hero-content {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 4rem;
+      align-items: center;
+    }
+
+    .hero-text h1 {
+      font-size: clamp(2.5rem, 5vw, 4rem);
+      font-weight: 800;
+      line-height: 1.2;
+      margin-bottom: 1.5rem;
+    }
+
+    .hero-text .gradient-text {
+      background: linear-gradient(135deg, #3b82f6, #8b5cf6, #ec4899);
       -webkit-background-clip: text;
       -webkit-text-fill-color: transparent;
       background-clip: text;
     }
 
-    .welcome-card p {
-      color: #fffdfd;
-      margin-bottom: 40px;
-      font-size: 1.3rem;
+    .hero-text p {
+      color: #9ca3af;
+      font-size: 1.2rem;
       line-height: 1.6;
-      max-width: 800px;
+      margin-bottom: 2rem;
     }
 
-    .button-group {
+    .hero-buttons {
       display: flex;
-      gap: 20px;
-      justify-content: center;
-      flex-wrap: wrap;
-      margin-bottom: 50px;
+      gap: 1rem;
+      margin-bottom: 3rem;
     }
 
     .btn {
-      padding: 15px 35px;
-      border: none;
-      border-radius: 15px;
-      font-size: 16px;
+      padding: 0.75rem 2rem;
+      border-radius: 9999px;
       font-weight: 600;
-      cursor: pointer;
-      transition: all 0.3s ease;
-      text-transform: uppercase;
-      letter-spacing: 0.5px;
       text-decoration: none;
-      display: inline-block;
-      min-width: 140px;
+      transition: all 0.3s;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
     }
 
     .btn-primary {
-      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      background: linear-gradient(135deg, #3b82f6, #8b5cf6);
       color: white;
+      box-shadow: 0 4px 15px rgba(59, 130, 246, 0.3);
     }
 
     .btn-primary:hover {
-      transform: translateY(-3px);
-      box-shadow: 0 15px 30px rgba(102, 126, 234, 0.4);
+      transform: translateY(-2px);
+      box-shadow: 0 8px 25px rgba(59, 130, 246, 0.4);
     }
 
     .btn-secondary {
-      background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
+      background: rgba(255, 255, 255, 0.1);
       color: white;
+      border: 1px solid rgba(255, 255, 255, 0.2);
     }
 
     .btn-secondary:hover {
-      transform: translateY(-3px);
-      box-shadow: 0 15px 30px rgba(40, 167, 69, 0.4);
+      background: rgba(255, 255, 255, 0.15);
+      transform: translateY(-2px);
     }
 
-    .features {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-      gap: 25px;
+    .hero-stats {
+      display: flex;
+      gap: 3rem;
+    }
+
+    .stat-item {
+      text-align: center;
+    }
+
+    .stat-number {
+      font-size: 2rem;
+      font-weight: 700;
+      color: #3b82f6;
+    }
+
+    .stat-label {
+      color: #9ca3af;
+      font-size: 0.9rem;
+    }
+
+    .hero-image {
+      position: relative;
+    }
+
+    .hero-image img {
       width: 100%;
-      max-width: 900px;
+      border-radius: 2rem;
+      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+    }
+
+    .floating-card {
+      position: absolute;
+      background: rgba(255, 255, 255, 0.1);
+      backdrop-filter: blur(10px);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      border-radius: 1rem;
+      padding: 1rem;
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      animation: float 3s ease-in-out infinite;
+    }
+
+    .floating-card-1 {
+      top: 20px;
+      right: -20px;
+    }
+
+    .floating-card-2 {
+      bottom: 40px;
+      left: -20px;
+      animation-delay: 1s;
+    }
+
+    /* Categories Section */
+    .categories {
+      padding: 4rem 2rem;
+      max-width: 1400px;
       margin: 0 auto;
     }
 
-    .feature {
-      padding: 20px;
-      background: rgba(70, 70, 70, 0);
-      border-radius: 15px;
-      border: 1px solid rgba(102, 126, 234, 0.2);
+    .section-title {
+      text-align: center;
+      margin-bottom: 3rem;
+    }
+
+    .section-title h2 {
+      font-size: 2.5rem;
+      font-weight: 700;
+      margin-bottom: 1rem;
+    }
+
+    .section-title p {
+      color: #9ca3af;
+      font-size: 1.1rem;
+    }
+
+    .category-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+      gap: 1.5rem;
+    }
+
+    .category-card {
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      border-radius: 1rem;
+      padding: 1.5rem;
+      text-align: center;
+      transition: all 0.3s;
+      cursor: pointer;
+      text-decoration: none;
+      color: white;
+    }
+
+    .category-card:hover {
+      transform: translateY(-5px);
+      background: rgba(59, 130, 246, 0.1);
+      border-color: #3b82f6;
+    }
+
+    .category-card i {
+      font-size: 2rem;
+      color: #3b82f6;
+      margin-bottom: 1rem;
+    }
+
+    .category-card span {
+      display: block;
+      font-weight: 600;
+      margin-bottom: 0.5rem;
+    }
+
+    .category-card small {
+      color: #9ca3af;
+      font-size: 0.8rem;
+    }
+
+    /* Features Section */
+    .features {
+      padding: 4rem 2rem;
+      max-width: 1400px;
+      margin: 0 auto;
+    }
+
+    .features-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 2rem;
+    }
+
+    .feature-card {
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      border-radius: 1.5rem;
+      padding: 2rem;
+      transition: all 0.3s;
+    }
+
+    .feature-card:hover {
+      transform: translateY(-5px);
+      border-color: #3b82f6;
     }
 
     .feature-icon {
-      font-size: 4rem;
-      margin-bottom: 10px;
-      display: block;
+      width: 60px;
+      height: 60px;
+      background: linear-gradient(135deg, rgba(59, 130, 246, 0.2), rgba(139, 92, 246, 0.2));
+      border-radius: 1rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 1.5rem;
     }
 
-    .feature h3 {
-      color: gold;
-      margin: 0 0 8px 0;
+    .feature-icon i {
+      font-size: 2rem;
+      color: #3b82f6;
+    }
+
+    .feature-card h3 {
+      font-size: 1.3rem;
+      font-weight: 600;
+      margin-bottom: 1rem;
+    }
+
+    .feature-card p {
+      color: #9ca3af;
+      line-height: 1.6;
+    }
+
+    /* How It Works */
+    .how-it-works {
+      padding: 4rem 2rem;
+      max-width: 1400px;
+      margin: 0 auto;
+    }
+
+    .steps-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 2rem;
+    }
+
+    .step-card {
+      text-align: center;
+      padding: 2rem;
+    }
+
+    .step-number {
+      width: 50px;
+      height: 50px;
+      background: linear-gradient(135deg, #3b82f6, #8b5cf6);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.5rem;
+      font-weight: 700;
+      margin: 0 auto 1.5rem;
+    }
+
+    /* Testimonials */
+    .testimonials {
+      padding: 4rem 2rem;
+      max-width: 1400px;
+      margin: 0 auto;
+    }
+
+    .testimonials-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 2rem;
+    }
+
+    .testimonial-card {
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      border-radius: 1.5rem;
+      padding: 2rem;
+    }
+
+    .rating {
+      color: #fbbf24;
+      margin-bottom: 1rem;
+    }
+
+    .testimonial-text {
+      color: #d1d5db;
+      line-height: 1.6;
+      margin-bottom: 1.5rem;
+      font-style: italic;
+    }
+
+    .testimonial-author {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+    }
+
+    .author-avatar {
+      width: 50px;
+      height: 50px;
+      background: linear-gradient(135deg, #3b82f6, #8b5cf6);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 600;
+    }
+
+    /* CTA Section */
+    .cta {
+      padding: 6rem 2rem;
+      max-width: 1400px;
+      margin: 0 auto;
+    }
+
+    .cta-content {
+      background: linear-gradient(135deg, rgba(59, 130, 246, 0.1), rgba(139, 92, 246, 0.1));
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      border-radius: 2rem;
+      padding: 4rem;
+      text-align: center;
+    }
+
+    .cta-content h2 {
+      font-size: 2.5rem;
+      font-weight: 700;
+      margin-bottom: 1rem;
+    }
+
+    .cta-content p {
+      color: #9ca3af;
       font-size: 1.2rem;
+      margin-bottom: 2rem;
     }
 
-    .feature p {
-      color: #ffffff;
-      margin: 0;
-      font-size: 1rem;
-      line-height: 1.4;
+    .cta-buttons {
+      display: flex;
+      gap: 1rem;
+      justify-content: center;
     }
 
-    @media (max-width: 600px) {
-      .welcome-card {
-        padding: 30px 20px;
+    /* Footer */
+    .footer {
+      background: rgba(0, 0, 0, 0.3);
+      padding: 4rem 2rem 2rem;
+    }
+
+    .footer-content {
+      max-width: 1400px;
+      margin: 0 auto;
+      display: grid;
+      grid-template-columns: 2fr 1fr 1fr 1fr;
+      gap: 3rem;
+    }
+
+    .footer-col p {
+      color: #9ca3af;
+      line-height: 1.6;
+      margin: 1rem 0;
+    }
+
+    .social-links {
+      display: flex;
+      gap: 1rem;
+    }
+
+    .social-links a {
+      width: 40px;
+      height: 40px;
+      background: rgba(255, 255, 255, 0.1);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: white;
+      transition: all 0.3s;
+    }
+
+    .social-links a:hover {
+      background: #3b82f6;
+      transform: translateY(-3px);
+    }
+
+    .footer-col h4 {
+      font-size: 1.2rem;
+      font-weight: 600;
+      margin-bottom: 1.5rem;
+    }
+
+    .footer-links {
+      list-style: none;
+    }
+
+    .footer-links li {
+      margin-bottom: 0.8rem;
+    }
+
+    .footer-links a {
+      color: #9ca3af;
+      text-decoration: none;
+      transition: color 0.3s;
+    }
+
+    .footer-links a:hover {
+      color: #3b82f6;
+    }
+
+    .footer-bottom {
+      max-width: 1400px;
+      margin: 3rem auto 0;
+      padding-top: 2rem;
+      border-top: 1px solid rgba(255, 255, 255, 0.1);
+      text-align: center;
+      color: #9ca3af;
+    }
+
+    /* Responsive Design */
+    @media (max-width: 1024px) {
+      .hero-content {
+        grid-template-columns: 1fr;
+        text-align: center;
       }
 
-      .welcome-card h1 {
-        font-size: 2rem;
+      .hero-buttons {
+        justify-content: center;
       }
 
-      .welcome-card p {
-        font-size: 1.1rem;
+      .hero-stats {
+        justify-content: center;
       }
 
-      .button-group {
+      .footer-content {
+        grid-template-columns: 1fr 1fr;
+      }
+    }
+
+    @media (max-width: 768px) {
+      .nav-links {
+        display: none;
+        position: absolute;
+        top: 100%;
+        left: 0;
+        right: 0;
+        background: rgba(10, 25, 41, 0.95);
+        backdrop-filter: blur(10px);
+        padding: 2rem;
         flex-direction: column;
-        align-items: center;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.1);
       }
 
-      .btn {
-        width: 100%;
-        max-width: 250px;
+      .nav-links.active {
+        display: flex;
       }
 
-      .features {
+      .mobile-menu-btn {
+        display: block;
+      }
+
+      .hero-stats {
+        flex-direction: column;
+        gap: 1.5rem;
+      }
+
+      .cta-buttons {
+        flex-direction: column;
+      }
+
+      .footer-content {
         grid-template-columns: 1fr;
       }
     }
+
+    /* App Download Section */
+    .app-download {
+      padding: 100px 0;
+      background: linear-gradient(135deg, rgba(59, 130, 246, 0.1) 0%, rgba(139, 92, 246, 0.1) 100%);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .app-container {
+      max-width: 1200px;
+      margin: 0 auto;
+      display: flex;
+      align-items: center;
+      gap: 60px;
+      padding: 0 20px;
+    }
+
+    .app-text {
+      flex: 1;
+      text-align: left;
+    }
+
+    .app-text h2 {
+      font-size: 42px;
+      font-weight: 800;
+      margin-bottom: 24px;
+      line-height: 1.2;
+    }
+
+    .app-text p {
+      color: #94a3b8;
+      font-size: 18px;
+      line-height: 1.6;
+      margin-bottom: 32px;
+    }
+
+    .app-buttons {
+      display: flex;
+      gap: 20px;
+    }
+
+    .download-btn {
+      background: #0f172a;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      padding: 12px 24px;
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      color: white;
+      text-decoration: none;
+      transition: all 0.3s;
+    }
+
+    .download-btn:hover {
+      background: #3b82f6;
+      border-color: #3b82f6;
+      transform: translateY(-5px);
+      box-shadow: 0 10px 20px rgba(59, 130, 246, 0.2);
+    }
+
+    .download-btn span {
+      display: flex;
+      flex-direction: column;
+      line-height: 1.2;
+    }
+
+    .download-btn .small-text {
+      font-size: 12px;
+      color: #94a3b8;
+    }
+
+    .download-btn .large-text {
+      font-size: 18px;
+      font-weight: 700;
+    }
+
+    .app-preview {
+      flex: 1;
+      display: flex;
+      justify-content: center;
+    }
+
+    .phone-mockup {
+      width: 280px;
+      height: 560px;
+      background: #0f172a;
+      border: 12px solid #1e293b;
+      border-radius: 40px;
+      position: relative;
+      box-shadow: 0 50px 100px -20px rgba(0, 0, 0, 0.5);
+      overflow: hidden;
+    }
+
+    .phone-screen {
+      width: 100%;
+      height: 100%;
+      background: url('https://placehold.co/300x600/0f172a/3b82f6?text=WorkConnect+App') center/cover;
+    }
+
+    @media (max-width: 968px) {
+      .app-container {
+        flex-direction: column;
+        text-align: center;
+      }
+
+      .app-text {
+        text-align: center;
+      }
+
+      .app-buttons {
+        justify-content: center;
+      }
+    }
   </style>
+  <script src="config.js"></script>
 </head>
+
 <body>
-  <div class="ocean-container">
-    <div class="welcome-card">
-    <h1 >WorkConnect</h1>
-    <p text-yellow-500 >Connect with skilled workers and get your projects done efficiently. Find the perfect match for your needs.</p>
+  <!-- Video-Style Animation -->
+  <div class="animation-container">
+    <div class="animation-content">
+      <!-- Animated SVG -->
+      <svg class="animated-svg" viewBox="0 0 400 200" xmlns="http://www.w3.org/2000/svg">
+        <!-- Background Circle -->
+        <circle cx="200" cy="100" r="40" fill="none" stroke="#3b82f6" stroke-width="2" class="pulsing-circle" />
 
-    <div class="button-group">
-      <a href="register.html" class="btn btn-primary">Get Started</a>
-      <a href="login.html" class="btn btn-secondary">Sign In</a>
-    </div>
+        <!-- Floating Tools -->
+        <g class="floating-tool floating-tool-1">
+          <path d="M120 70 L140 90 L130 100 L110 80 Z" fill="#8b5cf6" opacity="0.8" />
+          <rect x="115" y="75" width="20" height="6" rx="3" fill="#8b5cf6" opacity="0.8" />
+        </g>
 
-      <div class="features">
-      <div class="feature">
-        <span class="feature-icon">👷</span>
-        <h3>Skilled Workers</h3>
-        <p>Verified professionals with experience</p>
+        <g class="floating-tool floating-tool-2">
+          <rect x="250" y="60" width="16" height="40" rx="4" fill="#ec4899" opacity="0.8" />
+          <polygon points="258,40 266,40 262,48" fill="#ec4899" opacity="0.8" />
+        </g>
+
+        <g class="floating-tool floating-tool-3">
+          <circle cx="180" cy="140" r="15" fill="#3b82f6" opacity="0.6" />
+          <circle cx="180" cy="140" r="8" fill="white" opacity="0.3" />
+        </g>
+
+        <!-- Rotating Gear -->
+        <g class="rotating-gear" transform="translate(200,100)">
+          <circle r="20" fill="none" stroke="#10b981" stroke-width="3" />
+          <line x1="0" y1="-25" x2="0" y2="-15" stroke="#10b981" stroke-width="3" />
+          <line x1="0" y1="25" x2="0" y2="15" stroke="#10b981" stroke-width="3" />
+          <line x1="-25" y1="0" x2="-15" y2="0" stroke="#10b981" stroke-width="3" />
+          <line x1="25" y1="0" x2="15" y2="0" stroke="#10b981" stroke-width="3" />
+        </g>
+
+        <!-- Drawing Lines -->
+        <line x1="80" y1="180" x2="320" y2="180" stroke="#3b82f6" stroke-width="2" class="line-draw" />
+        <line x1="80" y1="185" x2="320" y2="185" stroke="#8b5cf6" stroke-width="2" class="line-draw" />
+        <line x1="80" y1="190" x2="320" y2="190" stroke="#ec4899" stroke-width="2" class="line-draw" />
+      </svg>
+
+      <!-- Typewriter Effect -->
+      <div class="typewriter text-2xl text-blue-400 mb-6">
+        Welcome to WorkConnect...
       </div>
-      <div class="feature">
-        <span class="feature-icon">⚡</span>
-        <h3>Quick Service</h3>
-        <p>Fast response and completion</p>
+
+      <!-- Fade Text -->
+      <div class="fade-text fade-text-1 text-3xl font-bold mb-2">
+        Connect with <span class="text-blue-400">Skilled Workers</span>
       </div>
-      <div class="feature">
-        <span class="feature-icon">💰</span>
-        <h3>Fair Pricing</h3>
-        <p>Transparent and competitive rates</p>
+
+      <div class="fade-text fade-text-2 text-xl text-gray-400 mb-4">
+        Find the perfect professional for your project
       </div>
-      <div class="feature">
-        <span class="feature-icon">⭐</span>
-        <h3>Rated & Reviewed</h3>
-        <p>Quality assurance through feedback</p>
+
+      <!-- Slide Letters -->
+      <div class="text-4xl font-bold mb-6">
+        <span class="slide-letter" style="animation-delay: 2.8s;">W</span>
+        <span class="slide-letter" style="animation-delay: 2.9s;">o</span>
+        <span class="slide-letter" style="animation-delay: 3.0s;">r</span>
+        <span class="slide-letter" style="animation-delay: 3.1s;">k</span>
+        <span class="slide-letter" style="animation-delay: 3.2s;">C</span>
+        <span class="slide-letter" style="animation-delay: 3.3s;">o</span>
+        <span class="slide-letter" style="animation-delay: 3.4s;">n</span>
+        <span class="slide-letter" style="animation-delay: 3.5s;">n</span>
+        <span class="slide-letter" style="animation-delay: 3.6s;">e</span>
+        <span class="slide-letter" style="animation-delay: 3.7s;">c</span>
+        <span class="slide-letter" style="animation-delay: 3.8s;">t</span>
       </div>
+
+      <!-- Progress Bar -->
+      <div class="w-64 h-1 bg-gray-700 rounded-full mx-auto overflow-hidden">
+        <div class="progress-bar"></div>
       </div>
     </div>
   </div>
+
+  <!-- Main Content -->
+  <div class="main-content">
+    <!-- Navigation -->
+    <nav class="navbar" id="navbar">
+      <div class="nav-container">
+        <a href="#" class="logo">
+          <i class="fas fa-tools"></i>
+          WorkConnect
+        </a>
+
+        <div class="nav-links" id="navLinks">
+          <a href="#home" class="active">Home</a>
+          <a href="#categories">Categories</a>
+          <a href="#features">Features</a>
+          <a href="#how-it-works">How It Works</a>
+          <a href="#testimonials">Testimonials</a>
+          <a href="#contact">Contact</a>
+          <a href="#download" class="text-blue-400 font-bold">App Download</a>
+          <a href="login.html" class="btn btn-secondary">Sign In</a>
+          <a href="register.html" class="btn btn-primary">Get Started</a>
+        </div>
+
+        <button class="mobile-menu-btn" onclick="toggleMenu()">
+          <i class="fas fa-bars"></i>
+        </button>
+      </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section id="home" class="hero">
+      <div class="hero-content">
+        <div class="hero-text">
+          <h1>
+            Find <span class="gradient-text">Skilled Workers</span><br>
+            For Your Projects
+          </h1>
+          <p>
+            Connect with verified professionals, get your work done efficiently,
+            and grow your business with our trusted platform.
+          </p>
+          <div class="hero-buttons">
+            <a href="register.html" class="btn btn-primary">
+              <i class="fas fa-user-plus"></i> Get Started
+            </a>
+            <a href="#" class="btn btn-secondary">
+              <i class="fas fa-play"></i> Watch Demo
+            </a>
+          </div>
+          <div class="hero-stats">
+            <div class="stat-item">
+              <div class="stat-number">50K+</div>
+              <div class="stat-label">Active Workers</div>
+            </div>
+            <div class="stat-item">
+              <div class="stat-number">100K+</div>
+              <div class="stat-label">Projects Done</div>
+            </div>
+            <div class="stat-item">
+              <div class="stat-number">4.9/5</div>
+              <div class="stat-label">User Rating</div>
+            </div>
+          </div>
+        </div>
+        <div class="hero-image">
+          <img
+            src="https://images.unsplash.com/photo-1521791136064-7986c2920216?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80"
+            alt="Professional Worker"
+            onerror="this.src='https://placehold.co/600x400/1a2b3c/3b82f6?text=Professional+Workers'">
+
+          <div class="floating-card floating-card-1">
+            <i class="fas fa-check-circle text-green-400 text-xl"></i>
+            <div>
+              <div class="font-semibold">Verified</div>
+              <div class="text-sm text-gray-400">ID Verified</div>
+            </div>
+          </div>
+
+          <div class="floating-card floating-card-2">
+            <i class="fas fa-star text-yellow-400 text-xl"></i>
+            <div>
+              <div class="font-semibold">Top Rated</div>
+              <div class="text-sm text-gray-400">4.9/5 Rating</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Categories Section -->
+    <section id="categories" class="categories">
+      <div class="section-title">
+        <h2>Browse by <span class="text-blue-400">Category</span></h2>
+        <p>Find the right professional for your specific needs</p>
+      </div>
+
+      <div class="category-grid">
+        <a href="search.html?category=plumbing" class="category-card">
+          <i class="fas fa-wrench"></i>
+          <span>Plumbing</span>
+          <small>1,200+ workers</small>
+        </a>
+        <a href="search.html?category=electrical" class="category-card">
+          <i class="fas fa-bolt"></i>
+          <span>Electrical</span>
+          <small>950+ workers</small>
+        </a>
+        <a href="search.html?category=carpentry" class="category-card">
+          <i class="fas fa-hammer"></i>
+          <span>Carpentry</span>
+          <small>800+ workers</small>
+        </a>
+        <a href="search.html?category=painting" class="category-card">
+          <i class="fas fa-paint-brush"></i>
+          <span>Painting</span>
+          <small>750+ workers</small>
+        </a>
+        <a href="search.html?category=cleaning" class="category-card">
+          <i class="fas fa-broom"></i>
+          <span>Cleaning</span>
+          <small>1,500+ workers</small>
+        </a>
+        <a href="search.html?category=moving" class="category-card">
+          <i class="fas fa-truck"></i>
+          <span>Moving</span>
+          <small>600+ workers</small>
+        </a>
+        <a href="search.html?category=gardening" class="category-card">
+          <i class="fas fa-leaf"></i>
+          <span>Gardening</span>
+          <small>450+ workers</small>
+        </a>
+        <a href="search.html?category=hvac" class="category-card">
+          <i class="fas fa-wind"></i>
+          <span>HVAC</span>
+          <small>350+ workers</small>
+        </a>
+        <a href="search.html?category=roofing" class="category-card">
+          <i class="fas fa-home"></i>
+          <span>Roofing</span>
+          <small>280+ workers</small>
+        </a>
+        <a href="search.html?category=flooring" class="category-card">
+          <i class="fas fa-border-all"></i>
+          <span>Flooring</span>
+          <small>320+ workers</small>
+        </a>
+        <a href="search.html?category=appliance" class="category-card">
+          <i class="fas fa-tools"></i>
+          <span>Appliance Repair</span>
+          <small>420+ workers</small>
+        </a>
+        <a href="search.html?category=handyman" class="category-card">
+          <i class="fas fa-user-cog"></i>
+          <span>Handyman</span>
+          <small>2,100+ workers</small>
+        </a>
+      </div>
+    </section>
+
+    <!-- Features Section -->
+    <section id="features" class="features">
+      <div class="section-title">
+        <h2>Why Choose <span class="text-blue-400">WorkConnect</span></h2>
+        <p>We make hiring skilled professionals simple and reliable</p>
+      </div>
+
+      <div class="features-grid">
+        <div class="feature-card">
+          <div class="feature-icon">
+            <i class="fas fa-user-check"></i>
+          </div>
+          <h3>Verified Workers</h3>
+          <p>All professionals undergo thorough background verification and skill assessment before joining our
+            platform.</p>
+        </div>
+
+        <div class="feature-card">
+          <div class="feature-icon">
+            <i class="fas fa-clock"></i>
+          </div>
+          <h3>Quick Response</h3>
+          <p>Get matched with available workers in minutes. Average response time under 30 minutes.</p>
+        </div>
+
+        <div class="feature-card">
+          <div class="feature-icon">
+            <i class="fas fa-shield-alt"></i>
+          </div>
+          <h3>Secure Payments</h3>
+          <p>Pay securely through our platform with milestone-based protection for both parties.</p>
+        </div>
+
+        <div class="feature-card">
+          <div class="feature-icon">
+            <i class="fas fa-star"></i>
+          </div>
+          <h3>Quality Guaranteed</h3>
+          <p>All work is backed by our satisfaction guarantee and verified customer reviews.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- How It Works -->
+    <section id="how-it-works" class="how-it-works">
+      <div class="section-title">
+        <h2>How It <span class="text-blue-400">Works</span></h2>
+        <p>Get your project done in four simple steps</p>
+      </div>
+
+      <div class="steps-grid">
+        <div class="step-card">
+          <div class="step-number">1</div>
+          <h3 class="text-xl font-semibold mb-2">Post a Job</h3>
+          <p class="text-gray-400">Describe your project requirements, budget, and timeline.</p>
+        </div>
+
+        <div class="step-card">
+          <div class="step-number">2</div>
+          <h3 class="text-xl font-semibold mb-2">Get Matched</h3>
+          <p class="text-gray-400">Receive proposals from qualified workers interested in your project.</p>
+        </div>
+
+        <div class="step-card">
+          <div class="step-number">3</div>
+          <h3 class="text-xl font-semibold mb-2">Hire & Work</h3>
+          <p class="text-gray-400">Review profiles, compare quotes, and hire the best professional.</p>
+        </div>
+
+        <div class="step-card">
+          <div class="step-number">4</div>
+          <h3 class="text-xl font-semibold mb-2">Pay & Review</h3>
+          <p class="text-gray-400">Release payment upon satisfaction and leave a review.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- Testimonials -->
+    <section id="testimonials" class="testimonials">
+      <div class="section-title">
+        <h2>What Our <span class="text-blue-400">Clients Say</span></h2>
+        <p>Real experiences from satisfied customers</p>
+      </div>
+
+      <div class="testimonials-grid">
+        <div class="testimonial-card">
+          <div class="rating">
+            <i class="fas fa-star"></i>
+            <i class="fas fa-star"></i>
+            <i class="fas fa-star"></i>
+            <i class="fas fa-star"></i>
+            <i class="fas fa-star"></i>
+          </div>
+          <p class="testimonial-text">"Found an excellent plumber through WorkConnect. He fixed a complex pipe issue in
+            just 2 hours. The platform made it so easy to compare quotes and check reviews."</p>
+          <div class="testimonial-author">
+            <div class="author-avatar">JD</div>
+            <div>
+              <div class="font-semibold">John Doe</div>
+              <div class="text-sm text-gray-400">Homeowner</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="testimonial-card">
+          <div class="rating">
+            <i class="fas fa-star"></i>
+            <i class="fas fa-star"></i>
+            <i class="fas fa-star"></i>
+            <i class="fas fa-star"></i>
+            <i class="fas fa-star"></i>
+          </div>
+          <p class="testimonial-text">"As a small business owner, I regularly need maintenance work. WorkConnect has
+            been a game-changer. Reliable workers, fair pricing, and excellent customer support."</p>
+          <div class="testimonial-author">
+            <div class="author-avatar">MS</div>
+            <div>
+              <div class="font-semibold">Maria Smith</div>
+              <div class="text-sm text-gray-400">Restaurant Owner</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="testimonial-card">
+          <div class="rating">
+            <i class="fas fa-star"></i>
+            <i class="fas fa-star"></i>
+            <i class="fas fa-star"></i>
+            <i class="fas fa-star"></i>
+            <i class="fas fa-star-half-alt"></i>
+          </div>
+          <p class="testimonial-text">"The electrician I hired rewired my entire home office perfectly. Professional,
+            punctual, and reasonably priced. The payment protection gave me peace of mind."</p>
+          <div class="testimonial-author">
+            <div class="author-avatar">RJ</div>
+            <div>
+              <div class="font-semibold">Robert Johnson</div>
+              <div class="text-sm text-gray-400">Freelancer</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- CTA Section -->
+    <section class="cta">
+      <div class="cta-content">
+        <h2>Ready to get started?</h2>
+        <p>Join thousands of satisfied customers who found their perfect professional through WorkConnect</p>
+        <div class="cta-buttons">
+          <a href="register.html?type=customer" class="btn btn-primary">
+            <i class="fas fa-user-plus"></i> Hire a Professional
+          </a>
+          <a href="register.html?type=worker" class="btn btn-secondary">
+            <i class="fas fa-briefcase"></i> Become a Worker
+          </a>
+        </div>
+      </div>
+    </section>
+
+    <!-- Footer -->
+    <!-- App Download Section -->
+    <section id="download" class="app-download">
+      <div class="app-container">
+        <div class="app-text">
+          <div class="badge px-4 py-1 bg-blue-500/10 text-blue-400 rounded-full inline-block mb-4 font-semibold">
+            Mobile App Available
+          </div>
+          <h2>Carry <span class="gradient-text">WorkConnect</span><br>In Your Pocket</h2>
+          <p>
+            Get the full WorkConnect experience on your mobile device.
+            Manage orders, chat with workers, and track your projects
+            on the go with our highly-rated mobile application.
+          </p>
+          <div class="app-buttons">
+            <a href="download.html" class="download-btn">
+              <i class="fab fa-android text-3xl"></i>
+              <span>
+                <span class="small-text">Get the</span>
+                <span class="large-text">Mobile App</span>
+              </span>
+            </a>
+            <a href="#" class="download-btn opacity-50 cursor-not-allowed">
+              <i class="fab fa-apple text-3xl"></i>
+              <span>
+                <span class="small-text">Coming Soon to</span>
+                <span class="large-text">App Store</span>
+              </span>
+            </a>
+          </div>
+        </div>
+        <div class="app-preview anim-fade">
+          <div class="phone-mockup">
+            <div class="phone-screen"></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <footer id="contact" class="footer">
+      <div class="footer-content">
+        <div class="footer-col">
+          <div class="logo text-2xl mb-4">
+            <i class="fas fa-tools"></i>
+            WorkConnect
+          </div>
+          <p>Connecting skilled professionals with customers since 2020. Trusted by over 50,000 workers and 100,000
+            satisfied customers.</p>
+          <div class="social-links">
+            <a href="#"><i class="fab fa-facebook-f"></i></a>
+            <a href="#"><i class="fab fa-twitter"></i></a>
+            <a href="#"><i class="fab fa-linkedin-in"></i></a>
+            <a href="#"><i class="fab fa-instagram"></i></a>
+          </div>
+        </div>
+
+        <div class="footer-col">
+          <h4>For Customers</h4>
+          <ul class="footer-links">
+            <li><a href="#">How it Works</a></li>
+            <li><a href="#">Find Workers</a></li>
+            <li><a href="#">Post a Job</a></li>
+            <li><a href="#">Pricing</a></li>
+            <li><a href="#">Reviews</a></li>
+          </ul>
+        </div>
+
+        <div class="footer-col">
+          <h4>For Workers</h4>
+          <ul class="footer-links">
+            <li><a href="#">Become a Worker</a></li>
+            <li><a href="#">Worker Guidelines</a></li>
+            <li><a href="#">Success Stories</a></li>
+            <li><a href="#">Training Resources</a></li>
+            <li><a href="#">Worker Dashboard</a></li>
+          </ul>
+        </div>
+
+        <div class="footer-col">
+          <h4>Company</h4>
+          <ul class="footer-links">
+            <li><a href="#">About Us</a></li>
+            <li><a href="#">Blog</a></li>
+            <li><a href="#">Careers</a></li>
+            <li><a href="#">Press</a></li>
+            <li><a href="#">Contact</a></li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="footer-bottom">
+        <p>&copy; 2024 WorkConnect. All rights reserved. | <a href="#">Privacy Policy</a> | <a href="#">Terms of
+            Service</a></p>
+      </div>
+    </footer>
+  </div>
+
+  <script>
+    // Mobile Menu Toggle
+    function toggleMenu() {
+      const navLinks = document.getElementById('navLinks');
+      navLinks.classList.toggle('active');
+    }
+
+    // Navbar Scroll Effect
+    window.addEventListener('scroll', function () {
+      const navbar = document.getElementById('navbar');
+      if (window.scrollY > 50) {
+        navbar.classList.add('scrolled');
+      } else {
+        navbar.classList.remove('scrolled');
+      }
+    });
+
+    // Smooth Scrolling for Navigation Links
+    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+      anchor.addEventListener('click', function (e) {
+        e.preventDefault();
+        const target = document.querySelector(this.getAttribute('href'));
+        if (target) {
+          target.scrollIntoView({
+            behavior: 'smooth',
+            block: 'start'
+          });
+
+          // Close mobile menu if open
+          document.getElementById('navLinks').classList.remove('active');
+        }
+      });
+    });
+
+    // Active Link Highlighting
+    const sections = document.querySelectorAll('section');
+    const navLinks = document.querySelectorAll('.nav-links a');
+
+    window.addEventListener('scroll', () => {
+      let current = '';
+      sections.forEach(section => {
+        const sectionTop = section.offsetTop;
+        const sectionHeight = section.clientHeight;
+        if (pageYOffset >= sectionTop - 200) {
+          current = section.getAttribute('id');
+        }
+      });
+
+      navLinks.forEach(link => {
+        link.classList.remove('active');
+        if (link.getAttribute('href') === `#${current}`) {
+          link.classList.add('active');
+        }
+      });
+    });
+
+    // Close mobile menu when clicking outside
+    document.addEventListener('click', function (event) {
+      const navLinks = document.getElementById('navLinks');
+      const menuBtn = document.querySelector('.mobile-menu-btn');
+
+      if (!navLinks.contains(event.target) && !menuBtn.contains(event.target)) {
+        navLinks.classList.remove('active');
+      }
+    });
+
+    // Counter Animation
+    function animateCounter(element, start, end, duration) {
+      let startTimestamp = null;
+      const step = (timestamp) => {
+        if (!startTimestamp) startTimestamp = timestamp;
+        const progress = Math.min((timestamp - startTimestamp) / duration, 1);
+        element.textContent = Math.floor(progress * (end - start) + start) +
+          (element.textContent.includes('K') ? 'K+' : element.textContent.includes('/') ? '/5' : '+');
+        if (progress < 1) {
+          window.requestAnimationFrame(step);
+        }
+      };
+      window.requestAnimationFrame(step);
+    }
+
+    // Trigger counter animation when stats are in view
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          const stats = document.querySelectorAll('.stat-number');
+          stats.forEach(stat => {
+            const value = stat.textContent.replace(/[^0-9.]/g, '');
+            if (stat.textContent.includes('K')) {
+              animateCounter(stat, 0, parseInt(value), 2000);
+            } else if (stat.textContent.includes('/')) {
+              animateCounter(stat, 0, parseFloat(value), 2000);
+            } else {
+              animateCounter(stat, 0, parseInt(value), 2000);
+            }
+          });
+          observer.disconnect();
+        }
+      });
+    }, { threshold: 0.5 });
+
+    observer.observe(document.querySelector('.hero-stats'));
+
+    // Category Cards Click Handler
+    document.querySelectorAll('.category-card').forEach(card => {
+      card.addEventListener('click', function (e) {
+        // The href already handles navigation
+        // Add any additional tracking or analytics here
+        console.log('Category clicked:', this.querySelector('span').textContent);
+      });
+    });
+
+    // Preload images
+    const images = [
+      'https://images.unsplash.com/photo-1521791136064-7986c2920216?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80'
+    ];
+
+    images.forEach(src => {
+      const img = new Image();
+      img.src = src;
+    });
+
+    // Handle window resize
+    window.addEventListener('resize', function () {
+      if (window.innerWidth > 768) {
+        document.getElementById('navLinks').classList.remove('active');
+      }
+    });
+
+    // Add loading animation for buttons
+    document.querySelectorAll('.btn').forEach(btn => {
+      btn.addEventListener('click', function (e) {
+        if (this.getAttribute('href') === '#') {
+          e.preventDefault();
+          // Demo button click animation
+          this.style.transform = 'scale(0.95)';
+          setTimeout(() => {
+            this.style.transform = '';
+          }, 200);
+        }
+      });
+    });
+  </script>
 </body>
+
 </html>

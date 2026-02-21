@@ -5,18 +5,21 @@
 }
 
 body {
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    background: linear-gradient(180deg, #0e2a47 0%, #071a2f 100%);
+    font-family: 'Outfit', 'Segoe UI', system-ui, -apple-system, sans-serif;
+    background: linear-gradient(135deg, #0f172a 0%, #1e293b 40%, #020617 100%);
+    color: #f1f5f9;
     min-height: 100vh;
     display: flex;
+    flex-direction: column;
     align-items: center;
-    justify-content: center;
+    justify-content: flex-start;
     position: relative;
     overflow-x: hidden;
+    line-height: 1.6;
 }
 
 /* Keep page content above the animated background */
-body > * {
+body>* {
     position: relative;
     z-index: 1;
 }
@@ -50,13 +53,23 @@ body::after {
 }
 
 @keyframes waveSlide1 {
-    0% { background-position-x: 0; }
-    100% { background-position-x: 2000px; }
+    0% {
+        background-position-x: 0;
+    }
+
+    100% {
+        background-position-x: 2000px;
+    }
 }
 
 @keyframes waveSlide2 {
-    0% { background-position-x: 0; }
-    100% { background-position-x: -2000px; }
+    0% {
+        background-position-x: 0;
+    }
+
+    100% {
+        background-position-x: -2000px;
+    }
 }
 
 .container {
@@ -386,27 +399,269 @@ body::after {
 }
 
 /* Responsive Design */
-@media (max-width: 600px) {
+@media (max-width: 1200px) {
     .container {
-        padding: 10px;
+        max-width: 95%;
     }
-    
-    .form-card, .welcome-card {
-        padding: 30px 20px;
+}
+
+@media (max-width: 992px) {
+    .main-content {
+        grid-template-columns: 1fr !important;
     }
-    
+
+    .profile-content {
+        grid-template-columns: 1fr !important;
+    }
+}
+
+@media (max-width: 768px) {
+    .header {
+        flex-direction: column;
+        gap: 1.5rem;
+        text-align: center;
+    }
+
+    .user-info {
+        flex-direction: column;
+        text-align: center;
+    }
+
+    .workers-grid {
+        grid-template-columns: 1fr !important;
+    }
+
     .button-group {
         flex-direction: column;
+        width: 100%;
     }
-    
-    .role-options {
-        flex-direction: column;
-        gap: 10px;
+
+    .btn {
+        width: 100%;
+        margin-bottom: 0.5rem;
     }
-    
+
+    .welcome-card h1 {
+        font-size: 2rem;
+    }
+
+    .form-card {
+        padding: 1.5rem;
+    }
+
     .modal-content {
-        margin: 20% auto;
         width: 95%;
-        padding: 20px;
+        margin: 10% auto;
+        padding: 1.5rem;
     }
-} 
+}
+
+@media (max-width: 480px) {
+    body {
+        padding: 10px;
+    }
+
+    .container {
+        padding: 5px;
+    }
+
+    .welcome-card h1 {
+        font-size: 1.75rem;
+    }
+
+    .form-group input,
+    .form-group select,
+    .form-group textarea {
+        font-size: 14px;
+        padding: 10px;
+    }
+
+    .navbar-brand {
+        font-size: 1.2rem;
+    }
+}
+
+/* Glassmorphism Classes for use across pages */
+.glass-effect {
+    background: rgba(30, 41, 59, 0.7) !important;
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border: 1px solid rgba(255, 255, 255, 0.1) !important;
+    box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.3) !important;
+}
+
+.worker-card {
+    transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1), box-shadow 0.3s ease;
+}
+
+.worker-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 12px 40px rgba(0, 0, 0, 0.4) !important;
+}
+
+.btn {
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
+}
+
+.btn:active {
+    transform: scale(0.95);
+}
+
+/* Navbar link hover effects */
+.navbar-links a:hover {
+    background: rgba(255, 255, 255, 0.2) !important;
+    transform: translateY(-2px);
+}
+
+.navbar-links button:hover {
+    background: #c0392b !important;
+    transform: translateY(-2px);
+}
+
+/* Notification System Styles */
+.notif-wrapper {
+    position: relative;
+    display: inline-block;
+}
+
+.notif-btn {
+    background: transparent;
+    border: none;
+    color: #cbd5e1;
+    font-size: 1.25rem;
+    position: relative;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    padding: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.notif-btn:hover {
+    color: #38bdf8;
+    transform: translateY(-2px);
+}
+
+.notif-count {
+    position: absolute;
+    top: 4px;
+    right: 4px;
+    background: #ef4444;
+    color: white;
+    font-size: 0.65rem;
+    padding: 2px 5px;
+    border-radius: 10px;
+    font-weight: bold;
+    min-width: 18px;
+    text-align: center;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);
+}
+
+.notif-dropdown {
+    position: absolute;
+    top: 100%;
+    right: 0;
+    width: 320px;
+    background: rgba(15, 23, 42, 0.95);
+    border: 1px solid rgba(56, 189, 248, 0.2);
+    border-radius: 1rem;
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5);
+    margin-top: 12px;
+    display: none;
+    z-index: 1000;
+    overflow: hidden;
+    backdrop-filter: blur(12px);
+    animation: slideDown 0.3s ease-out;
+}
+
+.notif-dropdown.show {
+    display: block;
+}
+
+.notif-dropdown h6 {
+    padding: 15px;
+    margin: 0;
+    border-bottom: 1px solid rgba(148, 163, 184, 0.1);
+    font-size: 0.85rem;
+    color: #9ca3af;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    font-weight: 700;
+}
+
+.notif-list {
+    max-height: 400px;
+    overflow-y: auto;
+}
+
+.notif-item {
+    padding: 12px 15px;
+    border-bottom: 1px solid rgba(148, 163, 184, 0.1);
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.notif-item:last-child {
+    border-bottom: none;
+}
+
+.notif-item:hover {
+    background: rgba(56, 189, 248, 0.05);
+}
+
+.notif-item.unread {
+    background: rgba(56, 189, 248, 0.08);
+    border-left: 3px solid #38bdf8;
+}
+
+.notif-title {
+    font-size: 0.9rem;
+    color: #e5e7eb;
+    margin-bottom: 4px;
+    line-height: 1.4;
+}
+
+.notif-item.unread .notif-title {
+    font-weight: 700;
+}
+
+.notif-meta {
+    font-size: 0.75rem;
+    color: #64748b;
+    display: flex;
+    align-items: center;
+}
+
+.notif-meta::before {
+    content: "\f017";
+    font-family: "Font Awesome 6 Free";
+    font-weight: 400;
+    margin-right: 5px;
+}
+
+@keyframes slideDown {
+    from {
+        opacity: 0;
+        transform: translateY(-10px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Custom Scrollbar for Notifications */
+.notif-list::-webkit-scrollbar {
+    width: 4px;
+}
+
+.notif-list::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+.notif-list::-webkit-scrollbar-thumb {
+    background: rgba(56, 189, 248, 0.2);
+    border-radius: 10px;
+}

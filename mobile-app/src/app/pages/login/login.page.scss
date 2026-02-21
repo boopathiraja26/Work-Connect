@@ -1,0 +1,127 @@
+.login-bg {
+    --background: radial-gradient(circle at top right, #1e293b, #0f172a);
+}
+
+.login-container {
+    display: flex;
+    flex-direction: column;
+    padding: 40px 24px;
+    min-height: 100%;
+    justify-content: center;
+}
+
+.logo-wrapper {
+    text-align: center;
+    margin-bottom: 40px;
+
+    .logo-icon {
+        width: 64px;
+        height: 64px;
+        background: linear-gradient(135deg, #3b82f6, #06b6d4);
+        border-radius: 18px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin: 0 auto 16px;
+        box-shadow: 0 8px 16px rgba(59, 130, 246, 0.4);
+
+        ion-icon {
+            font-size: 32px;
+            color: white;
+        }
+    }
+
+    h1 {
+        font-size: 28px;
+        font-weight: 800;
+        color: white;
+        margin: 0;
+        letter-spacing: -0.5px;
+    }
+
+    p {
+        color: #94a3b8;
+        font-size: 14px;
+        margin-top: 4px;
+    }
+}
+
+.form-card {
+    background: rgba(30, 41, 59, 0.7);
+    backdrop-filter: blur(20px);
+    border-radius: 24px;
+    padding: 32px 24px;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.2);
+
+    .form-header {
+        margin-bottom: 32px;
+
+        h2 {
+            font-size: 22px;
+            font-weight: 700;
+            color: white;
+            margin: 0;
+        }
+
+        p {
+            color: #94a3b8;
+            font-size: 14px;
+            margin-top: 4px;
+        }
+    }
+}
+
+.custom-input {
+    --background: rgba(15, 23, 42, 0.6);
+    --border-radius: 14px;
+    margin-bottom: 16px;
+    --padding-start: 16px;
+    border: 1px solid rgba(255, 255, 255, 0.05);
+
+    ion-icon[slot="start"] {
+        color: #3b82f6;
+        margin-right: 12px;
+    }
+
+    ion-input {
+        color: white;
+        font-size: 15px;
+    }
+}
+
+.helper-links {
+    text-align: right;
+    margin-bottom: 24px;
+
+    ion-text {
+        font-size: 13px;
+        cursor: pointer;
+    }
+}
+
+.login-btn {
+    --background: linear-gradient(135deg, #3b82f6, #2563eb);
+    --border-radius: 14px;
+    --box-shadow: 0 4px 12px rgba(37, 99, 235, 0.3);
+    height: 52px;
+    margin-top: 8px;
+    font-weight: 600;
+    letter-spacing: 0.5px;
+}
+
+.footer-links {
+    text-align: center;
+    margin-top: 24px;
+
+    p {
+        color: #94a3b8;
+        font-size: 14px;
+
+        a {
+            color: #3b82f6;
+            font-weight: 600;
+            text-decoration: none;
+        }
+    }
+}

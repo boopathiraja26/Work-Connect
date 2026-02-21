@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -12,30 +13,33 @@
             min-height: 100vh;
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
         }
-        
+
         .dashboard-container {
             padding: 20px;
             max-width: 1400px;
             margin: 0 auto;
         }
-        
+
         .header {
-            background: white;
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(10px);
             border-radius: 15px;
             padding: 25px;
-            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.2);
             margin-bottom: 30px;
             display: flex;
             justify-content: space-between;
             align-items: center;
         }
-        
+
+
         .user-info {
             display: flex;
             align-items: center;
             gap: 15px;
         }
-        
+
         .user-avatar {
             width: 60px;
             height: 60px;
@@ -43,18 +47,18 @@
             object-fit: cover;
             border: 3px solid #667eea;
         }
-        
+
         .user-details h2 {
             margin: 0;
             color: #ffffff;
             font-size: 24px;
         }
-        
+
         .user-details p {
             margin: 5px 0 0 0;
             color: #ffffff;
         }
-        
+
         .logout-btn {
             background: #e74c3c;
             color: white;
@@ -65,24 +69,24 @@
             cursor: pointer;
             transition: all 0.3s ease;
         }
-        
+
         .logout-btn:hover {
             background: #c0392b;
         }
-        
+
         .main-content {
             display: grid;
             grid-template-columns: 1fr 400px;
             gap: 30px;
         }
-        
+
         .workers-section {
             background: white;
             border-radius: 15px;
             padding: 25px;
             box-shadow: 0 5px 20px rgba(0, 0, 0, 0.1);
         }
-        
+
         .section-header {
             display: flex;
             justify-content: space-between;
@@ -91,18 +95,18 @@
             border-bottom: 2px solid #667eea;
             padding-bottom: 15px;
         }
-        
+
         .section-header h2 {
             color: #333;
             margin: 0;
         }
-        
+
         .search-box {
             display: flex;
             gap: 10px;
             margin-bottom: 20px;
         }
-        
+
         .search-input {
             flex: 1;
             padding: 12px;
@@ -110,12 +114,12 @@
             border-radius: 8px;
             font-size: 16px;
         }
-        
+
         .search-input:focus {
             outline: none;
             border-color: #667eea;
         }
-        
+
         .filter-select {
             padding: 12px;
             border: 2px solid #e1e5e9;
@@ -123,13 +127,13 @@
             font-size: 16px;
             background: white;
         }
-        
+
         .workers-grid {
             display: grid;
             grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
             gap: 20px;
         }
-        
+
         .worker-card {
             background: #f8f9fa;
             border-radius: 12px;
@@ -137,58 +141,58 @@
             border-left: 4px solid #667eea;
             transition: all 0.3s ease;
         }
-        
+
         .worker-card:hover {
             transform: translateY(-2px);
             box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
         }
-        
+
         .worker-header {
             display: flex;
             align-items: center;
             gap: 15px;
             margin-bottom: 15px;
         }
-        
+
         .worker-avatar {
             width: 50px;
             height: 50px;
             border-radius: 50%;
             object-fit: cover;
         }
-        
+
         .worker-info h3 {
             margin: 0;
             color: #ffffff;
             font-size: 18px;
         }
-        
+
         .worker-info p {
             margin: 5px 0 0 0;
             color: #ffffff;
             font-size: 14px;
         }
-        
+
         .worker-details {
             margin-bottom: 15px;
         }
-        
+
         .detail-item {
             display: flex;
             justify-content: space-between;
             margin-bottom: 8px;
             font-size: 14px;
         }
-        
+
         .detail-label {
             color: #fffbfb;
             font-weight: 500;
         }
-        
+
         .detail-value {
             color: #667eea;
         }
-        
+
         .location-link {
             color: #667eea;
             text-decoration: none;
@@ -196,21 +200,21 @@
             align-items: center;
             gap: 5px;
         }
-        
+
         .location-link:hover {
             text-decoration: underline;
         }
-        
+
         .rating {
             color: #f39c12;
             font-weight: 600;
         }
-        
+
         .action-buttons {
             display: flex;
             gap: 10px;
         }
-        
+
         .hire-btn {
             background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
             color: white;
@@ -222,19 +226,19 @@
             flex: 1;
             transition: all 0.3s ease;
         }
-        
+
         .hire-btn:hover {
             transform: translateY(-1px);
             box-shadow: 0 5px 15px rgba(40, 167, 69, 0.3);
         }
-        
+
         .hire-btn:disabled {
             background: #6c757d;
             cursor: not-allowed;
             transform: none;
             box-shadow: none;
         }
-        
+
         .details-btn {
             background: #667eea;
             color: white;
@@ -245,11 +249,11 @@
             font-size: 14px;
             transition: all 0.3s ease;
         }
-        
+
         .details-btn:hover {
             background: #5a6fd8;
         }
-        
+
         .orders-sidebar {
             background: white;
             border-radius: 15px;
@@ -257,7 +261,7 @@
             box-shadow: 0 5px 20px rgba(0, 0, 0, 0.1);
             height: fit-content;
         }
-        
+
         .order-item {
             background: #f8f9fa;
             border-radius: 10px;
@@ -267,55 +271,55 @@
             cursor: pointer;
             transition: all 0.3s ease;
         }
-        
+
         .order-item:hover {
             transform: translateX(5px);
             box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
         }
-        
+
         .order-header {
             display: flex;
             justify-content: space-between;
             align-items: center;
             margin-bottom: 10px;
         }
-        
+
         .order-id {
             font-weight: 600;
             color: #ffffff;
         }
-        
+
         .order-status {
             padding: 4px 8px;
             border-radius: 12px;
             font-size: 12px;
             font-weight: 600;
         }
-        
+
         .status-pending {
             background: #fff3cd;
             color: #856404;
         }
-        
+
         .status-accepted {
             background: #d4edda;
             color: #155724;
         }
-        
+
         .status-completed {
             background: #cce5ff;
             color: #004085;
         }
-        
+
         .order-summary {
             font-size: 14px;
             color: #666;
         }
-        
+
         .order-summary div {
             margin-bottom: 5px;
         }
-        
+
         /* Modal Styles */
         .modal {
             display: none;
@@ -327,7 +331,7 @@
             height: 100%;
             background-color: rgba(0, 0, 0, 0.5);
         }
-        
+
         .modal-content {
             background-color: white;
             margin: 5% auto;
@@ -337,18 +341,18 @@
             max-width: 600px;
             box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
         }
-        
+
         .modal-header {
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             color: white;
             padding: 20px;
             border-radius: 15px 15px 0 0;
         }
-        
+
         .modal-body {
             padding: 25px;
         }
-        
+
         .close {
             color: white;
             float: right;
@@ -356,22 +360,22 @@
             font-weight: bold;
             cursor: pointer;
         }
-        
+
         .close:hover {
             opacity: 0.7;
         }
-        
+
         .form-group {
             margin-bottom: 20px;
         }
-        
+
         .form-group label {
             display: block;
             margin-bottom: 8px;
             font-weight: 600;
             color: #333;
         }
-        
+
         .form-group input,
         .form-group select,
         .form-group textarea {
@@ -381,14 +385,14 @@
             border-radius: 8px;
             font-size: 16px;
         }
-        
+
         .form-group input:focus,
         .form-group select:focus,
         .form-group textarea:focus {
             outline: none;
             border-color: #667eea;
         }
-        
+
         .submit-btn {
             background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
             color: white;
@@ -400,12 +404,12 @@
             width: 100%;
             transition: all 0.3s ease;
         }
-        
+
         .submit-btn:hover {
             transform: translateY(-2px);
             box-shadow: 0 5px 15px rgba(40, 167, 69, 0.3);
         }
-        
+
         /* Full Order View Modal */
         .full-order-modal {
             display: none;
@@ -417,7 +421,7 @@
             height: 100%;
             background-color: rgba(0, 0, 0, 0.5);
         }
-        
+
         .full-order-content {
             background-color: white;
             margin: 2% auto;
@@ -429,7 +433,7 @@
             overflow-y: auto;
             box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
         }
-        
+
         .full-order-header {
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             color: white;
@@ -439,47 +443,47 @@
             top: 0;
             z-index: 10;
         }
-        
+
         .full-order-body {
             padding: 30px;
         }
-        
+
         .order-detail-section {
             margin-bottom: 30px;
         }
-        
+
         .order-detail-section h3 {
             color: #ffffff;
             border-bottom: 2px solid #667eea;
             padding-bottom: 10px;
             margin-bottom: 20px;
         }
-        
+
         .detail-grid {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
             gap: 20px;
         }
-        
+
         .detail-item-full {
             background: #f8f9fa;
             padding: 15px;
             border-radius: 8px;
             border-left: 4px solid #667eea;
         }
-        
+
         .detail-item-full .label {
             font-weight: 600;
             color: #ffffff;
             font-size: 14px;
             margin-bottom: 5px;
         }
-        
+
         .detail-item-full .value {
             color: #ffffff;
             font-size: 16px;
         }
-        
+
         .worker-info-full {
             display: flex;
             align-items: center;
@@ -489,95 +493,260 @@
             border-radius: 12px;
             margin-bottom: 20px;
         }
-        
+
         .worker-avatar-full {
             width: 80px;
             height: 80px;
             border-radius: 50%;
             object-fit: cover;
         }
-        
+
         .worker-details-full h4 {
             margin: 0 0 10px 0;
             color: #ffffff;
         }
-        
+
         .worker-details-full p {
             margin: 5px 0;
             color: #fffcfc;
         }
-        
+
         .review-section {
             background: #f8f9fa;
             padding: 20px;
             border-radius: 12px;
             margin-top: 20px;
         }
-        
+
         .review-form {
             margin-top: 15px;
         }
-        
+
         .rating-input {
             display: flex;
             gap: 10px;
             margin-bottom: 15px;
         }
-        
+
         .rating-input input[type="radio"] {
             display: none;
         }
-        
+
         .rating-input label {
             cursor: pointer;
             font-size: 24px;
             color: #ddd;
         }
-        
-        .rating-input input[type="radio"]:checked ~ label {
+
+        .rating-input input[type="radio"]:checked~label {
             color: #f39c12;
         }
-        
+
         .rating-input label:hover,
-        .rating-input label:hover ~ label {
+        .rating-input label:hover~label {
             color: #f39c12;
         }
-        
+
         .no-orders {
             text-align: center;
             color: #ffffff;
             padding: 40px 20px;
         }
-        
+
         .no-orders i {
             font-size: 48px;
             color: #ddd;
             margin-bottom: 15px;
         }
-        
-        @media (max-width: 768px) {
+
+        @media (max-width: 992px) {
             .main-content {
                 grid-template-columns: 1fr;
             }
-            
-            .workers-grid {
-                grid-template-columns: 1fr;
-            }
-            
+        }
+
+        @media (max-width: 768px) {
             .header {
                 flex-direction: column;
                 gap: 20px;
                 text-align: center;
             }
+
+            .user-info {
+                flex-direction: column;
+                text-align: center;
+            }
+
+            .workers-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .dashboard-container {
+                padding: 10px;
+            }
+
+            .user-avatar {
+                width: 80px;
+                height: 80px;
+            }
+
+            .search-box {
+                flex-direction: column;
+            }
+
+            .logout-btn {
+                width: 100%;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .worker-card {
+                padding: 15px;
+            }
+
+            .action-buttons {
+                flex-direction: column;
+            }
+
+            .detail-item {
+                font-size: 13px;
+            }
         }
     </style>
+    <script src="config.js"></script>
 </head>
+
+<style>
+    /* Navbar styles for enhanced dashboard */
+    .nav-notifications {
+        position: relative;
+    }
+
+    .notifications-dropdown {
+        position: absolute;
+        top: 100%;
+        right: 0;
+        width: 300px;
+        background: rgba(15, 23, 42, 0.98);
+        border: 1px solid rgba(148, 163, 184, 0.3);
+        border-radius: 0.75rem;
+        box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5);
+        display: none;
+        z-index: 2000;
+        padding: 0.5rem 0;
+        overflow: hidden;
+        backdrop-filter: blur(12px);
+    }
+
+    .notifications-dropdown.show {
+        display: block;
+    }
+
+    .notifications-dropdown h6 {
+        padding: 0.5rem 1rem;
+        border-bottom: 1px solid rgba(148, 163, 184, 0.2);
+        color: #94a3b8;
+        font-size: 0.8rem;
+        text-transform: uppercase;
+        margin: 0;
+    }
+
+    .notif-item {
+        padding: 10px 1rem;
+        border-bottom: 1px solid rgba(148, 163, 184, 0.1);
+        cursor: pointer;
+        transition: background 0.2s;
+    }
+
+    .notif-item:last-child {
+        border-bottom: none;
+    }
+
+    .notif-item:hover {
+        background: rgba(255, 255, 255, 0.05);
+    }
+
+    .notif-item.unread {
+        background: rgba(56, 189, 248, 0.05);
+        border-left: 3px solid #38bdf8;
+    }
+
+    .notif-title {
+        color: #e5e7eb;
+        font-size: 0.85rem;
+        margin-bottom: 4px;
+    }
+
+    .notif-item.unread .notif-title {
+        font-weight: 700;
+    }
+
+    .notif-meta {
+        color: #9ca3af;
+        font-size: 0.7rem;
+    }
+</style>
+
 <body>
+    <!-- Navigation -->
+    <nav
+        style="background: rgba(15, 23, 42, 0.95); border-bottom: 1px solid rgba(56, 189, 248, 0.2); backdrop-filter: blur(16px); padding: 0.75rem 0; position: sticky; top: 0; z-index: 1000; margin-bottom: 0;">
+        <div
+            style="display: flex; justify-content: space-between; align-items: center; max-width: 1400px; margin: 0 auto; padding: 0 20px;">
+            <a href="customer-dashboard.html"
+                style="font-weight: 700; font-size: 1.5rem; background: linear-gradient(135deg, #38bdf8, #3b82f6); -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent; text-decoration: none;">
+                <i class="fas fa-tools me-2"></i>WorkConnect
+            </a>
+
+            <div style="display: flex; align-items: center; gap: 1.5rem;">
+                <a href="customer-dashboard.html"
+                    style="color: #cbd5e1; text-decoration: none; font-weight: 500; font-size: 0.95rem; transition: color 0.3s;"
+                    onmouseover="this.style.color='#fff'" onmouseout="this.style.color='#cbd5e1'">Dashboard</a>
+                <a href="customer-orders.html"
+                    style="color: #cbd5e1; text-decoration: none; font-weight: 500; font-size: 0.95rem; transition: color 0.3s;"
+                    onmouseover="this.style.color='#fff'" onmouseout="this.style.color='#cbd5e1'">My Orders</a>
+                <a href="customer-payments.html"
+                    style="color: #cbd5e1; text-decoration: none; font-weight: 500; font-size: 0.95rem; transition: color 0.3s;"
+                    onmouseover="this.style.color='#fff'" onmouseout="this.style.color='#cbd5e1'">Payments</a>
+                <a href="customer-help.html"
+                    style="color: #cbd5e1; text-decoration: none; font-weight: 500; font-size: 0.95rem; transition: color 0.3s;"
+                    onmouseover="this.style.color='#fff'" onmouseout="this.style.color='#cbd5e1'">Help</a>
+
+                <div class="nav-notifications">
+                    <button type="button" id="customerNotifBtn"
+                        style="background: none; border: none; color: #cbd5e1; position: relative; cursor: pointer; font-size: 1.1rem;">
+                        <i class="fas fa-bell"></i>
+                        <span id="customerNotifCount"
+                            style="display: none; position: absolute; top: -5px; right: -5px; background: #ef4444; color: white; border-radius: 50%; padding: 2px 5px; font-size: 0.65rem; font-weight: bold;">0</span>
+                    </button>
+                    <div id="customerNotifDropdown" class="notifications-dropdown">
+                        <h6>Notifications</h6>
+                        <div id="customerNotifList" style="max-height: 300px; overflow-y: auto;"></div>
+                    </div>
+                </div>
+
+                <div>
+                    <a href="customer-profile.html"
+                        style="color: #cbd5e1; text-decoration: none; font-weight: 500; font-size: 0.95rem; display: flex; align-items: center; gap: 0.5rem;"
+                        onmouseover="this.style.color='#fff'" onmouseout="this.style.color='#cbd5e1'">
+                        <i class="fas fa-user-circle" style="font-size: 1.2rem;"></i>
+                        <span id="navUserName">Profile</span>
+                    </a>
+                </div>
+
+                <button class="btn btn-outline-danger btn-sm" onclick="logout()" style="border-radius: 8px;">
+                    <i class="fas fa-sign-out-alt"></i>
+                </button>
+            </div>
+        </div>
+    </nav>
+
     <div class="dashboard-container">
         <!-- Header -->
         <div class="header">
             <div class="user-info">
-                <img id="userAvatar" src="/uploads/default-avatar.png" alt="User Avatar" class="user-avatar">
+                <img id="userAvatar" src="https://placehold.co/100x100?text=Avatar" alt="User Avatar"
+                    class="user-avatar">
                 <div class="user-details">
                     <h2 id="userName" style="color: white;">Loading...</h2>
                     <p id="userEmail">Loading...</p>
@@ -596,9 +765,10 @@
                 <div class="section-header" style="color: white;">
                     <h2><i class="fas fa-users"></i> Available Workers</h2>
                 </div>
-                
+
                 <div class="search-box">
-                    <input type="text" id="searchInput" class="search-input" placeholder="Search workers by name, skills, or location...">
+                    <input type="text" id="searchInput" class="search-input"
+                        placeholder="Search workers by name, skills, or location...">
                     <select id="filterSelect" class="filter-select">
                         <option value="">All Skills</option>
                         <option value="Plumbing">Plumbing</option>
@@ -608,7 +778,7 @@
                         <option value="Painting">Painting</option>
                     </select>
                 </div>
-                
+
                 <div id="workersGrid" class="workers-grid">
                     <!-- Workers will be loaded here -->
                 </div>
@@ -619,7 +789,7 @@
                 <div class="section-header">
                     <h2><i class="fas fa-clipboard-list"></i> My Orders</h2>
                 </div>
-                
+
                 <div id="ordersList">
                     <!-- Orders will be loaded here -->
                 </div>
@@ -650,7 +820,8 @@
                     </div>
                     <div class="form-group">
                         <label for="description">Description</label>
-                        <textarea id="description" rows="4" placeholder="Describe the work you need..." required></textarea>
+                        <textarea id="description" rows="4" placeholder="Describe the work you need..."
+                            required></textarea>
                     </div>
                     <div class="form-group">
                         <label for="duration">Duration (hours)</label>
@@ -679,6 +850,8 @@
         </div>
     </div>
 
+    </div>
+    <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
     <script>
         let currentUser = null;
         let selectedWorkerId = null;
@@ -686,11 +859,14 @@
         let orders = [];
 
         // Initialize dashboard
-        document.addEventListener('DOMContentLoaded', function() {
+        document.addEventListener('DOMContentLoaded', function () {
             loadUserInfo();
             loadWorkers();
             loadOrders();
             setupEventListeners();
+            loadNotifications();
+            initCustomerNotifToggle();
+            setInterval(loadNotifications, 10000);
         });
 
         function loadUserInfo() {
@@ -706,25 +882,31 @@
                 return;
             }
             currentUser = user;
-            
+
             document.getElementById('userName').textContent = user.name || user.username;
             document.getElementById('userEmail').textContent = user.email;
-            
+
             if (user.location && user.location.link) {
-                document.getElementById('userLocation').innerHTML = 
+                document.getElementById('userLocation').innerHTML =
                     `<i class="fas fa-map-marker-alt"></i> <a href="${user.location.link}" target="_blank" style="color: #667eea;">View My Location</a>`;
             } else {
                 document.getElementById('userLocation').textContent = 'Location not set';
             }
-            
+
             if (user.profileImage) {
                 document.getElementById('userAvatar').src = user.profileImage;
+            }
+
+            // Update navbar profile name
+            const navUserName = document.getElementById('navUserName');
+            if (navUserName) {
+                navUserName.textContent = (user.name || user.username).split(' ')[0];
             }
         }
 
         async function loadWorkers() {
             try {
-                const response = await fetch('/api/workers');
+                const response = await fetch(getApiUrl('/api/workers'));
                 workers = await response.json();
                 displayWorkers(workers);
             } catch (error) {
@@ -734,16 +916,16 @@
 
         function displayWorkers(workersToShow) {
             const grid = document.getElementById('workersGrid');
-            
+
             if (workersToShow.length === 0) {
                 grid.innerHTML = '<div class="no-orders"><i class="fas fa-users"></i><p>No workers available</p></div>';
                 return;
             }
-            
+
             grid.innerHTML = workersToShow.map(worker => `
                 <div class="worker-card">
                     <div class="worker-header">
-                        <img src="${worker.profileImage || '/uploads/default-avatar.png'}" alt="${worker.name}" class="worker-avatar">
+                        <img src="${worker.profileImage || 'https://placehold.co/100x100?text=Avatar'}" alt="${worker.name}" class="worker-avatar">
                         <div class="worker-info">
                             <h3>${worker.name || worker.username}</h3>
                             <p>${worker.skills ? worker.skills.join(', ') : 'No skills listed'}</p>
@@ -803,7 +985,7 @@
 
         async function loadOrders() {
             try {
-                const response = await fetch(`/api/orders/customer/${currentUser.id}`);
+                const response = await fetch(getApiUrl(`/api/orders/customer/${currentUser.id}`));
                 orders = await response.json();
                 displayOrders(orders);
             } catch (error) {
@@ -813,18 +995,18 @@
 
         function displayOrders(ordersToShow) {
             const ordersList = document.getElementById('ordersList');
-            
+
             if (ordersToShow.length === 0) {
                 ordersList.innerHTML = '<div class="no-orders"><i class="fas fa-clipboard-list"></i><p>No orders yet</p></div>';
                 return;
             }
-            
+
             ordersList.innerHTML = ordersToShow.map(order => {
                 const paymentStatus = order.paymentStatus || 'unpaid';
                 const canPay = paymentStatus !== 'paid' && (order.status === 'accepted' || order.status === 'completed');
                 const paymentLine = `<div><strong>Payment:</strong> ${paymentStatus === 'paid' ? 'Paid' : 'Not paid'}${order.transactionId ? ` (Txn: ${order.transactionId})` : ''}</div>`;
                 const payButton = canPay ? `
-                    <button style="margin-top:8px;" class="submit-btn" onclick="event.stopPropagation(); payForOrder('${order.id}', ${order.totalAmount});">
+                    <button style="margin-top:8px;" class="submit-btn" onclick="event.stopPropagation(); window.location.href='payment.html?orderId=${order.id}';">
                         <i class="fas fa-credit-card"></i> Pay Now
                     </button>
                 ` : '';
@@ -849,16 +1031,16 @@
 
         function setupEventListeners() {
             // Search functionality
-            document.getElementById('searchInput').addEventListener('input', function() {
+            document.getElementById('searchInput').addEventListener('input', function () {
                 filterWorkers();
             });
-            
-            document.getElementById('filterSelect').addEventListener('change', function() {
+
+            document.getElementById('filterSelect').addEventListener('change', function () {
                 filterWorkers();
             });
-            
+
             // Order form
-            document.getElementById('orderForm').addEventListener('submit', function(e) {
+            document.getElementById('orderForm').addEventListener('submit', function (e) {
                 e.preventDefault();
                 submitOrder();
             });
@@ -867,20 +1049,20 @@
         function filterWorkers() {
             const searchTerm = document.getElementById('searchInput').value.toLowerCase();
             const skillFilter = document.getElementById('filterSelect').value;
-            
+
             let filteredWorkers = workers.filter(worker => {
-                const matchesSearch = !searchTerm || 
+                const matchesSearch = !searchTerm ||
                     (worker.name && worker.name.toLowerCase().includes(searchTerm)) ||
                     (worker.username && worker.username.toLowerCase().includes(searchTerm)) ||
                     (worker.skills && worker.skills.some(skill => skill.toLowerCase().includes(searchTerm))) ||
                     (worker.address && `${worker.address.city} ${worker.address.state}`.toLowerCase().includes(searchTerm));
-                
-                const matchesSkill = !skillFilter || 
+
+                const matchesSkill = !skillFilter ||
                     (worker.skills && worker.skills.includes(skillFilter));
-                
+
                 return matchesSearch && matchesSkill;
             });
-            
+
             displayWorkers(filteredWorkers);
         }
 
@@ -904,14 +1086,14 @@
                 duration: parseInt(document.getElementById('duration').value),
                 location: document.getElementById('serviceLocation').value
             };
-            
+
             try {
-                const response = await fetch('/api/orders', {
+                const response = await fetch(getApiUrl('/api/orders'), {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify(formData)
                 });
-                
+
                 const result = await response.json();
                 if (response.ok) {
                     alert('Order placed successfully!');
@@ -931,7 +1113,7 @@
 
         async function viewFullOrder(orderId) {
             try {
-                const response = await fetch(`/api/order/${orderId}`);
+                const response = await fetch(getApiUrl(`/api/order/${orderId}`));
                 const order = await response.json();
                 if (order.workerLiveLocation) {
                     const { latitude, longitude, timestamp } = order.workerLiveLocation;
@@ -940,9 +1122,9 @@
                 } else {
                     console.log('[Customer] No live location yet for order', orderId);
                 }
-                
+
                 document.getElementById('fullOrderTitle').textContent = `Order #${order.id.slice(-6)}`;
-                
+
                 const orderBody = document.getElementById('fullOrderBody');
                 orderBody.innerHTML = `
                     <div class="order-detail-section">
@@ -970,11 +1152,14 @@
                                 <div class="label">Total Amount</div>
                                 <div class="value">$${order.totalAmount}</div>
                             </div>
-                            <div class="detail-item-full">
+                             <div class="detail-item-full">
                                 <div class="label">Payment</div>
                                 <div class="value">
-                                    ${order.paymentStatus === 'paid' ? 'Paid' : 'Not paid'}
-                                    ${order.transactionId ? `<br/><small>Txn ID: ${order.transactionId}</small>` : ''}
+                                    ${order.paymentStatus === 'paid' ?
+                        '<span style="color: #28a745; font-weight: bold;"><i class="fas fa-check-circle"></i> Paid</span>' :
+                        `<button class="btn btn-sm btn-success" onclick="window.location.href='payment.html?orderId=${order.id}'">Pay Now (₹${order.totalAmount})</button>`
+                    }
+                                    ${order.razorpayPaymentId ? `<br/><small>Txn ID: ${order.razorpayPaymentId}</small>` : ''}
                                 </div>
                             </div>
                             <div class="detail-item-full">
@@ -1000,7 +1185,7 @@
                         <div class="order-detail-section">
                             <h3><i class="fas fa-user"></i> Assigned Worker</h3>
                             <div class="worker-info-full">
-                                <img src="${order.worker.profileImage || '/uploads/default-avatar.png'}" alt="${order.worker.username}" class="worker-avatar-full">
+                                <img src="${order.worker.profileImage || 'https://placehold.co/100x100?text=Avatar'}" alt="${order.worker.username}" class="worker-avatar-full">
                                 <div class="worker-details-full">
                                     <h4>${order.worker.name || order.worker.username}</h4>
                                     <p><strong>Phone:</strong> ${order.worker.phone}</p>
@@ -1066,11 +1251,11 @@
                         </div>
                     ` : ''}
                 `;
-                
+
                 document.getElementById('fullOrderModal').style.display = 'block';
 
                 // Initialize map with current position if available
-                if (order.workerLiveLocation && window.google && google.maps && document.getElementById('liveMap')) {
+                if (order.workerLiveLocation && document.getElementById('liveMap')) {
                     renderLiveMap(order.workerLiveLocation.latitude, order.workerLiveLocation.longitude);
                 }
 
@@ -1078,17 +1263,17 @@
                 if (window.__livePoll) clearInterval(window.__livePoll);
                 window.__livePoll = setInterval(async () => {
                     try {
-                        const r = await fetch(`/api/order/${orderId}`);
+                        const r = await fetch(getApiUrl(`/api/order/${orderId}`));
                         const o = await r.json();
                         if (o.workerLiveLocation) {
                             const { latitude, longitude, timestamp } = o.workerLiveLocation;
                             const mapsUrl = `https://maps.google.com/?q=${latitude},${longitude}`;
                             console.log('[Customer] Live update', { orderId, latitude, longitude, mapsUrl, at: timestamp });
-                            if (window.google && google.maps && document.getElementById('liveMap')) {
+                            if (document.getElementById('liveMap')) {
                                 renderLiveMap(latitude, longitude);
                             }
                         }
-                    } catch {}
+                    } catch { }
                 }, 10000);
             } catch (error) {
                 console.error('Error loading order details:', error);
@@ -1109,28 +1294,31 @@
         let __liveMapMarker = null;
         function renderLiveMap(lat, lng) {
             const mapEl = document.getElementById('liveMap');
-            if (!mapEl || !window.google || !google.maps) return;
-            const position = { lat: Number(lat), lng: Number(lng) };
+            if (!mapEl) return;
+            const position = [Number(lat), Number(lng)];
             if (!__liveMapInstance) {
-                __liveMapInstance = new google.maps.Map(mapEl, { center: position, zoom: 15 });
+                __liveMapInstance = L.map('liveMap').setView(position, 15);
+                L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                    attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+                }).addTo(__liveMapInstance);
             } else {
-                __liveMapInstance.setCenter(position);
+                __liveMapInstance.setView(position, 15);
             }
             if (!__liveMapMarker) {
-                __liveMapMarker = new google.maps.Marker({ position, map: __liveMapInstance, title: 'Worker' });
+                __liveMapMarker = L.marker(position).addTo(__liveMapInstance).bindPopup('Worker Location').openPopup();
             } else {
-                __liveMapMarker.setPosition(position);
+                __liveMapMarker.setLatLng(position);
             }
         }
 
         async function submitReview(event, orderId, workerId) {
             event.preventDefault();
-            
+
             const rating = document.querySelector('input[name="rating"]:checked').value;
             const comment = document.getElementById('reviewComment').value;
-            
+
             try {
-                const response = await fetch(`/api/worker/${workerId}/review`, {
+                const response = await fetch(getApiUrl(`/api/worker/${workerId}/review`), {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({
@@ -1141,7 +1329,7 @@
                         orderId
                     })
                 });
-                
+
                 const result = await response.json();
                 if (response.ok) {
                     alert('Review submitted successfully!');
@@ -1165,11 +1353,72 @@
             window.location.href = 'index.html';
         }
 
+        async function loadNotifications() {
+            if (!currentUser) return;
+            try {
+                const res = await fetch(getApiUrl(`/api/notifications/${currentUser.id}`));
+                if (res.ok) {
+                    const notifications = await res.json();
+                    renderNotifications(notifications);
+                }
+            } catch (e) {
+                console.error('Error loading notifications', e);
+            }
+        }
+
+        function renderNotifications(notifications) {
+            const listEl = document.getElementById('customerNotifList');
+            const countEl = document.getElementById('customerNotifCount');
+            if (!listEl || !countEl) return;
+
+            const unread = notifications.filter(n => !n.read);
+            countEl.textContent = unread.length > 9 ? '9+' : unread.length;
+            countEl.style.display = unread.length > 0 ? 'inline-block' : 'none';
+
+            if (notifications.length === 0) {
+                listEl.innerHTML = '<div style="padding: 12px; text-align: center; color: #9ca3af; font-size: 0.85rem;">No notifications</div>';
+                return;
+            }
+
+            listEl.innerHTML = notifications.map(n => `
+                <div class="notif-item ${n.read ? '' : 'unread'}" onclick="markNotifAsRead('${n._id || n.id}', '${n.link}')">
+                    <div class="notif-title" style="${n.read ? '' : 'font-weight:700;'}">${n.message}</div>
+                    <div class="notif-meta">${new Date(n.createdAt).toLocaleString([], { month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' })}</div>
+                </div>
+            `).join('');
+        }
+
+        async function markNotifAsRead(notifId, link) {
+            try {
+                await fetch(getApiUrl(`/api/notifications/${notifId}/read`), { method: 'PUT' });
+                if (link && link !== 'null' && link !== 'undefined') {
+                    window.location.href = link;
+                } else {
+                    loadNotifications();
+                }
+            } catch (e) {
+                console.error('Error marking as read', e);
+            }
+        }
+
+        function initCustomerNotifToggle() {
+            const btn = document.getElementById('customerNotifBtn');
+            const dropdown = document.getElementById('customerNotifDropdown');
+            if (!btn || !dropdown) return;
+            btn.addEventListener('click', (e) => {
+                e.stopPropagation();
+                dropdown.classList.toggle('show');
+            });
+            document.addEventListener('click', () => {
+                dropdown.classList.remove('show');
+            });
+        }
+
         // Close modals when clicking outside
-        window.onclick = function(event) {
+        window.onclick = function (event) {
             const orderModal = document.getElementById('orderModal');
             const fullOrderModal = document.getElementById('fullOrderModal');
-            
+
             if (event.target === orderModal) {
                 closeModal();
             }
@@ -1178,6 +1427,9 @@
             }
         }
     </script>
-    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyB41DRUbKWJHPxaFjMAwdrzWzbVKartNGg" async defer></script>
+    <!-- Leaflet Local Search (Alternative to Google Maps) -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 </body>
-</html> 
+
+</html>

@@ -1,407 +1,245 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>WorkConnect - Payment</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="stylesheet" href="styles.css">
+
+    <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+    <script src="https://sdk.cashfree.com/js/v3/cashfree.js"></script>
+
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: {
+                            50: '#eff6ff',
+                            100: '#dbeafe',
+                            200: '#bfdbfe',
+                            300: '#93c5fd',
+                            400: '#60a5fa',
+                            500: '#3b82f6',
+                            600: '#2563eb',
+                            700: '#1d4ed8',
+                            800: '#1e40af',
+                            900: '#1e3a8a',
+                        },
+                        dark: {
+                            50: '#f8fafc',
+                            100: '#f1f5f9',
+                            200: '#e2e8f0',
+                            300: '#cbd5e1',
+                            400: '#94a3b8',
+                            500: '#64748b',
+                            600: '#475569',
+                            700: '#334155',
+                            800: '#1e293b',
+                            900: '#0f172a',
+                            950: '#020617',
+                        }
+                    },
+                    fontFamily: {
+                        'sans': ['Inter', 'system-ui', 'sans-serif'],
+                    },
+                    keyframes: {
+                        float: {
+                            '0%, 100%': { transform: 'translateY(0)' },
+                            '50%': { transform: 'translateY(-10px)' },
+                        },
+                        slideUp: {
+                            'from': { opacity: '0', transform: 'translateY(20px)' },
+                            'to': { opacity: '1', transform: 'translateY(0)' }
+                        },
+                        fadeIn: {
+                            'from': { opacity: '0' },
+                            'to': { opacity: '1' }
+                        },
+                        'scan-line': {
+                            '0%': { top: '0', opacity: '0' },
+                            '5%': { opacity: '1' },
+                            '95%': { opacity: '1' },
+                            '100%': { top: '100%', opacity: '0' }
+                        }
+                    },
+                    animation: {
+                        'float': 'float 3s ease-in-out infinite',
+                        'pulse-slow': 'pulse 3s ease-in-out infinite',
+                        'slide-up': 'slideUp 0.4s ease-out',
+                        'fade-in': 'fadeIn 0.5s ease-out',
+                        'scan-line': 'scan-line 2s linear infinite'
+                    },
+                    backdropBlur: {
+                        'xs': '2px',
+                    }
+                }
+            }
+        }
+    </script>
+
     <style>
-        :root {
-            --primary: #38bdf8;
-            --primary-dark: #0ea5e9;
-            --success: #10b981;
-            --warning: #f59e0b;
-            --danger: #ef4444;
-            --dark-bg: #0f172a;
-            --darker-bg: #020617;
-            --card-bg: rgba(15, 23, 42, 0.85);
-            --border-color: rgba(148, 163, 184, 0.2);
-            --text-primary: #f1f5f9;
-            --text-secondary: #94a3b8;
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap');
+
+        * {
+            box-sizing: border-box;
         }
-        
+
         body {
-            min-height: 100vh;
-            background: linear-gradient(135deg, var(--darker-bg) 0%, var(--dark-bg) 40%, #1e293b 100%);
-            color: var(--text-primary);
-            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
-            line-height: 1.6;
+            font-family: 'Inter', sans-serif;
         }
 
-        .navbar {
-            background: rgba(15, 23, 42, 0.95);
-            backdrop-filter: blur(20px);
-            border-bottom: 1px solid var(--border-color);
-            padding: 1rem 0;
-            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+        /* Custom scrollbar */
+        ::-webkit-scrollbar {
+            width: 6px;
         }
 
-        .navbar-brand {
-            font-size: 1.5rem;
-            font-weight: 700;
-            background: linear-gradient(135deg, var(--primary) 0%, #60a5fa 100%);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
+        ::-webkit-scrollbar-track {
+            background: #1e293b;
         }
 
-        .payment-container {
-            max-width: 1400px;
-            margin: 2rem auto;
-            padding: 0 1.5rem;
+        ::-webkit-scrollbar-thumb {
+            background: #475569;
+            border-radius: 3px;
         }
 
-        .glass-card {
+        ::-webkit-scrollbar-thumb:hover {
+            background: #64748b;
+        }
+
+        .glass-effect {
             background: rgba(15, 23, 42, 0.7);
             backdrop-filter: blur(20px);
-            border: 1px solid var(--border-color);
-            border-radius: 1.5rem;
-            box-shadow: 
-                0 8px 32px rgba(0, 0, 0, 0.3),
-                inset 0 1px 0 rgba(255, 255, 255, 0.1);
-            overflow: hidden;
-            position: relative;
+            border: 1px solid rgba(148, 163, 184, 0.1);
         }
 
-        .section-title {
-            font-size: 0.85rem;
-            font-weight: 600;
-            letter-spacing: 0.05em;
-            text-transform: uppercase;
-            color: var(--text-secondary);
-            margin-bottom: 1rem;
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
+        .gradient-bg {
+            background: linear-gradient(135deg, #020617 0%, #0f172a 40%, #1e293b 100%);
         }
 
-        .section-title::before {
-            content: '';
-            width: 4px;
-            height: 14px;
-            background: var(--primary);
-            border-radius: 2px;
+        .card-hover {
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
         }
 
-        .amount-display {
-            font-size: 3.5rem;
-            font-weight: 800;
-            background: linear-gradient(135deg, var(--text-primary) 0%, var(--text-secondary) 100%);
+        .card-hover:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+        }
+
+        .text-gradient {
+            background: linear-gradient(135deg, #f1f5f9 0%, #94a3b8 100%);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
             background-clip: text;
-            line-height: 1.2;
-            margin: 0.5rem 0;
-        }
-
-        .badge-upi {
-            background: rgba(16, 185, 129, 0.15);
-            color: var(--success);
-            border: 1px solid rgba(16, 185, 129, 0.3);
-            padding: 0.4rem 1rem;
-            border-radius: 50px;
-            font-size: 0.8rem;
-            font-weight: 600;
-            display: inline-flex;
-            align-items: center;
-            gap: 0.5rem;
-        }
-
-        .method-pill {
-            background: rgba(30, 41, 59, 0.5);
-            border: 2px solid var(--border-color);
-            border-radius: 1rem;
-            padding: 1.25rem 1.5rem;
-            margin-bottom: 0.75rem;
-            cursor: pointer;
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-            position: relative;
-            overflow: hidden;
-        }
-
-        .method-pill:hover {
-            border-color: var(--primary);
-            transform: translateY(-2px);
-            box-shadow: 0 8px 25px rgba(56, 189, 248, 0.15);
-        }
-
-        .method-pill.active {
-            border-color: var(--primary);
-            background: rgba(56, 189, 248, 0.1);
-            box-shadow: 0 8px 25px rgba(56, 189, 248, 0.2);
-        }
-
-        .method-icon {
-            width: 40px;
-            height: 40px;
-            border-radius: 10px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            margin-right: 1rem;
-            flex-shrink: 0;
-        }
-
-        .method-pill:nth-child(1) .method-icon {
-            background: rgba(16, 185, 129, 0.15);
-            color: var(--success);
-        }
-
-        .method-pill:nth-child(2) .method-icon {
-            background: rgba(59, 130, 246, 0.15);
-            color: #3b82f6;
-        }
-
-        .method-pill:nth-child(3) .method-icon {
-            background: rgba(245, 158, 11, 0.15);
-            color: var(--warning);
-        }
-
-        .checkmark {
-            width: 24px;
-            height: 24px;
-            border-radius: 50%;
-            background: var(--success);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: white;
-            flex-shrink: 0;
-            opacity: 0;
-            transform: scale(0.8);
-            transition: all 0.3s ease;
-        }
-
-        .method-pill.active .checkmark {
-            opacity: 1;
-            transform: scale(1);
-        }
-
-        .order-summary {
-            background: linear-gradient(135deg, rgba(30, 41, 59, 0.5), rgba(15, 23, 42, 0.7));
-            border: 1px solid var(--border-color);
-            border-radius: 1rem;
-            padding: 1.5rem;
-            margin: 1.5rem 0;
-        }
-
-        .upi-display {
-            background: rgba(30, 41, 59, 0.5);
-            border: 1px solid var(--border-color);
-            border-radius: 1rem;
-            padding: 1.25rem;
-            margin: 1rem 0;
-        }
-
-        .btn-primary {
-            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
-            border: none;
-            border-radius: 12px;
-            padding: 1rem 2rem;
-            font-weight: 600;
-            font-size: 1.1rem;
-            letter-spacing: 0.5px;
-            transition: all 0.3s ease;
-            box-shadow: 0 4px 15px rgba(56, 189, 248, 0.3);
-        }
-
-        .btn-primary:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 8px 25px rgba(56, 189, 248, 0.4);
-        }
-
-        .btn-outline-light {
-            border: 2px solid var(--border-color);
-            border-radius: 12px;
-            padding: 0.75rem 1.5rem;
-            font-weight: 500;
-            transition: all 0.3s ease;
-        }
-
-        .btn-outline-light:hover {
-            border-color: var(--primary);
-            background: rgba(56, 189, 248, 0.1);
-            transform: translateY(-1px);
-        }
-
-        .history-row {
-            background: rgba(30, 41, 59, 0.3);
-            border-radius: 0.75rem;
-            padding: 1rem;
-            margin-bottom: 0.75rem;
-            border: 1px solid transparent;
-            transition: all 0.3s ease;
-        }
-
-        .history-row:hover {
-            border-color: var(--primary);
-            background: rgba(56, 189, 248, 0.05);
-            transform: translateX(4px);
-        }
-
-        .pill-status {
-            padding: 0.35rem 0.75rem;
-            border-radius: 50px;
-            font-size: 0.75rem;
-            font-weight: 600;
-            letter-spacing: 0.5px;
-            text-transform: uppercase;
-        }
-
-        .pill-success {
-            background: rgba(16, 185, 129, 0.15);
-            color: var(--success);
-            border: 1px solid rgba(16, 185, 129, 0.3);
-        }
-
-        .help-item {
-            background: rgba(30, 41, 59, 0.3);
-            border-radius: 1rem;
-            padding: 1.25rem;
-            margin-bottom: 0.75rem;
-            border: 1px solid var(--border-color);
-            transition: all 0.3s ease;
-        }
-
-        .help-item:hover {
-            border-color: var(--primary);
-            transform: translateX(4px);
-        }
-
-        .screenshot-upload {
-            background: linear-gradient(135deg, rgba(30, 41, 59, 0.5), rgba(15, 23, 42, 0.7));
-            border: 2px dashed var(--border-color);
-            border-radius: 1rem;
-            padding: 1.5rem;
-            margin: 1.5rem 0;
-            text-align: center;
-            transition: all 0.3s ease;
-        }
-
-        .screenshot-upload:hover {
-            border-color: var(--primary);
-            background: rgba(56, 189, 248, 0.05);
-        }
-
-        .screenshot-preview {
-            max-width: 200px;
-            max-height: 150px;
-            border-radius: 0.75rem;
-            border: 2px solid var(--border-color);
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
-        }
-
-        .error-state {
-            text-align: center;
-            padding: 3rem 1rem;
-        }
-
-        .error-icon {
-            font-size: 4rem;
-            color: var(--danger);
-            margin-bottom: 1rem;
-            opacity: 0.7;
         }
 
         .loading-spinner {
             display: inline-block;
             width: 20px;
             height: 20px;
-            border: 3px solid rgba(56, 189, 248, 0.3);
+            border: 3px solid rgba(59, 130, 246, 0.3);
             border-radius: 50%;
-            border-top-color: var(--primary);
+            border-top-color: #3b82f6;
             animation: spin 1s ease-in-out infinite;
         }
 
+        .method-option.active>div {
+            border-color: #3b82f6 !important;
+            background: rgba(59, 130, 246, 0.1) !important;
+        }
+
         @keyframes spin {
-            to { transform: rotate(360deg); }
-        }
-
-        @media (max-width: 768px) {
-            .payment-container {
-                padding: 0 1rem;
-                margin: 1rem auto;
-            }
-            
-            .amount-display {
-                font-size: 2.5rem;
-            }
-            
-            .method-pill {
-                padding: 1rem;
-            }
-            
-            .glass-card {
-                padding: 1.5rem !important;
-            }
-        }
-
-        .fade-in {
-            animation: fadeIn 0.5s ease-out;
-        }
-
-        .slide-up {
-            animation: slideUp 0.4s ease-out;
-        }
-
-        @keyframes fadeIn {
-            from { opacity: 0; }
-            to { opacity: 1; }
-        }
-
-        @keyframes slideUp {
-            from {
-                opacity: 0;
-                transform: translateY(20px);
-            }
             to {
-                opacity: 1;
-                transform: translateY(0);
+                transform: rotate(360deg);
             }
         }
     </style>
+    <script src="config.js"></script>
 </head>
-<body>
-    <nav class="navbar navbar-expand-lg navbar-dark">
-        <div class="container-fluid px-4">
-            <a class="navbar-brand" href="customer-dashboard.html">
-                <i class="fas fa-tools me-2"></i>WorkConnect
+
+<body class="gradient-bg min-h-screen text-gray-100">
+
+    <!-- Navigation -->
+    <nav class="glass-effect border-b border-gray-800/50 px-6 py-3 sticky top-0 z-50">
+        <div class="max-w-7xl mx-auto flex items-center justify-between h-[42px]">
+            <!-- Brand -->
+            <a href="customer-dashboard.html" class="flex items-center space-x-3 h-full">
+                <div
+                    class="w-10 h-10 rounded-xl bg-gradient-to-br from-primary-500 to-primary-700 flex items-center justify-center shadow-lg shadow-primary-500/20">
+                    <i class="fas fa-tools text-white text-base"></i>
+                </div>
+                <span
+                    class="text-xl font-extrabold bg-gradient-to-r from-primary-400 to-primary-600 bg-clip-text text-transparent tracking-tight">
+                    WorkConnect
+                </span>
             </a>
-            <div class="ms-auto d-flex align-items-center gap-3">
-                <div class="d-none d-md-flex align-items-center gap-2">
-                    <div class="rounded-circle bg-primary bg-opacity-25 p-2">
-                        <i class="fas fa-user text-primary"></i>
-                    </div>
-                    <div>
-                        <div id="navUser" class="small fw-medium"></div>
-                        <div class="text-xs text-secondary">Customer</div>
+
+            <!-- Right Actions -->
+            <div class="flex items-center space-x-4 h-full">
+                <!-- Notifications -->
+                <div class="relative flex items-center h-full">
+                    <button id="customerNotifBtn" class="p-2.5 rounded-xl hover:bg-white/5 transition-all group">
+                        <i class="fas fa-bell text-gray-400 group-hover:text-primary-400 text-xl transition-colors"></i>
+                        <span id="customerNotifCount"
+                            class="absolute top-1 right-1 w-4 h-4 bg-red-500 text-white text-[10px] font-bold rounded-full flex items-center justify-center border-2 border-[#0f172a]"
+                            style="display: none;">0</span>
+                    </button>
+                    <!-- Enhanced Notification Dropdown -->
+                    <div id="customerNotifDropdown"
+                        class="absolute top-full right-0 mt-4 w-80 glass-effect rounded-2xl shadow-2xl border border-white/10 overflow-hidden transform origin-top-right transition-all duration-300 scale-95 opacity-0 pointer-events-none z-[60]">
+                        <div class="px-5 py-4 border-b border-white/5 bg-white/5 flex items-center justify-between">
+                            <h6 class="text-xs font-bold text-gray-400 uppercase tracking-widest">Notifications</h6>
+                            <span
+                                class="text-[10px] bg-primary-500/20 text-primary-400 px-2 py-0.5 rounded-full font-bold">RECENT</span>
+                        </div>
+                        <div id="customerNotifList" class="max-h-80 overflow-y-auto scrollbar-hide py-2">
+                            <!-- JS loaded -->
+                        </div>
                     </div>
                 </div>
-                <button class="btn btn-outline-light" onclick="goBackToDashboard()">
-                    <i class="fas fa-arrow-left me-2"></i>Dashboard
+
+                <!-- User Profile -->
+                <div
+                    class="hidden md:flex items-center px-3 py-1.5 rounded-xl bg-white/5 border border-white/10 space-x-3">
+                    <div
+                        class="w-8 h-8 rounded-full bg-primary-500/20 flex items-center justify-center border border-primary-500/30">
+                        <i class="fas fa-user text-primary-400 text-xs"></i>
+                    </div>
+                    <div class="text-left">
+                        <div id="navUser" class="text-sm font-bold text-gray-100 leading-tight">Loading...</div>
+                        <div class="text-[10px] text-gray-400 uppercase tracking-wider font-semibold">Customer</div>
+                    </div>
+                </div>
+
+                <!-- Dashboard Action -->
+                <button onclick="goBackToDashboard()"
+                    class="h-[42px] px-5 rounded-xl bg-white/5 border border-white/10 hover:border-primary-500/50 hover:bg-primary-500/10 transition-all duration-300 flex items-center space-x-3 group text-gray-300 hover:text-white">
+                    <i class="fas fa-arrow-left text-sm group-hover:-translate-x-1 transition-transform"></i>
+                    <span class="text-sm font-bold">Dashboard</span>
                 </button>
             </div>
         </div>
     </nav>
 
-    <main class="payment-container fade-in">
-        <div id="mainContent">
-            <!-- Loading state will be shown initially -->
-            <div class="row">
-                <div class="col-12">
-                    <div class="glass-card p-5 text-center">
-                        <div class="loading-spinner mx-auto mb-3" style="width: 40px; height: 40px;"></div>
-                        <h4 class="mb-2">Loading Payment Details</h4>
-                        <p class="text-muted">Please wait while we fetch your order information...</p>
-                    </div>
-                </div>
+    <!-- Main Content -->
+    <main class="max-w-7xl mx-auto px-4 py-8 lg:px-8 lg:py-12">
+        <div id="mainContent" class="animate-fade-in">
+            <!-- Loading State -->
+            <div
+                class="flex flex-col items-center justify-center min-h-[60vh] glass-effect rounded-2xl p-8 text-center">
+                <div class="loading-spinner w-12 h-12 mb-6"></div>
+                <h3 class="text-xl font-semibold text-gray-200 mb-2">Loading Payment Details</h3>
+                <p class="text-gray-400">Please wait while we fetch your order information...</p>
             </div>
         </div>
     </main>
 
     <script>
-        // Mock API Database (for testing when real APIs are not available)
+        // Mock API Database (same as original)
         const mockDatabase = {
             users: [
                 {
@@ -455,7 +293,7 @@
         // Initialize application
         document.addEventListener('DOMContentLoaded', async () => {
             console.log('DOM loaded, initializing...');
-            
+
             // Check authentication
             const user = await checkAuthentication();
             if (!user) {
@@ -463,24 +301,35 @@
                 window.location.href = 'login.html';
                 return;
             }
-            
+
             currentUser = user;
-            document.getElementById('navUser').textContent = user.name || user.username;
-            
+            document.getElementById('navUser').textContent = (user.name || user.username).split(' ')[0];
+
+            // Notifications logic
+            loadNotifications();
+            setInterval(loadNotifications, 10000);
+            initCustomerNotifToggle();
+
             // Get order ID from URL
             const params = new URLSearchParams(window.location.search);
             const orderId = params.get('orderId');
-            
+
             console.log('Order ID from URL:', orderId);
-            
+
             if (!orderId) {
                 console.log('No order ID found in URL');
                 showErrorState('Order ID is missing. Please access this page from your dashboard.');
                 return;
             }
-            
+
             // Load order data
             await loadOrderData(orderId);
+
+            // Check for Cashfree verification redirect
+            if (params.get('cf_verify') === '1' && params.get('cf_id')) {
+                const cfOrderId = params.get('cf_id');
+                verifyCashfreePayment(cfOrderId, orderId);
+            }
         });
 
         // Authentication check
@@ -493,7 +342,7 @@
                     console.log('User from localStorage:', user);
                     return user;
                 }
-                
+
                 // Fallback to mock user for demo
                 console.log('Using mock user');
                 return mockDatabase.users[0];
@@ -507,22 +356,24 @@
         function showErrorState(message) {
             const mainContent = document.getElementById('mainContent');
             mainContent.innerHTML = `
-                <div class="row">
-                    <div class="col-12">
-                        <div class="glass-card p-5 error-state">
-                            <div class="error-icon">
-                                <i class="fas fa-exclamation-triangle"></i>
-                            </div>
-                            <h3 class="mb-3">Order Not Found</h3>
-                            <p class="text-muted mb-4">${message}</p>
-                            <div class="d-flex gap-3 justify-content-center">
-                                <button class="btn btn-primary" onclick="goBackToDashboard()">
-                                    <i class="fas fa-arrow-left me-2"></i>Back to Dashboard
-                                </button>
-                                <button class="btn btn-outline-light" onclick="retryLoad()">
-                                    <i class="fas fa-redo me-2"></i>Try Again
-                                </button>
-                            </div>
+                <div class="animate-fade-in">
+                    <div class="glass-effect rounded-2xl p-8 text-center">
+                        <div class="w-20 h-20 mx-auto mb-6 rounded-full bg-red-500/10 flex items-center justify-center">
+                            <i class="fas fa-exclamation-triangle text-red-400 text-3xl"></i>
+                        </div>
+                        <h3 class="text-2xl font-bold text-gray-200 mb-3">Order Not Found</h3>
+                        <p class="text-gray-400 mb-8 max-w-md mx-auto">${message}</p>
+                        <div class="flex flex-col sm:flex-row gap-4 justify-center">
+                            <button onclick="goBackToDashboard()" 
+                                    class="px-6 py-3 bg-gradient-to-r from-primary-500 to-primary-600 hover:from-primary-600 hover:to-primary-700 rounded-lg font-semibold text-white transition-all duration-300 transform hover:-translate-y-0.5 shadow-lg hover:shadow-primary-500/25 flex items-center justify-center space-x-2">
+                                <i class="fas fa-arrow-left"></i>
+                                <span>Back to Dashboard</span>
+                            </button>
+                            <button onclick="retryLoad()" 
+                                    class="px-6 py-3 border border-gray-700 hover:border-primary-500 hover:bg-primary-500/10 rounded-lg font-medium text-gray-300 hover:text-gray-200 transition-all duration-300 flex items-center justify-center space-x-2">
+                                <i class="fas fa-redo"></i>
+                                <span>Try Again</span>
+                            </button>
                         </div>
                     </div>
                 </div>
@@ -533,11 +384,11 @@
         async function loadOrderData(orderId) {
             try {
                 console.log('Loading order data for ID:', orderId);
-                
+
                 // Try real API first, fallback to mock data if fails
                 let order;
                 try {
-                    const res = await fetch(`/api/order/${orderId}`);
+                    const res = await fetch(getApiUrl(`/api/order/${orderId}`));
                     if (!res.ok) throw new Error('API request failed');
                     order = await res.json();
                     console.log('Order from API:', order);
@@ -546,511 +397,583 @@
                     // Fallback to mock data
                     await new Promise(resolve => setTimeout(resolve, 1000));
                     order = mockDatabase.orders.find(o => o.id === orderId);
-                    
+
                     if (!order) {
                         throw new Error(`Order with ID "${orderId}" not found`);
                     }
                 }
-                
+
                 // Security check
                 if (order.customerId !== currentUser.id) {
                     showErrorState('Access denied: This order does not belong to you.');
                     return;
                 }
-                
+
                 currentOrder = order;
-                
+
                 // Check if payment can be made
                 if (order.status !== 'accepted' && order.status !== 'completed') {
                     showErrorState('This order is not yet accepted by the worker. Payment can only be made after the worker accepts the order.');
                     return;
                 }
-                
+
                 if (order.paymentStatus === 'paid') {
                     showErrorState(`This order has already been paid. Transaction ID: ${order.transactionId || 'N/A'}`);
                     return;
                 }
-                
+
                 // Show payment interface
                 showPaymentInterface(order);
-                
+
             } catch (error) {
                 console.error('Error loading order:', error);
                 showErrorState(error.message || 'Failed to load order details. Please try again.');
             }
         }
 
-        // Show payment interface
+        // Show payment interface - Tailwind CSS Version
         function showPaymentInterface(order) {
             const mainContent = document.getElementById('mainContent');
             mainContent.innerHTML = `
-                <div class="row g-4 slide-up">
-                    <!-- Left Column: Payment Section -->
-                    <div class="col-lg-8">
-                        <div class="glass-card p-4 p-xl-5 h-100">
-                            <!-- Header -->
-                            <div class="d-flex justify-content-between align-items-center mb-4">
-                                <div>
-                                    <div class="section-title">Secure Payment Gateway</div>
-                                    <h1 class="h3 fw-bold mb-0">Complete Your Payment</h1>
-                                </div>
-                                <span class="badge-upi">
-                                    <i class="fas fa-shield-alt"></i>
-                                    256-bit Encrypted
-                                </span>
-                            </div>
-
-                            <!-- Order Summary -->
-                            <div class="order-summary">
-                                <div class="d-flex justify-content-between align-items-center mb-3">
-                                    <div>
-                                        <div class="text-muted small">Order Details</div>
-                                        <div class="fw-bold h5 mb-1">${order.serviceType}</div>
-                                    </div>
-                                    <span class="pill-status pill-success">
-                                        ORDER #${order.id.slice(-6)}
-                                    </span>
-                                </div>
-                                <div class="row g-3">
-                                    <div class="col-md-6">
-                                        <div class="text-muted small">Worker</div>
-                                        <div class="fw-semibold">${order.worker ? order.worker.name : 'N/A'}</div>
-                                    </div>
-                                    <div class="col-md-6">
-                                        <div class="text-muted small">Order Date</div>
-                                        <div class="fw-semibold">${new Date(order.createdAt).toLocaleDateString()}</div>
-                                    </div>
-                                    <div class="col-12">
-                                        <div class="text-muted small">Description</div>
-                                        <div class="fw-semibold">${order.description || 'No description provided'}</div>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <!-- Amount Display -->
-                            <div class="mb-4">
-                                <div class="section-title">Payment Amount</div>
-                                <div class="d-flex align-items-baseline gap-3 mb-2">
-                                    <span class="amount-display" id="payAmount">₹${order.totalAmount || 0}</span>
-                                    <span class="${order.status === 'completed' ? 'text-success' : 'text-warning'} fw-semibold" id="amountNote">
-                                        ${order.status === 'completed' ? 'Service completed' : 'Service in progress'}
-                                    </span>
-                                </div>
-                                <div class="text-muted small">
-                                    <i class="fas fa-info-circle me-1"></i>
-                                    Includes all applicable taxes and service charges
-                                </div>
-                            </div>
-
-                            <!-- Payment Methods -->
-                            <div class="mb-4">
-                                <div class="section-title">Select Payment Method</div>
-                                <div class="d-flex flex-column gap-2">
-                                    <div class="method-pill active" data-method="upi" onclick="selectMethod('upi')">
-                                        <div class="d-flex align-items-center">
-                                            <div class="method-icon">
-                                                <i class="fas fa-mobile-alt fa-lg"></i>
+                <div class="animate-slide-up">
+                    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 lg:gap-8">
+                        <!-- Left Column: Payment Section -->
+                        <div class="lg:col-span-2 space-y-6">
+                            <!-- Main Payment Card -->
+                            <div class="glass-effect rounded-2xl p-6 card-hover">
+                                <!-- Premium Price Summary Header -->
+                                <div class="bg-gradient-to-r from-primary-600 to-primary-700 rounded-2xl p-6 mb-8 shadow-lg relative overflow-hidden group">
+                                    <div class="absolute -right-4 -top-4 w-24 h-24 bg-white/10 rounded-full blur-2xl group-hover:scale-150 transition-transform duration-700"></div>
+                                    <div class="absolute -left-4 -bottom-4 w-32 h-32 bg-primary-400/20 rounded-full blur-3xl"></div>
+                                    <div class="relative flex flex-col md:flex-row md:items-center justify-between gap-6">
+                                        <div class="flex items-center space-x-4">
+                                            <div class="w-12 h-12 bg-white rounded-xl flex items-center justify-center shadow-lg shadow-primary-900/20">
+                                                <i class="fas fa-tools text-primary-600 text-xl"></i>
                                             </div>
-                                            <div class="flex-grow-1">
-                                                <div class="fw-semibold">UPI Payment</div>
-                                                <div class="text-muted small">Google Pay, PhonePe, Paytm & More</div>
-                                            </div>
-                                            <div class="checkmark">
-                                                <i class="fas fa-check"></i>
+                                            <div>
+                                                <div class="text-white text-xl font-black italic tracking-tighter">WorkConnect</div>
+                                                <div class="text-primary-100 text-[10px] font-bold uppercase tracking-widest flex items-center">
+                                                    <span class="w-1 h-1 bg-primary-200 rounded-full mr-2"></span>
+                                                    SECURE CHECKOUT
+                                                </div>
                                             </div>
                                         </div>
-                                    </div>
-                                    
-                                    <div class="method-pill" data-method="card" onclick="selectMethod('card')">
-                                        <div class="d-flex align-items-center">
-                                            <div class="method-icon">
-                                                <i class="far fa-credit-card fa-lg"></i>
-                                            </div>
-                                            <div class="flex-grow-1">
-                                                <div class="fw-semibold">Debit / Credit Card</div>
-                                                <div class="text-muted small">Visa, Mastercard, RuPay, American Express</div>
-                                            </div>
-                                            <div class="checkmark">
-                                                <i class="fas fa-check"></i>
-                                            </div>
+                                        <div class="bg-white/10 backdrop-blur-md rounded-2xl p-4 border border-white/20 min-w-[200px]">
+                                            <div class="text-primary-100 text-xs font-semibold mb-1 uppercase tracking-tight opacity-80">Price Summary</div>
+                                            <div class="text-white text-3xl font-black leading-none">₹${order.totalAmount || 0}</div>
                                         </div>
-                                    </div>
-                                    
-                                    <div class="method-pill" data-method="cash" onclick="selectMethod('cash')">
-                                        <div class="d-flex align-items-center">
-                                            <div class="method-icon">
-                                                <i class="fas fa-money-bill-wave fa-lg"></i>
+                                        <div class="flex items-center space-x-3 bg-primary-800/40 px-4 py-3 rounded-xl border border-white/5 backdrop-blur-sm self-start md:self-center">
+                                            <div class="w-8 h-8 rounded-full bg-primary-400/20 flex items-center justify-center border border-white/10">
+                                                <i class="fas fa-user-check text-white text-xs"></i>
                                             </div>
-                                            <div class="flex-grow-1">
-                                                <div class="fw-semibold">Cash on Completion</div>
-                                                <div class="text-muted small">Pay directly to worker after service completion</div>
-                                            </div>
-                                            <div class="checkmark">
-                                                <i class="fas fa-check"></i>
+                                            <div class="text-left">
+                                                <div class="text-[10px] text-primary-200 uppercase font-bold">Authenticated as</div>
+                                                <div class="text-xs text-white font-bold leading-none mt-0.5">${currentUser.name || currentUser.username}</div>
                                             </div>
                                         </div>
                                     </div>
                                 </div>
-                            </div>
 
-                            <!-- UPI Details -->
-                            <div id="upiBlock">
-                                <div class="section-title">
-                                    <i class="fas fa-qrcode"></i>
-                                    Worker UPI Details
-                                </div>
-                                <div class="upi-display">
-                                    <div class="d-flex justify-content-between align-items-center">
-                                        <div>
-                                            <div class="text-muted small mb-1">Pay directly to worker's UPI ID</div>
-                                            <div id="workerUpi" class="fw-bold h5 mb-0 font-monospace">${order.worker && order.worker.upiId ? order.worker.upiId : 'UPI ID not available'}</div>
+                                <!-- Payment Methods Selection -->
+                                <div class="mb-8">
+                                    <div class="flex items-center space-x-2 text-sm font-semibold text-gray-400 uppercase tracking-wider mb-4">
+                                        <div class="w-1 h-4 bg-primary-500 rounded-full"></div>
+                                        <span>Select Payment Method</span>
+                                    </div>
+                                    <div class="grid grid-cols-1 md:grid-cols-3 gap-3">
+                                        <div class="method-option active" data-method="upi" onclick="selectMethod('upi')">
+                                            <div class="flex flex-col items-center justify-center p-4 rounded-xl border-2 border-dark-700 hover:border-primary-500 transition-all duration-300 cursor-pointer bg-dark-800/20 relative group">
+                                                <div class="w-10 h-10 rounded-lg bg-emerald-500/10 flex items-center justify-center mb-2 group-hover:scale-110 transition-transform">
+                                                    <i class="fas fa-mobile-alt text-emerald-400"></i>
+                                                </div>
+                                                <div class="text-xs font-bold text-gray-200">UPI Apps</div>
+                                                <div class="checkmark absolute top-2 right-2 w-5 h-5 rounded-full bg-emerald-500 flex items-center justify-center opacity-0 scale-75 transition-all">
+                                                    <i class="fas fa-check text-white text-[10px]"></i>
+                                                </div>
+                                            </div>
                                         </div>
-                                        <div class="d-flex gap-2">
-                                            <button class="btn btn-outline-primary" type="button" onclick="copyUpi()">
-                                                <i class="fas fa-copy me-2"></i>Copy UPI ID
+                                        <div class="method-option" data-method="card" onclick="selectMethod('card')">
+                                            <div class="flex flex-col items-center justify-center p-4 rounded-xl border-2 border-dark-700 hover:border-primary-500 transition-all duration-300 cursor-pointer bg-dark-800/20 relative group">
+                                                <div class="w-10 h-10 rounded-lg bg-blue-500/10 flex items-center justify-center mb-2 group-hover:scale-110 transition-transform">
+                                                    <i class="far fa-credit-card text-blue-400"></i>
+                                                </div>
+                                                <div class="text-xs font-bold text-gray-200">Card</div>
+                                                <div class="checkmark absolute top-2 right-2 w-5 h-5 rounded-full bg-emerald-500 flex items-center justify-center opacity-0 scale-75 transition-all">
+                                                    <i class="fas fa-check text-white text-[10px]"></i>
+                                                </div>
+                                            </div>
+                                        </div>
+                                         <div class="method-option" data-method="cash" onclick="selectMethod('cash')">
+                                            <div class="flex flex-col items-center justify-center p-4 rounded-xl border-2 border-dark-700 hover:border-primary-500 transition-all duration-300 cursor-pointer bg-dark-800/20 relative group">
+                                                <div class="w-10 h-10 rounded-lg bg-amber-500/10 flex items-center justify-center mb-2 group-hover:scale-110 transition-transform">
+                                                    <i class="fas fa-money-bill-wave text-amber-400"></i>
+                                                </div>
+                                                <div class="text-xs font-bold text-gray-200">Cash</div>
+                                                <div class="checkmark absolute top-2 right-2 w-5 h-5 rounded-full bg-emerald-500 flex items-center justify-center opacity-0 scale-75 transition-all">
+                                                    <i class="fas fa-check text-white text-[10px]"></i>
+                                                </div>
+                                            </div>
+                                        </div>
+                                         <div class="method-option" data-method="cashfree" onclick="selectMethod('cashfree')">
+                                            <div class="flex flex-col items-center justify-center p-4 rounded-xl border-2 border-dark-700 hover:border-primary-500 transition-all duration-300 cursor-pointer bg-dark-800/20 relative group">
+                                                <div class="w-10 h-10 rounded-lg bg-indigo-500/10 flex items-center justify-center mb-2 group-hover:scale-110 transition-transform">
+                                                    <i class="fas fa-rocket text-indigo-400"></i>
+                                                </div>
+                                                <div class="text-xs font-bold text-gray-200">Cashfree</div>
+                                                <div class="checkmark absolute top-2 right-2 w-5 h-5 rounded-full bg-emerald-500 flex items-center justify-center opacity-0 scale-75 transition-all">
+                                                    <i class="fas fa-check text-white text-[10px]"></i>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Dynamic Blocks -->
+                                <div id="upiBlock" class="mb-8 hidden animate-fade-in">
+                                    <div class="glass-effect border border-white/5 rounded-2xl p-6 bg-white/[0.02]">
+                                        <div class="grid grid-cols-3 gap-3 mb-6">
+                                            <button onclick="payWithApp('google_pay')" class="p-4 rounded-xl border border-dark-700 bg-dark-800/30 hover:border-primary-500 transition-all flex flex-col items-center space-y-2 group">
+                                                <img src="https://uxwing.com/wp-content/themes/uxwing/download/brands-and-social-media/google-pay-icon.png" class="h-6 grayscale group-hover:grayscale-0 transition-all">
+                                                <span class="text-[9px] font-black text-gray-500 group-hover:text-white uppercase">G-Pay</span>
                                             </button>
-                                            <button class="btn btn-primary" type="button" onclick="openUpiApp()">
-                                                <i class="fas fa-external-link-alt me-2"></i>Open UPI App
+                                            <button onclick="payWithApp('phonepe')" class="p-4 rounded-xl border border-dark-700 bg-dark-800/30 hover:border-primary-500 transition-all flex flex-col items-center space-y-2 group">
+                                                <img src="https://uxwing.com/wp-content/themes/uxwing/download/brands-and-social-media/phonepe-icon.png" class="h-6 grayscale group-hover:grayscale-0 transition-all">
+                                                <span class="text-[9px] font-black text-gray-500 group-hover:text-white uppercase">PhonePe</span>
+                                            </button>
+                                            <button onclick="payWithApp('paytm')" class="p-4 rounded-xl border border-dark-700 bg-dark-800/30 hover:border-primary-500 transition-all flex flex-col items-center space-y-2 group">
+                                                <img src="https://uxwing.com/wp-content/themes/uxwing/download/brands-and-social-media/paytm-icon.png" class="h-6 grayscale group-hover:grayscale-0 transition-all">
+                                                <span class="text-[9px] font-black text-gray-500 group-hover:text-white uppercase">Paytm</span>
                                             </button>
                                         </div>
-                                    </div>
-                                </div>
-                                <div class="alert alert-info bg-primary bg-opacity-10 border-primary border-opacity-25 mt-3">
-                                    <i class="fas fa-lightbulb me-2"></i>
-                                    <strong>How to pay:</strong> Copy the UPI ID above, open your UPI app, paste the ID, enter amount, and complete payment. Then click "I have completed the payment".
-                                </div>
-                            </div>
 
-                            <!-- Screenshot Upload -->
-                            <div class="screenshot-upload">
-                                <div class="d-flex align-items-center mb-3">
-                                    <div class="rounded-circle bg-primary bg-opacity-25 p-3 me-3">
-                                        <i class="fas fa-camera text-primary fa-lg"></i>
-                                    </div>
-                                    <div>
-                                        <div class="fw-semibold">Upload Payment Proof (Optional)</div>
-                                        <div class="text-muted small">Screenshot of UPI payment confirmation</div>
-                                    </div>
-                                </div>
-                                <div class="mb-3">
-                                    <input type="file" id="screenshotInput" accept="image/*" class="form-control form-control-lg" 
-                                           style="background: rgba(15, 23, 42, 0.5); border: 2px dashed var(--border-color); color: var(--text-primary);">
-                                </div>
-                                <div id="screenshotPreview" class="d-none">
-                                    <div class="d-flex align-items-center gap-3">
-                                        <img id="previewImg" src="" alt="Payment Screenshot" class="screenshot-preview">
-                                        <div class="flex-grow-1">
-                                            <div class="fw-semibold">Screenshot uploaded</div>
-                                            <div class="text-muted small">Click the image to view full size</div>
+                                        <div class="flex flex-col items-center justify-center p-8 bg-white rounded-3xl relative overflow-hidden group/qr mb-6">
+                                            <div class="absolute inset-x-0 h-0.5 bg-primary-500 shadow-[0_0_15px_rgba(59,130,246,0.8)] z-20 animate-scan-line top-0"></div>
+                                            <img src="https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=upi://pay?pa=${order.worker?.upiId || ''}%26pn=${order.worker?.name || 'Worker'}%26am=${order.totalAmount}%26cu=INR" 
+                                                alt="UPI QR" class="w-40 h-40 p-2 relative z-10 transition-transform group-hover/qr:scale-105">
+                                            <div class="mt-4 text-[10px] font-black text-gray-400 uppercase tracking-widest">Scan with any UPI App</div>
                                         </div>
-                                        <button type="button" class="btn btn-outline-danger" onclick="removeScreenshot()">
-                                            <i class="fas fa-trash"></i>
-                                        </button>
+
+                                        <div class="relative py-4 mb-6">
+                                            <div class="absolute inset-x-0 top-1/2 -translate-y-1/2 flex items-center justify-center"><span class="bg-[#0f172a] px-3 text-[9px] font-black text-gray-500 uppercase tracking-widest">OR USE UPI ID</span></div>
+                                            <div class="border-t border-white/5 h-0"></div>
+                                        </div>
+
+                                        <div class="relative">
+                                            <input type="text" id="upiIdInput" placeholder="username@upi" 
+                                                class="w-full bg-dark-900 border border-dark-700 rounded-2xl px-5 py-4 text-white placeholder-gray-600 focus:border-primary-500 outline-none transition-all pr-32">
+                                            <button onclick="confirmPaid()" class="absolute right-2 top-2 bottom-2 bg-primary-600 hover:bg-primary-500 text-white text-[10px] font-black uppercase tracking-wider px-6 rounded-xl transition-all shadow-lg active:scale-95">Verify & Pay</button>
+                                        </div>
                                     </div>
                                 </div>
-                            </div>
 
-                            <!-- Action Buttons -->
-                            <div class="mt-5">
-                                <div class="d-grid gap-3">
-                                    <button id="payBtn" class="btn btn-primary btn-lg py-3" onclick="confirmPaid()">
-                                        <i class="fas fa-check-circle me-2"></i>
-                                        <span id="payBtnText">I have completed the payment</span>
-                                    </button>
-                                    <button class="btn btn-outline-light py-2" onclick="goBackToDashboard()">
-                                        <i class="fas fa-arrow-left me-2"></i>Back to Dashboard
-                                    </button>
+                                <div id="cardBlock" class="mb-8 hidden animate-fade-in">
+                                    <div class="glass-effect border border-white/5 rounded-full p-2 bg-white/[0.02] flex items-center justify-center space-x-4 grayscale opacity-40 mb-6">
+                                        <i class="fab fa-cc-visa text-2xl"></i>
+                                        <i class="fab fa-cc-mastercard text-2xl"></i>
+                                        <i class="fab fa-cc-amex text-2xl"></i>
+                                        <i class="fab fa-cc-discover text-2xl"></i>
+                                    </div>
+                                    <div class="bg-gradient-to-br from-gray-800 to-black rounded-2xl p-8 border border-white/10 shadow-2xl relative overflow-hidden text-center">
+                                         <div class="relative z-10">
+                                            <i class="fas fa-shield-check text-primary-400 text-4xl mb-4"></i>
+                                            <h3 class="text-white font-bold mb-2">PCI-DSS Secure Portal</h3>
+                                            <p class="text-xs text-gray-400 px-12">You'll be redirected to our encrypted gateway for card processing. We never store your card data.</p>
+                                         </div>
+                                         <div class="absolute -right-8 -bottom-8 w-32 h-32 bg-primary-500/10 rounded-full blur-3xl"></div>
+                                    </div>
                                 </div>
-                                <div id="paymentMessage" class="mt-3 text-center"></div>
-                            </div>
-                        </div>
-                    </div>
 
-                    <!-- Right Column: History & Help -->
-                    <div class="col-lg-4">
-                        <!-- Payment History -->
-                        <div class="glass-card p-4 mb-4">
-                            <div class="d-flex justify-content-between align-items-center mb-3">
-                                <div class="section-title">Payment History</div>
-                                <button class="btn btn-sm btn-outline-light" onclick="loadPaymentHistory()">
-                                    <i class="fas fa-sync-alt"></i>
-                                </button>
-                            </div>
-                            <div id="historyList" class="position-relative" style="min-height: 100px;">
-                                <div class="text-center py-4">
-                                    <div class="loading-spinner mx-auto mb-2"></div>
-                                    <div class="text-muted small">Loading payment history...</div>
+                                <!-- Premium Screenshot Upload Zone -->
+                                <div id="screenshotSection" class="mb-8">
+                                    <div class="flex items-center space-x-2 text-sm font-semibold text-gray-400 uppercase tracking-wider mb-4">
+                                        <div class="w-1 h-4 bg-primary-500 rounded-full"></div>
+                                        <span>Payment Confirmation</span>
+                                    </div>
+                                    <div id="dropZone" class="relative group">
+                                        <input type="file" id="screenshotInput" accept="image/*" class="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-20">
+                                        <div class="glass-effect border-2 border-dashed border-dark-700 group-hover:border-primary-500/50 rounded-2xl p-8 transition-all duration-300 text-center bg-white/[0.01]">
+                                            <div id="uploadPlaceholder" class="space-y-4">
+                                                <div class="w-16 h-16 rounded-2xl bg-primary-500/10 border border-primary-500/20 flex items-center justify-center mx-auto group-hover:scale-110 transition-transform">
+                                                    <i class="fas fa-cloud-upload-alt text-primary-400 text-2xl"></i>
+                                                </div>
+                                                <div>
+                                                    <div class="font-bold text-gray-100 mb-1">Upload Receipt Screenshot</div>
+                                                    <p class="text-[10px] text-gray-500 max-w-xs mx-auto uppercase tracking-wider">Already paid? Upload proof for instant manual verification.</p>
+                                                </div>
+                                            </div>
+                                            <div id="screenshotPreview" class="hidden relative inline-block">
+                                                <img id="previewImg" src="" class="max-h-64 rounded-xl border border-white/10 shadow-2xl">
+                                                <button onclick="removeScreenshot()" class="absolute -top-3 -right-3 w-8 h-8 rounded-full bg-red-500 text-white flex items-center justify-center shadow-lg hover:bg-red-600 transition-colors z-30">
+                                                    <i class="fas fa-times text-xs"></i>
+                                                </button>
+                                                <div class="absolute bottom-3 inset-x-3 bg-black/60 backdrop-blur-md rounded-lg p-2 flex items-center justify-between border border-white/10">
+                                                    <div class="text-[10px] text-white font-bold uppercase truncate" id="fileName">screenshot.png</div>
+                                                    <div class="text-[10px] text-emerald-400 font-black">READY</div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Main Action Buttons -->
+                                <div class="space-y-4">
+                                    <button id="payBtn" onclick="confirmPaid()"
+                                            class="w-full py-4 rounded-xl bg-gradient-to-r from-primary-500 to-primary-600 hover:from-primary-600 hover:to-primary-700 transition-all transform hover:-translate-y-1 shadow-lg shadow-primary-500/25 flex items-center justify-center space-x-3">
+                                        <i class="fas fa-shield-check text-lg"></i>
+                                        <span id="payBtnText" class="font-bold text-lg">Secure Checkout</span>
+                                    </button>
+                                    <button onclick="goBackToDashboard()" class="w-full py-3 text-gray-500 hover:text-white text-sm font-bold uppercase tracking-widest transition-colors">
+                                        Cancel & Return to Dashboard
+                                    </button>
                                 </div>
                             </div>
                         </div>
 
-                        <!-- Help Center -->
-                        <div class="glass-card p-4">
-                            <div class="section-title">Help & Support</div>
-                            <h3 class="h6 fw-semibold mb-3">Frequently Asked Questions</h3>
-                            
-                            <div class="help-item">
-                                <div class="d-flex align-items-start gap-2">
-                                    <div class="rounded-circle bg-success bg-opacity-25 p-2 flex-shrink-0">
-                                        <i class="fas fa-lock text-success"></i>
+                        <!-- Right Column: History & Breakdown -->
+                        <div class="space-y-6">
+                             <!-- Breakdown Card -->
+                            <div class="glass-effect rounded-2xl p-6 border border-white/5">
+                                <div class="text-sm font-bold text-gray-400 uppercase tracking-wider mb-6 pb-4 border-b border-white/5">Order Summary</div>
+                                <div class="space-y-4">
+                                    <div class="flex justify-between items-center">
+                                        <span class="text-gray-400 text-xs">Base Work Charge</span>
+                                        <span class="text-white font-mono text-sm">₹${Math.round(order.totalAmount * 0.82)}</span>
                                     </div>
-                                    <div>
-                                        <div class="fw-semibold mb-1">Is my payment secure?</div>
-                                        <div class="text-muted small">
-                                            We use 256-bit encryption and never store your UPI PIN or card details.
+                                    <div class="flex justify-between items-center text-xs">
+                                        <span class="text-gray-400">Platform Services</span>
+                                        <span class="text-white font-mono">₹${Math.round(order.totalAmount * 0.05)}</span>
+                                    </div>
+                                    <div class="flex justify-between items-center text-xs">
+                                        <span class="text-gray-400">GST (18%)</span>
+                                        <span class="text-white font-mono">₹${Math.round(order.totalAmount * 0.13)}</span>
+                                    </div>
+                                    <div class="pt-4 mt-4 border-t border-white/5">
+                                        <div class="flex justify-between items-center">
+                                            <span class="text-white font-black uppercase tracking-wider">Total Payable</span>
+                                            <span class="text-primary-400 text-2xl font-black">₹${order.totalAmount}</span>
                                         </div>
                                     </div>
                                 </div>
                             </div>
 
-                            <div class="help-item">
-                                <div class="d-flex align-items-start gap-2">
-                                    <div class="rounded-circle bg-info bg-opacity-25 p-2 flex-shrink-0">
-                                        <i class="fas fa-question-circle text-info"></i>
-                                    </div>
-                                    <div>
-                                        <div class="fw-semibold mb-1">Payment not showing as paid?</div>
-                                        <div class="text-muted small">
-                                            Refresh this page or wait 2-3 minutes. If still pending, share UPI reference ID with worker.
-                                        </div>
-                                    </div>
+                            <!-- History Card -->
+                            <div class="glass-effect rounded-2xl p-6 border border-white/5 overflow-hidden">
+                                <div class="flex items-center justify-between mb-6">
+                                    <div class="text-sm font-bold text-gray-400 uppercase tracking-wider">Your History</div>
+                                    <button onclick="loadPaymentHistory()" class="text-primary-400 text-xs font-black hover:underline">REFRESH</button>
                                 </div>
-                            </div>
-
-                            <div class="help-item">
-                                <div class="d-flex align-items-start gap-2">
-                                    <div class="rounded-circle bg-warning bg-opacity-25 p-2 flex-shrink-0">
-                                        <i class="fas fa-headset text-warning"></i>
+                                <div id="historyList" class="space-y-3 min-h-[150px]">
+                                    <div class="flex flex-col items-center justify-center py-10 opacity-30">
+                                        <div class="loading-spinner w-6 h-6 mb-2"></div>
+                                        <span class="text-[10px] font-bold">Syncing Records...</span>
                                     </div>
-                                    <div>
-                                        <div class="fw-semibold mb-1">Need more help?</div>
-                                        <div class="text-muted small">
-                                            <div><i class="fas fa-envelope me-2"></i>support@workconnect.local</div>
-                                            <div><i class="fas fa-phone me-2"></i>+91-95247-85164</div>
-                                            <div><i class="fab fa-whatsapp me-2"></i>WhatsApp Support</div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <!-- Quick Tips -->
-                            <div class="alert alert-secondary bg-dark border-secondary mt-3">
-                                <div class="fw-semibold mb-2">
-                                    <i class="fas fa-lightbulb me-2"></i>Quick Tip
-                                </div>
-                                <div class="small text-muted">
-                                    Always keep the payment screenshot until the worker confirms receipt. This serves as proof of payment.
                                 </div>
                             </div>
                         </div>
                     </div>
                 </div>
             `;
-            
-            // Initialize UI
+
             initializeUI();
         }
 
         // Initialize UI after template is loaded
         function initializeUI() {
             // Set up screenshot upload
-            document.getElementById('screenshotInput').addEventListener('change', handleScreenshotUpload);
-            
+            const screenshotInput = document.getElementById('screenshotInput');
+            if (screenshotInput) {
+                screenshotInput.addEventListener('change', handleScreenshotUpload);
+            }
+
             // Load payment history
             loadPaymentHistory();
+
+            // Set default view
+            selectMethod('upi');
         }
 
         // Select payment method
         function selectMethod(method) {
             selectedMethod = method;
-            
-            // Remove active class from all methods
-            document.querySelectorAll('.method-pill').forEach(el => {
+
+            document.querySelectorAll('.method-option').forEach(el => {
                 el.classList.remove('active');
+                const checkmark = el.querySelector('.checkmark');
+                if (checkmark) { checkmark.style.opacity = '0'; checkmark.style.transform = 'scale(0.75)'; }
             });
-            
-            // Add active class to selected method
-            const selectedEl = document.querySelector(`.method-pill[data-method="${method}"]`);
+
+            const selectedEl = document.querySelector(`.method-option[data-method="${method}"]`);
             if (selectedEl) {
                 selectedEl.classList.add('active');
+                const checkmark = selectedEl.querySelector('.checkmark');
+                if (checkmark) { checkmark.style.opacity = '1'; checkmark.style.transform = 'scale(1)'; }
             }
-            
-            // Show/hide UPI block
+
+            // Show/hide blocks
             const upiBlock = document.getElementById('upiBlock');
+            const cardBlock = document.getElementById('cardBlock');
+            const screenshotSection = document.getElementById('screenshotSection');
+
             if (upiBlock) {
-                upiBlock.style.display = method === 'upi' ? 'block' : 'none';
+                upiBlock.classList.toggle('hidden', (method !== 'upi'));
+                upiBlock.style.display = (method === 'upi') ? 'block' : 'none';
             }
-            
-            // Update button text
+            if (cardBlock) {
+                cardBlock.classList.toggle('hidden', (method !== 'card'));
+                cardBlock.style.display = (method === 'card') ? 'block' : 'none';
+            }
+
+            // Auto-update button text
             const payBtnText = document.getElementById('payBtnText');
             if (payBtnText) {
-                if (method === 'cash') {
-                    payBtnText.textContent = 'Mark as Cash Payment';
-                } else if (method === 'card') {
-                    payBtnText.textContent = 'Proceed to Card Payment';
-                } else {
-                    payBtnText.textContent = 'I have completed the payment';
+                if (method === 'cash') payBtnText.textContent = 'Confirm Cash Payment';
+                else if (method === 'cashfree') payBtnText.textContent = 'Secure Checkout via Cashfree';
+                else if (screenshotFile) payBtnText.textContent = 'Submit Manual Verification';
+                else payBtnText.textContent = 'Secure Checkout via Razorpay';
+            }
+        }
+
+        async function confirmPaid() {
+            if (!currentOrder) return showMessage('Order not loaded', 'error');
+
+            // 1. Handle Cash
+            if (selectedMethod === 'cash') {
+                if (confirm('Mark this as cash payment? You will pay directly to the worker.')) {
+                    await submitManualPayment('cash');
+                }
+                return;
+            }
+
+            // 2. Handle Manual Screenshot Submission (For any digital method)
+            if (screenshotFile) {
+                if (confirm('Submit this screenshot for manual payment verification?')) {
+                    await submitManualPayment(selectedMethod);
+                }
+                return;
+            }
+
+            // 3. Digital Payment via Cashfree
+            if (selectedMethod === 'cashfree') {
+                await payWithCashfree();
+                return;
+            }
+
+            // 4. Digital Payment via Razorpay Gateway
+            await payWithRazorpay();
+        }
+
+        async function payWithApp(app) {
+            if (!currentOrder) return showMessage('Order not loaded', 'error');
+            await payWithRazorpay(app);
+        }
+
+        async function payWithRazorpay(preferredApp = null) {
+            try {
+                const payBtn = document.getElementById('payBtn');
+                payBtn.disabled = true;
+                payBtn.innerHTML = '<span class="loading-spinner mr-2"></span> Initializing Gateway...';
+
+                // 1. Get Razorpay Config
+                const configRes = await fetch(getApiUrl('/api/config'));
+                const { razorpayKeyId } = await configRes.json();
+
+                // 2. Create Razorpay Order
+                const orderRes = await fetch(getApiUrl('/api/create-razorpay-order'), {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        amount: currentOrder.totalAmount,
+                        receipt: 'rcpt_' + currentOrder.id.slice(-6)
+                    })
+                });
+                const rzpOrder = await orderRes.json();
+
+                const options = {
+                    "key": razorpayKeyId,
+                    "amount": rzpOrder.amount,
+                    "currency": "INR",
+                    "name": "WorkConnect",
+                    "description": `Payment for ${currentOrder.serviceType}`,
+                    "order_id": rzpOrder.id,
+                    "handler": async function (response) {
+                        payBtn.innerHTML = '<span class="loading-spinner mr-2"></span> Verifying Payment...';
+
+                        // 3. Verify Payment
+                        const verifyRes = await fetch(getApiUrl('/api/verify-payment'), {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify({
+                                razorpay_order_id: response.razorpay_order_id,
+                                razorpay_payment_id: response.razorpay_payment_id,
+                                razorpay_signature: response.razorpay_signature,
+                                orderId: currentOrder.id,
+                                amount: currentOrder.totalAmount
+                            })
+                        });
+
+                        const result = await verifyRes.json();
+                        if (result.success) {
+                            handlePaymentSuccess(response.razorpay_payment_id);
+                        } else {
+                            showMessage('Verification failed. Please contact support.', 'error');
+                            payBtn.disabled = false;
+                            payBtn.textContent = 'Retry Payment';
+                        }
+                    },
+                    "prefill": {
+                        "name": currentUser.name || currentUser.username,
+                        "email": currentUser.email || "",
+                        "contact": currentUser.phone || ""
+                    },
+                    "theme": { "color": "#3b82f6" },
+                    "modal": {
+                        "ondismiss": function () {
+                            payBtn.disabled = false;
+                            payBtn.innerHTML = '<i class="fas fa-shield-check text-lg"></i><span id="payBtnText" class="font-bold text-lg">Secure Checkout via Razorpay</span>';
+                        }
+                    }
+                };
+
+                // Add app specific config for direct UPI app opening
+                if (preferredApp) {
+                    options.method = 'upi';
+                    options.config = {
+                        display: {
+                            blocks: {
+                                banks: {
+                                    name: 'Pay using UPI',
+                                    instruments: [{ method: 'upi' }]
+                                }
+                            },
+                            hide: [
+                                { method: 'card' },
+                                { method: 'netbanking' },
+                                { method: 'wallet' },
+                                { method: 'paylater' }
+                            ],
+                            sequence: ['block.banks'],
+                            preferences: { show_default_blocks: false }
+                        }
+                    };
+                    options.prefill.method = 'upi';
+                    const appNames = {
+                        'google_pay': 'Google Pay',
+                        'phonepe': 'PhonePe',
+                        'paytm': 'Paytm'
+                    };
+                    const appName = appNames[preferredApp] || 'your preferred app';
+                    showMessage(`Opening payment gateway. Please select ${appName} from UPI options.`, 'info');
+                }
+
+                const rzp1 = new Razorpay(options);
+                rzp1.open();
+
+                rzp1.on('payment.failed', function (response) {
+                    console.error('Razorpay Payment Failed:', response.error);
+                    showMessage(`Payment Failed: ${response.error.description || 'Reason unknown'}`, 'error');
+                    payBtn.disabled = false;
+                    payBtn.innerHTML = '<i class="fas fa-exclamation-circle mr-2"></i><span>Payment Failed - Try Again</span>';
+                });
+            } catch (error) {
+                console.error('Payment Error:', error);
+                showMessage(error.message || 'Failed to initialize payment gateway. Please try again.', 'error');
+                const payBtn = document.getElementById('payBtn');
+                if (payBtn) {
+                    payBtn.disabled = false;
+                    payBtn.innerHTML = '<i class="fas fa-shield-check text-lg"></i><span id="payBtnText" class="font-bold text-lg">Secure Checkout via Razorpay</span>';
                 }
             }
         }
 
-        // Copy UPI ID
-        function copyUpi() {
-            const upiId = document.getElementById('workerUpi').textContent.trim();
-            if (!upiId || upiId.includes('not available')) {
-                showMessage('UPI ID not available', 'warning');
-                return;
-            }
-            
-            navigator.clipboard.writeText(upiId)
-                .then(() => showMessage('UPI ID copied to clipboard!', 'success'))
-                .catch(() => showMessage('Failed to copy UPI ID', 'error'));
+        function handlePaymentSuccess(paymentId) {
+            const mainContent = document.getElementById('mainContent');
+            mainContent.innerHTML = `
+                <div class="animate-fade-in flex flex-col items-center justify-center min-h-[50vh] text-center p-8">
+                    <div class="w-20 h-20 bg-emerald-500 rounded-full flex items-center justify-center mb-6 shadow-lg shadow-emerald-500/30">
+                        <i class="fas fa-check text-white text-3xl"></i>
+                    </div>
+                    <h2 class="text-3xl font-bold text-gray-100 mb-2">Payment Successful!</h2>
+                    <p class="text-gray-400 mb-8">Your payment has been verified and processed. Transaction ID: <span class="text-primary-400 font-mono">${paymentId}</span></p>
+                    <button onclick="goBackToDashboard()" 
+                            class="px-8 py-3 bg-gradient-to-r from-primary-600 to-primary-700 hover:from-primary-700 hover:to-primary-800 rounded-xl font-bold text-white transition-all shadow-lg hover:translate-y-[-2px]">
+                        Return to Dashboard
+                    </button>
+                </div>
+            `;
         }
 
-        // Open UPI app
-        function openUpiApp() {
-            const upiId = document.getElementById('workerUpi').textContent.trim();
-            if (!upiId || upiId.includes('not available')) {
-                showMessage('UPI ID not available', 'warning');
-                return;
+        async function submitManualPayment(method) {
+            try {
+                const payBtn = document.getElementById('payBtn');
+                payBtn.disabled = true;
+                payBtn.innerHTML = '<span class="loading-spinner mr-2"></span> Submitting...';
+
+                const formData = new FormData();
+                formData.append('method', method);
+                formData.append('customerId', currentUser.id);
+                if (screenshotFile) formData.append('screenshot', screenshotFile);
+
+                const res = await fetch(getApiUrl(`/api/orders/${currentOrder.id}/pay`), {
+                    method: 'POST',
+                    body: formData
+                });
+
+                const result = await res.json();
+                if (res.ok) {
+                    handlePaymentSuccess(result.payment.transactionId);
+                } else {
+                    throw new Error(result.message || 'Payment failed');
+                }
+            } catch (err) {
+                showMessage(err.message, 'error');
+                payBtn.disabled = false;
+                payBtn.innerHTML = '<i class="fas fa-redo-alt mr-2"></i><span>Retry Transaction</span>';
             }
-            
-            const amount = currentOrder?.totalAmount || 0;
-            const upiLink = `upi://pay?pa=${encodeURIComponent(upiId)}&pn=${encodeURIComponent(currentOrder.worker?.name || 'Worker')}&am=${amount}&cu=INR&tn=${encodeURIComponent(`Payment for ${currentOrder.serviceType}`)}`;
-            
-            window.open(upiLink, '_blank');
-            showMessage('Opening UPI app...', 'info');
         }
 
         // Handle screenshot upload
         function handleScreenshotUpload(e) {
-            const file = e.target.files[0];
+            const file = e.target.files ? e.target.files[0] : null;
             if (!file) return;
-            
-            if (!file.type.startsWith('image/')) {
-                showMessage('Please upload an image file', 'error');
-                return;
-            }
-            
-            if (file.size > 5 * 1024 * 1024) { // 5MB limit
-                showMessage('Image size should be less than 5MB', 'error');
-                return;
-            }
-            
+            if (!file.type.startsWith('image/')) return showMessage('Please upload an image file', 'error');
+            if (file.size > 5 * 1024 * 1024) return showMessage('Image size should be less than 5MB', 'error');
+
             screenshotFile = file;
-            
+
+            // Visual Update
+            document.getElementById('uploadPlaceholder').classList.add('hidden');
+            document.getElementById('screenshotPreview').classList.remove('hidden');
+            document.getElementById('fileName').textContent = file.name;
+
+            // Update Pay Button
+            const payBtnText = document.getElementById('payBtnText');
+            if (payBtnText) payBtnText.textContent = 'Submit Manual Verification';
+
             const reader = new FileReader();
-            reader.onload = function(event) {
-                document.getElementById('previewImg').src = event.target.result;
-                document.getElementById('screenshotPreview').classList.remove('d-none');
+            reader.onload = function (event) {
+                const previewImg = document.getElementById('previewImg');
+                if (previewImg) {
+                    previewImg.src = event.target.result;
+                    previewImg.onclick = () => window.open(event.target.result, '_blank');
+                }
             };
             reader.readAsDataURL(file);
-            
-            showMessage('Screenshot uploaded successfully', 'success');
+            showMessage('Payment proof attached successfully!', 'success');
         }
 
-        // Remove screenshot
         function removeScreenshot() {
             screenshotFile = null;
             document.getElementById('screenshotInput').value = '';
-            document.getElementById('screenshotPreview').classList.add('d-none');
+            document.getElementById('uploadPlaceholder').classList.remove('hidden');
+            document.getElementById('screenshotPreview').classList.add('hidden');
+
+            // Revert Pay Button
+            const payBtnText = document.getElementById('payBtnText');
+            if (payBtnText) {
+                if (selectedMethod === 'cash') payBtnText.textContent = 'Confirm Cash Payment';
+                else payBtnText.textContent = 'Secure Checkout via Razorpay';
+            }
             showMessage('Screenshot removed', 'info');
-        }
-
-        // Confirm payment
-        async function confirmPaid() {
-            if (!currentOrder) {
-                showMessage('Order not loaded', 'error');
-                return;
-            }
-            
-            if (selectedMethod === 'upi' && !confirm('Have you completed the payment in your UPI app?')) {
-                return;
-            }
-            
-            if (selectedMethod === 'cash' && !confirm('Mark this as cash payment? You will pay directly to the worker.')) {
-                return;
-            }
-            
-            try {
-                // Disable button and show loading
-                const payBtn = document.getElementById('payBtn');
-                const originalText = payBtn.innerHTML;
-                payBtn.innerHTML = '<span class="loading-spinner me-2"></span> Processing...';
-                payBtn.disabled = true;
-                
-                // Prepare payment data
-                const formData = new FormData();
-                formData.append('method', selectedMethod);
-                formData.append('customerId', currentUser.id);
-                if (screenshotFile) {
-                    formData.append('screenshot', screenshotFile);
-                }
-
-                let result;
-                try {
-                    // Try real API first
-                    const res = await fetch(`/api/orders/${currentOrder.id}/pay`, {
-                        method: 'POST',
-                        body: formData
-                    });
-                    
-                    if (!res.ok) throw new Error('API request failed');
-                    result = await res.json();
-                } catch (apiError) {
-                    console.log('API failed, using mock payment:', apiError);
-                    // Fallback to mock payment
-                    await new Promise(resolve => setTimeout(resolve, 800));
-                    
-                    const transactionId = 'TXN' + Math.random().toString(36).substr(2, 9).toUpperCase();
-                    
-                    result = {
-                        success: true,
-                        payment: {
-                            transactionId: transactionId
-                        },
-                        message: 'Payment processed successfully'
-                    };
-                    
-                    // Update mock database
-                    currentOrder.paymentStatus = 'paid';
-                    currentOrder.transactionId = transactionId;
-                }
-                
-                if (result.success) {
-                    showMessage(`Payment successful! Transaction ID: ${result.payment.transactionId}`, 'success');
-                    
-                    // Clear screenshot
-                    removeScreenshot();
-                    
-                    // Update UI
-                    currentOrder.paymentStatus = 'paid';
-                    currentOrder.transactionId = result.payment.transactionId;
-                    
-                    // Update button
-                    payBtn.innerHTML = '<i class="fas fa-check-circle me-2"></i>Payment Successful';
-                    payBtn.className = 'btn btn-success btn-lg py-3';
-                    
-                    // Load updated history
-                    await loadPaymentHistory();
-                    
-                    // Redirect after delay
-                    setTimeout(() => {
-                        window.location.href = 'customer-dashboard.html';
-                    }, 3000);
-                } else {
-                    throw new Error(result.message || 'Payment failed');
-                }
-                
-            } catch (error) {
-                console.error('Payment error:', error);
-                showMessage(`Payment failed: ${error.message}`, 'error');
-                
-                // Re-enable button
-                const payBtn = document.getElementById('payBtn');
-                payBtn.innerHTML = '<i class="fas fa-check-circle me-2"></i>Try Again';
-                payBtn.disabled = false;
-            }
         }
 
         // Load payment history
@@ -1058,11 +981,11 @@
             try {
                 const historyList = document.getElementById('historyList');
                 if (!historyList) return;
-                
+
                 let payments;
                 try {
                     // Try real API first
-                    const res = await fetch(`/api/payments/customer/${currentUser.id}`);
+                    const res = await fetch(getApiUrl(`/api/payments/customer/${currentUser.id}`));
                     if (!res.ok) throw new Error('API request failed');
                     payments = await res.json();
                 } catch (apiError) {
@@ -1073,104 +996,119 @@
                         .filter(p => p.customerId === currentUser.id)
                         .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
                 }
-                
+
                 if (!payments || payments.length === 0) {
                     historyList.innerHTML = `
-                        <div class="text-center py-4">
-                            <i class="fas fa-history fa-2x text-muted mb-3"></i>
-                            <div class="text-muted">No payment history found</div>
-                            <small class="text-secondary">Your payment history will appear here</small>
+                        <div class="flex flex-col items-center justify-center py-8">
+                            <i class="fas fa-history text-3xl text-gray-600 mb-3"></i>
+                            <div class="text-gray-400 mb-1">No payment history found</div>
+                            <div class="text-sm text-gray-500">Your payment history will appear here</div>
                         </div>
                     `;
                     return;
                 }
-                
+
                 historyList.innerHTML = payments.map(payment => `
-                    <div class="history-row">
-                        <div class="d-flex justify-content-between align-items-start mb-2">
+                    <div class="payment-history-item p-4 rounded-xl border border-dark-700 hover:border-primary-500/50 bg-gradient-to-r from-dark-800/30 to-dark-900/30 mb-3 transition-all duration-300">
+                        <div class="flex flex-col sm:flex-row sm:items-start justify-between gap-3 mb-3">
                             <div>
-                                <div class="fw-bold h6 mb-1">₹${payment.amount}</div>
-                                <div class="text-muted small mb-1">
-                                    ${payment.method === 'upi' ? 'UPI Payment' : 
-                                      payment.method === 'card' ? 'Card Payment' : 'Cash Payment'}
+                                <div class="text-xl font-bold text-gray-100 mb-1">₹${payment.amount}</div>
+                                <div class="text-sm text-gray-400 mb-1">
+                                    ${payment.method === 'upi' ? 'UPI Payment' :
+                        payment.method === 'card' ? 'Card Payment' : 'Cash Payment'}
                                 </div>
-                                <div class="text-muted small">
+                                <div class="text-sm text-gray-500">
                                     ${new Date(payment.createdAt).toLocaleDateString('en-IN', {
-                                        day: '2-digit',
-                                        month: 'short',
-                                        year: 'numeric'
-                                    })}
+                            day: '2-digit',
+                            month: 'short',
+                            year: 'numeric'
+                        })}
                                 </div>
                             </div>
-                            <div class="text-end">
-                                <span class="pill-status pill-success">
-                                    ${payment.status || 'success'}
-                                </span>
-                                <div class="text-muted small mt-1">${payment.transactionId}</div>
+                            <div class="text-right">
+                                <div class="inline-flex items-center px-2 py-1 rounded-full ${payment.status === 'pending' ? 'bg-amber-500/10 border-amber-500/30' : payment.status === 'failed' ? 'bg-red-500/10 border-red-500/30' : 'bg-emerald-500/10 border-emerald-500/30'} mb-2">
+                                    <span class="text-xs font-semibold ${payment.status === 'pending' ? 'text-amber-300' : payment.status === 'failed' ? 'text-red-300' : 'text-emerald-300'}">${payment.status || 'success'}</span>
+                                </div>
+                                <div class="text-sm text-gray-400">${payment.transactionId}</div>
                             </div>
                         </div>
                         ${payment.screenshot ? `
-                            <div class="mt-2">
+                            <div class="mt-3 pt-3 border-t border-dark-700">
                                 <img src="${payment.screenshot}" alt="Payment Proof" 
-                                     class="screenshot-preview cursor-pointer"
+                                     class="w-20 h-20 object-cover rounded-lg border border-dark-600 cursor-pointer"
                                      onclick="window.open('${payment.screenshot}', '_blank')">
-                                <div class="mt-1">
-                                    <a href="${payment.screenshot}" target="_blank" class="text-primary small text-decoration-none">
-                                        <i class="fas fa-external-link-alt me-1"></i>View Proof
+                                <div class="mt-2">
+                                    <a href="${payment.screenshot}" target="_blank" 
+                                       class="inline-flex items-center text-sm text-primary-400 hover:text-primary-300 transition-colors">
+                                        <i class="fas fa-external-link-alt mr-1 text-xs"></i>
+                                        <span>View Proof</span>
                                     </a>
                                 </div>
                             </div>
                         ` : ''}
                     </div>
                 `).join('');
-                
+
             } catch (error) {
                 console.error('Error loading payment history:', error);
                 const historyList = document.getElementById('historyList');
                 if (historyList) {
                     historyList.innerHTML = `
-                        <div class="text-center py-4 text-danger">
-                            <i class="fas fa-exclamation-circle mb-2"></i>
-                            <div>Failed to load payment history</div>
-                            <small>${error.message}</small>
+                        <div class="flex flex-col items-center justify-center py-8 text-red-400">
+                            <i class="fas fa-exclamation-circle text-xl mb-2"></i>
+                            <div class="text-center">Failed to load payment history</div>
+                            <div class="text-sm text-gray-500">${error.message}</div>
                         </div>
                     `;
                 }
             }
         }
 
+        // Copy UPI ID
+        function copyUPI(upi) {
+            if (!upi) return;
+            navigator.clipboard.writeText(upi).then(() => {
+                showMessage('Worker UPI ID copied to clipboard!', 'success');
+            }).catch(err => {
+                console.error('Copy failed:', err);
+                showMessage('Failed to copy UPI ID', 'error');
+            });
+        }
+
         // Show message
         function showMessage(text, type = 'info') {
             const messageEl = document.getElementById('paymentMessage');
             if (!messageEl) return;
-            
+
             const icons = {
-                success: 'check-circle',
-                error: 'exclamation-circle',
-                warning: 'exclamation-triangle',
-                info: 'info-circle'
+                success: 'fa-check-circle',
+                error: 'fa-exclamation-circle',
+                warning: 'fa-exclamation-triangle',
+                info: 'fa-info-circle'
             };
-            
+
             const colors = {
-                success: 'success',
-                error: 'danger',
-                warning: 'warning',
-                info: 'info'
+                success: 'emerald',
+                error: 'red',
+                warning: 'amber',
+                info: 'blue'
             };
-            
+
+            const bgColor = type === 'success' ? 'bg-emerald-500/10' : type === 'error' ? 'bg-red-500/10' : 'bg-blue-500/10';
+            const textColor = type === 'success' ? 'text-emerald-400' : type === 'error' ? 'text-red-400' : 'text-blue-400';
+            const borderColor = type === 'success' ? 'border-emerald-500/30' : type === 'error' ? 'border-red-500/30' : 'border-blue-500/30';
+
             messageEl.innerHTML = `
-                <div class="alert alert-${colors[type]} bg-${colors[type]} bg-opacity-10 border-${colors[type]} border-opacity-25 d-flex align-items-center">
-                    <i class="fas fa-${icons[type]} me-2"></i>
-                    ${text}
+                <div class="p-4 rounded-xl ${bgColor} border ${borderColor} flex items-start space-x-3 animate-fade-in mb-4">
+                    <i class="fas ${icons[type]} ${textColor} text-lg mt-0.5"></i>
+                    <div class="${textColor}">${text}</div>
                 </div>
             `;
-            
-            // Auto-hide info messages
-            if (type === 'info') {
-                setTimeout(() => {
-                    messageEl.innerHTML = '';
-                }, 5000);
-            }
+
+            // Auto-hide messages after 5 seconds
+            setTimeout(() => {
+                messageEl.innerHTML = '';
+            }, 5000);
         }
 
         // Retry loading
@@ -1188,6 +1126,157 @@
         function goBackToDashboard() {
             window.location.href = 'customer-dashboard.html';
         }
+
+        async function payWithCashfree() {
+            try {
+                const payBtn = document.getElementById('payBtn');
+                payBtn.disabled = true;
+                payBtn.innerHTML = '<span class="loading-spinner mr-2"></span> Initializing Cashfree...';
+
+                // 1. Get Cashfree Config
+                const configRes = await fetch(getApiUrl('/api/cashfree-config'));
+                const { cashfreeAppId, isSandbox } = await configRes.json();
+
+                const cashfree = Cashfree({
+                    mode: isSandbox ? "sandbox" : "production"
+                });
+
+                // 2. Create Cashfree Order
+                const orderRes = await fetch(getApiUrl('/api/create-cashfree-order'), {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        orderId: currentOrder.id,
+                        amount: currentOrder.totalAmount,
+                        customerName: currentUser.name || currentUser.username,
+                        customerEmail: currentUser.email || "",
+                        customerPhone: currentUser.phone || "9999999999",
+                        workerId: currentOrder.workerId
+                    })
+                });
+                const cfOrder = await orderRes.json();
+
+                if (!cfOrder.payment_session_id) {
+                    throw new Error(cfOrder.message || 'Failed to create payment session');
+                }
+
+                const checkoutOptions = {
+                    paymentSessionId: cfOrder.payment_session_id,
+                    redirectTarget: "_self",
+                };
+
+                cashfree.checkout(checkoutOptions).then((result) => {
+                    if (result.error) {
+                        console.error('Cashfree Error:', result.error);
+                        showMessage(result.error.message, 'error');
+                        payBtn.disabled = false;
+                        payBtn.innerHTML = '<i class="fas fa-shield-check text-lg"></i><span id="payBtnText" class="font-bold text-lg">Secure Checkout</span>';
+                    }
+                });
+
+            } catch (error) {
+                console.error('Cashfree Error:', error);
+                showMessage(error.message || 'Failed to initialize Cashfree. Please try again.', 'error');
+                const payBtn = document.getElementById('payBtn');
+                if (payBtn) {
+                    payBtn.disabled = false;
+                    payBtn.innerHTML = '<i class="fas fa-shield-check text-lg"></i><span id="payBtnText" class="font-bold text-lg">Secure Checkout</span>';
+                }
+            }
+        }
+
+        async function verifyCashfreePayment(cfOrderId, internalOrderId) {
+            try {
+                showMessage('Verifying your Cashfree payment...', 'info');
+
+                const res = await fetch(getApiUrl('/api/verify-cashfree-payment'), {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        orderId: cfOrderId,
+                        cf_payment_id: 'CF_REDIRECT_' + Date.now()
+                    })
+                });
+
+                const result = await res.json();
+                if (result.success) {
+                    handlePaymentSuccess(cfOrderId);
+                } else {
+                    showMessage('Payment verification unsuccessful. If amount was deducted, please contact support.', 'error');
+                }
+            } catch (err) {
+                console.error('Cashfree Verification Error:', err);
+                showMessage('An error occurred while verifying your payment.', 'error');
+            }
+        }
+
+        // --- Notification Handlers ---
+        async function loadNotifications() {
+            if (!currentUser) return;
+            try {
+                const res = await fetch(getApiUrl(`/api/notifications/${currentUser.id}`));
+                if (res.ok) {
+                    const notifications = await res.json();
+                    renderNotifications(notifications);
+                }
+            } catch (e) {
+                console.error('Error loading notifications', e);
+            }
+        }
+
+        function renderNotifications(notifications) {
+            const listEl = document.getElementById('customerNotifList');
+            const countEl = document.getElementById('customerNotifCount');
+            if (!listEl || !countEl) return;
+
+            const unread = notifications.filter(n => !n.read);
+            countEl.textContent = unread.length > 9 ? '9+' : unread.length;
+            countEl.style.display = unread.length > 0 ? 'inline-block' : 'none';
+
+            if (notifications.length === 0) {
+                listEl.innerHTML = '<div class="p-4 text-center text-gray-500 text-sm">No new notifications</div>';
+                return;
+            }
+
+            listEl.innerHTML = notifications.map(n => `
+                <div class="notif-item ${n.read ? '' : 'unread'} p-3 border-b border-white/5 cursor-pointer hover:bg-white/5 transition-colors" onclick="markAsRead('${n._id || n.id}', '${n.link}')">
+                    <div class="notif-title text-sm text-gray-200 ${n.read ? '' : 'font-bold'}">${n.message}</div>
+                    <div class="notif-meta text-xs text-gray-500 mt-1 flex items-center">
+                        <i class="far fa-clock mr-1"></i>
+                        ${new Date(n.createdAt).toLocaleString([], { month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' })}
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        async function markAsRead(notifId, link) {
+            try {
+                await fetch(getApiUrl(`/api/notifications/${notifId}/read`), { method: 'PUT' });
+                if (link && link !== 'null' && link !== 'undefined') {
+                    window.location.href = link;
+                } else {
+                    loadNotifications();
+                }
+            } catch (e) {
+                console.error('Error marking as read', e);
+            }
+        }
+
+        function initCustomerNotifToggle() {
+            const btn = document.getElementById('customerNotifBtn');
+            const dropdown = document.getElementById('customerNotifDropdown');
+            if (!btn || !dropdown) return;
+            btn.addEventListener('click', (e) => {
+                e.stopPropagation();
+                dropdown.classList.toggle('scale-100');
+                dropdown.classList.toggle('opacity-100');
+                dropdown.classList.toggle('pointer-events-auto');
+            });
+            document.addEventListener('click', () => {
+                dropdown.classList.remove('scale-100', 'opacity-100', 'pointer-events-auto');
+            });
+        }
     </script>
 </body>
+
 </html>
