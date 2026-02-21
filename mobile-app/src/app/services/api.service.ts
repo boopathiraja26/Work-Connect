@@ -7,7 +7,7 @@ import { Observable } from 'rxjs';
 })
 export class ApiService {
     // Use the mobile-accessible IP address of your machine
-    private apiUrl = '/api';
+    private apiUrl = 'https://workconnect-neon.vercel.app/api';
 
     constructor(private http: HttpClient) { }
 
