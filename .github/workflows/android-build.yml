@@ -51,9 +51,7 @@ jobs:
 
       - name: Build with Gradle
         working-directory: ./mobile-app/android
-        env:
-          JAVA_HOME: ${{ env.JAVA_HOME_17_X64 }}
-        run: ./gradlew assembleDebug
+        run: ./gradlew assembleDebug --info --stacktrace
 
       - name: List Files on Failure
         if: failure()
