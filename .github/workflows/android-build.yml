@@ -26,7 +26,7 @@ jobs:
 
       - name: Install Mobile App Dependencies
         working-directory: ./mobile-app
-        run: npm install
+        run: npm install --legacy-peer-deps
 
       - name: Build Web App
         working-directory: ./mobile-app
@@ -51,7 +51,15 @@ jobs:
 
       - name: Build with Gradle
         working-directory: ./mobile-app/android
+        env:
+          JAVA_HOME: ${{ env.JAVA_HOME_17_X64 }}
         run: ./gradlew assembleDebug
+
+      - name: List Files on Failure
+        if: failure()
+        run: |
+          ls -R
+          find . -name "*.log"
 
       - name: Upload APK
         uses: actions/upload-artifact@v4
