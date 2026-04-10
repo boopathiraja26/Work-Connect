@@ -702,11 +702,11 @@
                 Admin Panel</h1>
         </div>
         <div class="navbar-stats">
-            <div class="stat-item-nav" style="text-align:right;">
+            <div class="stat-item-nav" style="text-align:center;">
                 <p id="totalWorkers" style="font-size:1.3rem; font-weight:800; color:#7aa9ff; margin:0;">0</p>
                 <p style="font-size:0.7rem; color:#90a9c2; text-transform:uppercase;">Total Workers</p>
             </div>
-            <div class="stat-item-nav" style="text-align:right;">
+            <div class="stat-item-nav" style="text-align:center;">
                 <p id="pendingApprovals" style="font-size:1.3rem; font-weight:800; color:#fcd34d; margin:0;">0</p>
                 <p style="font-size:0.7rem; color:#90a9c2; text-transform:uppercase;">Pending</p>
             </div>
@@ -827,34 +827,7 @@
 
     <script src="admin.js"></script>
     <!-- inline demo data to preview dark scheme (no API change) -->
-    <script>
-        (function () {
-            // only for preview — respect original structure
-            if (!window.location.href.includes('nopreview')) {
-                document.getElementById('totalWorkers').innerText = '42';
-                document.getElementById('pendingApprovals').innerText = '7';
-                document.getElementById('totalRevenue').innerText = '₹2,45,800';
-                document.getElementById('totalOrdersCount').innerText = '418';
-                document.getElementById('activeUsersCount').innerText = '1.4k';
-                // mini charts
-                setTimeout(() => {
-                    const revCtx = document.getElementById('revenueChart')?.getContext('2d');
-                    if (revCtx) new Chart(revCtx, { type: 'line', data: { labels: ['M', 'T', 'W', 'T', 'F', 'S', 'S'], datasets: [{ label: 'Revenue (₹)', data: [21000, 25500, 23200, 27800, 30200, 35800, 41200], borderColor: '#38bdf8', backgroundColor: 'rgba(56,189,248,0.1)', tension: 0.3 }] }, options: { responsive: true, maintainAspectRatio: true, plugins: { legend: { labels: { color: '#deecff' } } }, scales: { y: { ticks: { color: '#aac3e0' } }, x: { ticks: { color: '#aac3e0' } } } } });
-                    const catCtx = document.getElementById('categoryChart')?.getContext('2d');
-                    if (catCtx) new Chart(catCtx, { type: 'doughnut', data: { labels: ['Plumbing', 'Electrical', 'Cleaning', 'Carpentry'], datasets: [{ data: [38, 32, 22, 18], backgroundColor: ['#2563eb', '#38bdf8', '#7c3aed', '#0ea5e9'] }] }, options: { plugins: { legend: { labels: { color: '#deecff' } } } } });
-                }, 100);
-                // fill workers grid
-                const wgrid = document.getElementById('workersGrid');
-                if (wgrid) wgrid.innerHTML = Array(4).fill().map((_, i) => `
-                    <div class="worker-card">
-                        <div class="worker-header"><div class="worker-profile"><div class="worker-avatar"><i class="fas fa-user-tie"></i></div><div class="worker-identity"><h3>Elena Rodriguez</h3><p>⭐⭐⭐⭐ 4.8</p></div></div><span class="status-badge-card">verified</span></div>
-                        <div class="worker-body"><div class="info-item"><i class="fas fa-tools info-icon"></i> Electrical · 6 yrs</div><div class="info-item"><i class="fas fa-map-marker-alt info-icon"></i> Sector 15, Noida</div><div class="info-item"><i class="fas fa-clock info-icon"></i> 84 jobs completed</div></div>
-                        <div class="worker-actions"><button class="action-btn approve-btn"><i class="fas fa-check-circle"></i> approve</button><button class="action-btn reject-btn"><i class="fas fa-times-circle"></i> reject</button></div>
-                    </div>`).join('');
-                document.getElementById('allOrdersList').innerHTML = `<tr><td>#W1102</td><td>AC repair</td><td>Anil K.</td><td>Rajesh</td><td>₹2,800</td><td><span class="order-badge badge-pending">pending</span></td><td>2025-02-19</td></tr><tr><td>#W1087</td><td>Plumbing</td><td>Neha S.</td><td>Ahmed</td><td>₹3,500</td><td><span class="order-badge badge-accepted">accepted</span></td><td>2025-02-18</td></tr><tr><td>#W1065</td><td>Cleaning</td><td>Maya I.</td><td>Lakshmi</td><td>₹1,800</td><td><span class="order-badge badge-completed">completed</span></td><td>2025-02-17</td></tr>`;
-            }
-        })();
-    </script>
+    <!-- Removed hardcoded preview script to ensure real API data is used -->
 </body>
 
 </html>

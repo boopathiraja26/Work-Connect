@@ -246,6 +246,7 @@ function maskAadhaar(aadhaar) {
 }
 
 // Add admin user if not present (Wait for initializeDatabase instead)
+// Add/Update admin user based on ENV or defaults
 async function ensureAdminUser() {
     const ADMIN_USER = process.env.ADMIN_USERNAME || 'udhaya111';
     const ADMIN_PASS = process.env.ADMIN_PASSWORD || 'Udhaya111@';
@@ -261,13 +262,20 @@ async function ensureAdminUser() {
                 role: 'admin'
             });
             console.log(`Admin user (${ADMIN_USER}) created in MongoDB`);
+        } else {
+            // Update existing admin to match current config
+            admin.username = ADMIN_USER;
+            admin.password = adminPasswordHash;
+            await admin.save();
         }
         return;
     }
     const db = await readDatabase();
-    if (!db.users.some(u => u.role === 'admin')) {
+    const adminIndex = db.users.findIndex(u => u.role === 'admin');
+    
+    if (adminIndex === -1) {
         db.users.push({
-            id: 'admin-' + Date.now(),
+            id: 'admin',
             username: ADMIN_USER,
             email: 'admin@workconnect.com',
             phone: '',
@@ -275,9 +283,14 @@ async function ensureAdminUser() {
             role: 'admin',
             createdAt: new Date().toISOString()
         });
-        await writeDatabase(db);
         console.log(`Admin user (${ADMIN_USER}) created in JSON DB`);
+    } else {
+        // Update existing admin
+        db.users[adminIndex].username = ADMIN_USER;
+        db.users[adminIndex].password = adminPasswordHash;
+        console.log(`Admin user (${ADMIN_USER}) updated in JSON DB`);
     }
+    await writeDatabase(db);
 }
 
 // Nodemailer setup with OAuth2 and automatic test account creation
@@ -1871,6 +1884,61 @@ app.post('/api/orders/:orderId/worker-location', async (req, res) => {
     }
 });
 
+// Public Stats API for Hero Section
+app.get('/api/stats', async (req, res) => {
+    try {
+        if (MONGODB_URI) {
+            const workers = await User.countDocuments({ role: 'worker' });
+            const projects = await Order.countDocuments({ status: 'completed' });
+            
+            // System Average Rating
+            const workersForRating = await User.find({ role: 'worker' });
+            let totalRatingSum = 0;
+            let totalReviewsCount = 0;
+            workersForRating.forEach(w => {
+                if (w.reviews && w.reviews.length > 0) {
+                    w.reviews.forEach(r => {
+                        totalRatingSum += r.rating;
+                        totalReviewsCount++;
+                    });
+                }
+            });
+            const avgRating = totalReviewsCount > 0 ? (totalRatingSum / totalReviewsCount) : 4.8;
+
+            res.json({
+                totalWorkers: workers,
+                totalOrders: projects,
+                avgRating: avgRating
+            });
+        } else {
+            const db = await readDatabase();
+            const workersList = db.users.filter(u => u.role === 'worker');
+            const projectsCount = db.orders.filter(o => o.status === 'completed').length;
+            
+            // Avg Rating
+            let totalRatingSum = 0;
+            let totalReviewsCount = 0;
+            workersList.forEach(w => {
+                if (w.reviews && w.reviews.length > 0) {
+                    w.reviews.forEach(r => {
+                        totalRatingSum += r.rating;
+                        totalReviewsCount++;
+                    });
+                }
+            });
+            const avgRatingVal = totalReviewsCount > 0 ? (totalRatingSum / totalReviewsCount) : 4.8;
+
+            res.json({
+                totalWorkers: workersList.length,
+                totalOrders: projectsCount,
+                avgRating: avgRatingVal
+            });
+        }
+    } catch (e) {
+        res.status(500).json({ message: 'Error fetching stats' });
+    }
+});
+
 // Admin login endpoint
 app.post('/api/admin/login', async (req, res) => {
     try {
@@ -1925,7 +1993,7 @@ app.get('/api/admin/stats', async (req, res) => {
             const pendingWorkers = await User.countDocuments({ role: 'worker', approved: 'pending' });
             const orders = await Order.countDocuments();
             const paidOrders = await Order.find({ paymentStatus: 'paid' });
-            const revenue = paidOrders.reduce((sum, o) => sum + (o.totalAmount || 0), 0);
+            const revenue = paidOrders.reduce((sum, o) => sum + Number(o.totalAmount || 0), 0);
 
             // Service Split
             const split = await Order.aggregate([
@@ -1957,7 +2025,7 @@ app.get('/api/admin/stats', async (req, res) => {
                     paymentStatus: 'paid',
                     paidAt: { $gte: dayStart, $lte: dayEnd }
                 });
-                return dayOrders.reduce((sum, o) => sum + (o.totalAmount || 0), 0);
+                return dayOrders.reduce((sum, o) => sum + Number(o.totalAmount || 0), 0);
             }));
 
             res.json({
@@ -1976,7 +2044,7 @@ app.get('/api/admin/stats', async (req, res) => {
             const workersList = db.users.filter(u => u.role === 'worker');
             const pendingApprovals = workersList.filter(w => w.approved === 'pending').length;
             const paidOrders = db.orders.filter(o => o.paymentStatus === 'paid');
-            const totalRevenue = paidOrders.reduce((sum, o) => sum + (o.totalAmount || 0), 0);
+            const totalRevenue = paidOrders.reduce((sum, o) => sum + Number(o.totalAmount || 0), 0);
 
             const serviceSplit = {};
             db.orders.forEach(o => {
@@ -2000,7 +2068,7 @@ app.get('/api/admin/stats', async (req, res) => {
             const revenueTrend = last7Days.map(day => {
                 return paidOrders
                     .filter(o => (o.paidAt || o.createdAt).startsWith(day))
-                    .reduce((sum, o) => sum + (o.totalAmount || 0), 0);
+                    .reduce((sum, o) => sum + Number(o.totalAmount || 0), 0);
             });
 
             res.json({
