@@ -467,12 +467,12 @@
 
     .floating-card-1 {
       top: 20px;
-      right: -20px;
+      right: 20px;
     }
 
     .floating-card-2 {
       bottom: 40px;
-      left: -20px;
+      left: 20px;
       animation-delay: 1s;
     }
 
@@ -511,22 +511,30 @@
       border-radius: 1rem;
       padding: 1.5rem;
       text-align: center;
-      transition: all 0.3s;
+      transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
       cursor: pointer;
-      text-decoration: none;
       color: white;
+      position: relative;
+      overflow: hidden;
     }
 
     .category-card:hover {
-      transform: translateY(-5px);
+      transform: translateY(-8px);
       background: rgba(59, 130, 246, 0.1);
       border-color: #3b82f6;
+      box-shadow: 0 15px 30px rgba(0, 0, 0, 0.3), 0 0 15px rgba(59, 130, 246, 0.2);
     }
 
     .category-card i {
       font-size: 2rem;
       color: #3b82f6;
       margin-bottom: 1rem;
+      transition: all 0.4s ease;
+    }
+
+    .category-card:hover i {
+      transform: scale(1.15) rotate(10deg);
+      color: #60a5fa;
     }
 
     .category-card span {
@@ -1075,21 +1083,21 @@
             <a href="register.html" class="btn btn-primary">
               <i class="fas fa-user-plus"></i> Get Started
             </a>
-            <a href="#" class="btn btn-secondary">
+            <a href="https://youtu.be/ckJA0Mor5AI" class="btn btn-secondary">
               <i class="fas fa-play"></i> Watch Demo
             </a>
           </div>
           <div class="hero-stats">
             <div class="stat-item">
-              <div class="stat-number">50K+</div>
+              <div class="stat-number" id="hero-workers-count">0+</div>
               <div class="stat-label">Active Workers</div>
             </div>
             <div class="stat-item">
-              <div class="stat-number">100K+</div>
+              <div class="stat-number" id="hero-projects-count">0+</div>
               <div class="stat-label">Projects Done</div>
             </div>
             <div class="stat-item">
-              <div class="stat-number">4.9/5</div>
+              <div class="stat-number" id="hero-rating-count">0/5</div>
               <div class="stat-label">User Rating</div>
             </div>
           </div>
@@ -1122,71 +1130,71 @@
     <!-- Categories Section -->
     <section id="categories" class="categories">
       <div class="section-title">
-        <h2>Browse by <span class="text-blue-400">Category</span></h2>
+        <h2>Categories</h2>
         <p>Find the right professional for your specific needs</p>
       </div>
 
       <div class="category-grid">
-        <a href="search.html?category=plumbing" class="category-card">
+        <div class="category-card">
           <i class="fas fa-wrench"></i>
           <span>Plumbing</span>
           <small>1,200+ workers</small>
-        </a>
-        <a href="search.html?category=electrical" class="category-card">
+        </div>
+        <div class="category-card">
           <i class="fas fa-bolt"></i>
           <span>Electrical</span>
           <small>950+ workers</small>
-        </a>
-        <a href="search.html?category=carpentry" class="category-card">
+        </div>
+        <div class="category-card">
           <i class="fas fa-hammer"></i>
           <span>Carpentry</span>
           <small>800+ workers</small>
-        </a>
-        <a href="search.html?category=painting" class="category-card">
+        </div>
+        <div class="category-card">
           <i class="fas fa-paint-brush"></i>
           <span>Painting</span>
           <small>750+ workers</small>
-        </a>
-        <a href="search.html?category=cleaning" class="category-card">
+        </div>
+        <div class="category-card">
           <i class="fas fa-broom"></i>
           <span>Cleaning</span>
           <small>1,500+ workers</small>
-        </a>
-        <a href="search.html?category=moving" class="category-card">
+        </div>
+        <div class="category-card">
           <i class="fas fa-truck"></i>
           <span>Moving</span>
           <small>600+ workers</small>
-        </a>
-        <a href="search.html?category=gardening" class="category-card">
+        </div>
+        <div class="category-card">
           <i class="fas fa-leaf"></i>
           <span>Gardening</span>
           <small>450+ workers</small>
-        </a>
-        <a href="search.html?category=hvac" class="category-card">
+        </div>
+        <div class="category-card">
           <i class="fas fa-wind"></i>
           <span>HVAC</span>
           <small>350+ workers</small>
-        </a>
-        <a href="search.html?category=roofing" class="category-card">
+        </div>
+        <div class="category-card">
           <i class="fas fa-home"></i>
           <span>Roofing</span>
           <small>280+ workers</small>
-        </a>
-        <a href="search.html?category=flooring" class="category-card">
+        </div>
+        <div class="category-card">
           <i class="fas fa-border-all"></i>
           <span>Flooring</span>
           <small>320+ workers</small>
-        </a>
-        <a href="search.html?category=appliance" class="category-card">
+        </div>
+        <div class="category-card">
           <i class="fas fa-tools"></i>
           <span>Appliance Repair</span>
           <small>420+ workers</small>
-        </a>
-        <a href="search.html?category=handyman" class="category-card">
+        </div>
+        <div class="category-card">
           <i class="fas fa-user-cog"></i>
           <span>Handyman</span>
           <small>2,100+ workers</small>
-        </a>
+        </div>
       </div>
     </section>
 
@@ -1513,14 +1521,43 @@
       }
     });
 
+    // Fetch real-time stats and trigger counter animation
+    async function loadStats() {
+      try {
+        const response = await fetch('/api/stats');
+        const data = await response.json();
+
+        document.getElementById('hero-workers-count').dataset.target = data.totalWorkers || 0;
+        document.getElementById('hero-projects-count').dataset.target = data.totalOrders || 0;
+        document.getElementById('hero-rating-count').dataset.target = (data.avgRating || 4.8).toFixed(1);
+
+        observer.observe(document.querySelector('.hero-stats'));
+      } catch (error) {
+        console.error('Error fetching stats:', error);
+        // Fallback gracefully
+        document.getElementById('hero-workers-count').dataset.target = 50;
+        document.getElementById('hero-projects-count').dataset.target = 100;
+        document.getElementById('hero-rating-count').dataset.target = 4.8;
+        observer.observe(document.querySelector('.hero-stats'));
+      }
+    }
+
     // Counter Animation
-    function animateCounter(element, start, end, duration) {
+    function animateCounter(element, start, end, duration, formatStr) {
       let startTimestamp = null;
       const step = (timestamp) => {
         if (!startTimestamp) startTimestamp = timestamp;
         const progress = Math.min((timestamp - startTimestamp) / duration, 1);
-        element.textContent = Math.floor(progress * (end - start) + start) +
-          (element.textContent.includes('K') ? 'K+' : element.textContent.includes('/') ? '/5' : '+');
+
+        let currentValue;
+        if (formatStr === '/5') {
+          currentValue = (progress * (end - start) + start).toFixed(1);
+        } else {
+          currentValue = Math.floor(progress * (end - start) + start);
+        }
+
+        element.textContent = currentValue + formatStr;
+
         if (progress < 1) {
           window.requestAnimationFrame(step);
         }
@@ -1532,32 +1569,23 @@
     const observer = new IntersectionObserver((entries) => {
       entries.forEach(entry => {
         if (entry.isIntersecting) {
-          const stats = document.querySelectorAll('.stat-number');
-          stats.forEach(stat => {
-            const value = stat.textContent.replace(/[^0-9.]/g, '');
-            if (stat.textContent.includes('K')) {
-              animateCounter(stat, 0, parseInt(value), 2000);
-            } else if (stat.textContent.includes('/')) {
-              animateCounter(stat, 0, parseFloat(value), 2000);
-            } else {
-              animateCounter(stat, 0, parseInt(value), 2000);
-            }
-          });
+
+          const workersEl = document.getElementById('hero-workers-count');
+          const projectsEl = document.getElementById('hero-projects-count');
+          const ratingEl = document.getElementById('hero-rating-count');
+
+          animateCounter(workersEl, 0, parseInt(workersEl.dataset.target), 2000, '+');
+          animateCounter(projectsEl, 0, parseInt(projectsEl.dataset.target), 2000, '+');
+          animateCounter(ratingEl, 0, parseFloat(ratingEl.dataset.target), 2000, '/5');
+
           observer.disconnect();
         }
       });
     }, { threshold: 0.5 });
 
-    observer.observe(document.querySelector('.hero-stats'));
+    loadStats();
 
-    // Category Cards Click Handler
-    document.querySelectorAll('.category-card').forEach(card => {
-      card.addEventListener('click', function (e) {
-        // The href already handles navigation
-        // Add any additional tracking or analytics here
-        console.log('Category clicked:', this.querySelector('span').textContent);
-      });
-    });
+    // Category Cards Click Handler removed
 
     // Preload images
     const images = [

@@ -246,6 +246,7 @@ function maskAadhaar(aadhaar) {
 }
 
 // Add admin user if not present (Wait for initializeDatabase instead)
+// Add/Update admin user based on ENV or defaults
 async function ensureAdminUser() {
     const ADMIN_USER = process.env.ADMIN_USERNAME || 'udhaya111';
     const ADMIN_PASS = process.env.ADMIN_PASSWORD || 'Udhaya111@';
@@ -261,13 +262,20 @@ async function ensureAdminUser() {
                 role: 'admin'
             });
             console.log(`Admin user (${ADMIN_USER}) created in MongoDB`);
+        } else {
+            // Update existing admin to match current config
+            admin.username = ADMIN_USER;
+            admin.password = adminPasswordHash;
+            await admin.save();
         }
         return;
     }
     const db = await readDatabase();
-    if (!db.users.some(u => u.role === 'admin')) {
+    const adminIndex = db.users.findIndex(u => u.role === 'admin');
+    
+    if (adminIndex === -1) {
         db.users.push({
-            id: 'admin-' + Date.now(),
+            id: 'admin',
             username: ADMIN_USER,
             email: 'admin@workconnect.com',
             phone: '',
@@ -275,9 +283,14 @@ async function ensureAdminUser() {
             role: 'admin',
             createdAt: new Date().toISOString()
         });
-        await writeDatabase(db);
         console.log(`Admin user (${ADMIN_USER}) created in JSON DB`);
+    } else {
+        // Update existing admin
+        db.users[adminIndex].username = ADMIN_USER;
+        db.users[adminIndex].password = adminPasswordHash;
+        console.log(`Admin user (${ADMIN_USER}) updated in JSON DB`);
     }
+    await writeDatabase(db);
 }
 
 // Nodemailer setup with OAuth2 and automatic test account creation
@@ -389,13 +402,13 @@ app.post('/api/register', upload.single('profileImage'), async (req, res) => {
 
         // Verify email OTP for both workers and customers
         const emailOtpEntry = emailOtpStore[email];
-        if (!emailOtpEntry || !emailOtpEntry.verified || Date.now() > emailOtpEntry.expires) {
+        if (!emailOtpEntry || !emailOtpEntry.verified) {
             return res.status(400).json({ message: 'Email OTP verification required' });
         }
 
         // Verify phone OTP
         const phoneOtpEntry = phoneOtpStore[phone];
-        if (!phoneOtpEntry || !phoneOtpEntry.verified || Date.now() > phoneOtpEntry.expires) {
+        if (!phoneOtpEntry || !phoneOtpEntry.verified) {
             return res.status(400).json({ message: 'Phone verification required' });
         }
 
@@ -542,7 +555,7 @@ app.post('/api/verify-email-otp', async (req, res) => {
             return res.status(400).json({ message: 'Role mismatch' });
         }
 
-        emailOtpStore[email].verified = true;
+        emailOtpStore[email] = { verified: true };
         res.status(200).json({ message: 'Email OTP verified successfully' });
     } catch (error) {
         console.error('Email OTP verification error:', error);
@@ -671,7 +684,7 @@ app.post('/api/verify-phone-otp', async (req, res) => {
             return res.status(400).json({ message: 'Invalid or expired phone OTP' });
         }
 
-        phoneOtpStore[phone].verified = true;
+        phoneOtpStore[phone] = { verified: true };
         res.status(200).json({ message: 'Phone OTP verified successfully' });
     } catch (error) {
         console.error('Phone OTP verification error:', error);
@@ -726,35 +739,57 @@ app.post('/api/forgot-password', async (req, res) => {
         const user = await findUserByEmail(email);
         if (!user) {
             // For security reasons, don't reveal if email exists or not
-            return res.json({ message: 'If the email exists, a reset link has been sent' });
+            return res.json({ message: 'If the email exists, an OTP has been sent' });
         }
 
-        // Generate reset token
-        const resetToken = Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15);
-        const resetTokenExpiry = new Date(Date.now() + 3600000); // 1 hour from now
+        // Generate 6-digit OTP
+        const otp = Math.floor(100000 + Math.random() * 900000).toString();
+        const resetTokenExpiry = new Date(Date.now() + 10 * 60 * 1000); // 10 minutes
 
-        // Save reset token to database
+        // Send OTP via email
+        try {
+            await sendEmail({
+                to: email,
+                subject: 'Password Reset OTP - WorkConnect',
+                text: `Your password reset OTP is: ${otp}. It expires in 10 minutes.`,
+                html: `
+                    <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; border: 1px solid #e0e0e0; border-radius: 10px;">
+                        <h2 style="color: #6366f1; text-align: center;">Password Reset Request</h2>
+                        <p>Hello,</p>
+                        <p>We received a request to reset your password. Here is your One Time Password (OTP):</p>
+                        <div style="background-color: #f3f4f6; padding: 20px; text-align: center; border-radius: 8px; margin: 20px 0;">
+                            <span style="font-size: 32px; font-weight: bold; letter-spacing: 5px; color: #1f2937;">${otp}</span>
+                        </div>
+                        <p style="color: #6b7280; font-size: 14px;">This code will expire in 10 minutes. If you did not request this, please ignore this email.</p>
+                        <hr style="border: none; border-top: 1px solid #e0e0e0; margin: 20px 0;">
+                        <p style="text-align: center; color: #9ca3af; font-size: 12px;">&copy; 2025 WorkConnect. All rights reserved.</p>
+                    </div>
+                `
+            });
+        } catch (e) {
+            console.error('Error sending reset OTP email:', e);
+        }
+
+        // Save OTP to database
         if (MONGODB_URI) {
             await PasswordResetToken.create({
                 email,
-                token: resetToken,
+                token: otp,
                 expiry: resetTokenExpiry
             });
-            console.log(`Password reset link: http://localhost:${PORT}/reset-password.html?token=${resetToken}`);
-            return res.json({ message: 'If the email exists, a reset link has been sent' });
+            return res.json({ message: 'If the email exists, an OTP has been sent' });
         }
 
         const db = await readDatabase();
         db.passwordResetTokens.push({
             email,
-            token: resetToken,
+            token: otp,
             expiry: resetTokenExpiry.toISOString(),
             used: false
         });
 
         if (await writeDatabase(db)) {
-            console.log(`Reset link: http://localhost:${PORT}/reset-password.html?token=${resetToken}`);
-            res.json({ message: 'If the email exists, a reset link has been sent' });
+            res.json({ message: 'If the email exists, an OTP has been sent' });
         } else {
             res.status(500).json({ message: 'Error processing request' });
         }
@@ -768,15 +803,35 @@ app.post('/api/forgot-password', async (req, res) => {
 // Reset password endpoint
 app.post('/api/reset-password', async (req, res) => {
     try {
-        const { token, newPassword } = req.body;
-        if (!token || !newPassword) return res.status(400).json({ message: 'Token and new password are required' });
+        const { email, token, newPassword } = req.body;
+        if (!email || !token || !newPassword) return res.status(400).json({ message: 'Email, OTP, and new password are required' });
+
+        if (MONGODB_URI) {
+            const resetToken = await PasswordResetToken.findOne({
+                email,
+                token,
+                used: { $ne: true },
+                expiry: { $gt: new Date() }
+            });
+            if (!resetToken) return res.status(400).json({ message: 'Invalid or expired OTP' });
+            
+            const user = await User.findOne({ email });
+            if (!user) return res.status(400).json({ message: 'User not found' });
+            
+            user.password = await bcrypt.hash(newPassword, 10);
+            await user.save();
+            
+            resetToken.used = true;
+            await resetToken.save();
+            return res.json({ message: 'Password reset successfully' });
+        }
 
         const db = await readDatabase();
         const resetToken = db.passwordResetTokens.find(rt =>
-            rt.token === token && !rt.used && new Date(rt.expiry) > new Date()
+            rt.email === email && rt.token === token && !rt.used && new Date(rt.expiry) > new Date()
         );
 
-        if (!resetToken) return res.status(400).json({ message: 'Invalid or expired reset token' });
+        if (!resetToken) return res.status(400).json({ message: 'Invalid or expired OTP' });
 
         const hashedPassword = await bcrypt.hash(newPassword, 10);
         const userIndex = db.users.findIndex(user => user.email === resetToken.email);
@@ -1829,6 +1884,61 @@ app.post('/api/orders/:orderId/worker-location', async (req, res) => {
     }
 });
 
+// Public Stats API for Hero Section
+app.get('/api/stats', async (req, res) => {
+    try {
+        if (MONGODB_URI) {
+            const workers = await User.countDocuments({ role: 'worker' });
+            const projects = await Order.countDocuments({ status: 'completed' });
+            
+            // System Average Rating
+            const workersForRating = await User.find({ role: 'worker' });
+            let totalRatingSum = 0;
+            let totalReviewsCount = 0;
+            workersForRating.forEach(w => {
+                if (w.reviews && w.reviews.length > 0) {
+                    w.reviews.forEach(r => {
+                        totalRatingSum += r.rating;
+                        totalReviewsCount++;
+                    });
+                }
+            });
+            const avgRating = totalReviewsCount > 0 ? (totalRatingSum / totalReviewsCount) : 4.8;
+
+            res.json({
+                totalWorkers: workers,
+                totalOrders: projects,
+                avgRating: avgRating
+            });
+        } else {
+            const db = await readDatabase();
+            const workersList = db.users.filter(u => u.role === 'worker');
+            const projectsCount = db.orders.filter(o => o.status === 'completed').length;
+            
+            // Avg Rating
+            let totalRatingSum = 0;
+            let totalReviewsCount = 0;
+            workersList.forEach(w => {
+                if (w.reviews && w.reviews.length > 0) {
+                    w.reviews.forEach(r => {
+                        totalRatingSum += r.rating;
+                        totalReviewsCount++;
+                    });
+                }
+            });
+            const avgRatingVal = totalReviewsCount > 0 ? (totalRatingSum / totalReviewsCount) : 4.8;
+
+            res.json({
+                totalWorkers: workersList.length,
+                totalOrders: projectsCount,
+                avgRating: avgRatingVal
+            });
+        }
+    } catch (e) {
+        res.status(500).json({ message: 'Error fetching stats' });
+    }
+});
+
 // Admin login endpoint
 app.post('/api/admin/login', async (req, res) => {
     try {
@@ -1883,7 +1993,7 @@ app.get('/api/admin/stats', async (req, res) => {
             const pendingWorkers = await User.countDocuments({ role: 'worker', approved: 'pending' });
             const orders = await Order.countDocuments();
             const paidOrders = await Order.find({ paymentStatus: 'paid' });
-            const revenue = paidOrders.reduce((sum, o) => sum + (o.totalAmount || 0), 0);
+            const revenue = paidOrders.reduce((sum, o) => sum + Number(o.totalAmount || 0), 0);
 
             // Service Split
             const split = await Order.aggregate([
@@ -1915,7 +2025,7 @@ app.get('/api/admin/stats', async (req, res) => {
                     paymentStatus: 'paid',
                     paidAt: { $gte: dayStart, $lte: dayEnd }
                 });
-                return dayOrders.reduce((sum, o) => sum + (o.totalAmount || 0), 0);
+                return dayOrders.reduce((sum, o) => sum + Number(o.totalAmount || 0), 0);
             }));
 
             res.json({
@@ -1934,7 +2044,7 @@ app.get('/api/admin/stats', async (req, res) => {
             const workersList = db.users.filter(u => u.role === 'worker');
             const pendingApprovals = workersList.filter(w => w.approved === 'pending').length;
             const paidOrders = db.orders.filter(o => o.paymentStatus === 'paid');
-            const totalRevenue = paidOrders.reduce((sum, o) => sum + (o.totalAmount || 0), 0);
+            const totalRevenue = paidOrders.reduce((sum, o) => sum + Number(o.totalAmount || 0), 0);
 
             const serviceSplit = {};
             db.orders.forEach(o => {
@@ -1958,7 +2068,7 @@ app.get('/api/admin/stats', async (req, res) => {
             const revenueTrend = last7Days.map(day => {
                 return paidOrders
                     .filter(o => (o.paidAt || o.createdAt).startsWith(day))
-                    .reduce((sum, o) => sum + (o.totalAmount || 0), 0);
+                    .reduce((sum, o) => sum + Number(o.totalAmount || 0), 0);
             });
 
             res.json({

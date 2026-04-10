@@ -469,8 +469,8 @@
         <div class="modal-content">
             <span class="close">&times;</span>
             <h2 style="margin-bottom: 10px; color: #f8fafc;">Reset Password</h2>
-            <p style="color: #94a3b8; margin-bottom: 20px; font-size: 14px;">Enter your email address to receive a reset
-                link</p>
+            <p style="color: #94a3b8; margin-bottom: 20px; font-size: 14px;" id="forgotPasswordDesc">Enter your email address to receive an OTP</p>
+            
             <form id="forgotPasswordForm">
                 <div class="form-group">
                     <i class="fas fa-envelope form-icon"></i>
@@ -478,7 +478,23 @@
                         placeholder="Enter your email">
                     <span class="error" id="resetEmail-error"></span>
                 </div>
-                <button type="submit" class="btn-primary">Send Reset Link</button>
+                <button type="submit" class="btn-primary" id="btnSendOtp">Send OTP</button>
+            </form>
+
+            <form id="resetPasswordForm" style="display: none;">
+                <div class="form-group">
+                    <i class="fas fa-key form-icon"></i>
+                    <input type="text" id="resetOtp" class="form-control" name="resetOtp" required
+                        placeholder="Enter 6-digit OTP">
+                    <span class="error" id="resetOtp-error"></span>
+                </div>
+                <div class="form-group">
+                    <i class="fas fa-lock form-icon"></i>
+                    <input type="password" id="newPassword" class="form-control" name="newPassword" required
+                        placeholder="Enter new password">
+                    <span class="error" id="newPassword-error"></span>
+                </div>
+                <button type="submit" class="btn-primary" id="btnResetPassword">Reset Password</button>
             </form>
         </div>
     </div>
@@ -496,32 +512,6 @@
             } else {
                 passwordInput.type = 'password';
                 toggleIcon.className = 'fas fa-eye password-toggle';
-            }
-        }
-
-        // Modal logic is likely in login.js, but ensuring IDs match
-        // login.js expects: forgotPasswordModal, forgotPasswordLink, .close, forgotPasswordForm
-        // My HTML structure provides these.
-
-        // Make sure modal display uses flex
-        const modal = document.getElementById('forgotPasswordModal');
-        const link = document.getElementById('forgotPasswordLink');
-        const closeBtn = document.querySelector('.close');
-
-        if (link) {
-            link.addEventListener('click', (e) => {
-                e.preventDefault();
-                modal.style.display = 'flex'; // Override login.js 'block' if it sets block, flex centers it
-            });
-        }
-        if (closeBtn) {
-            closeBtn.addEventListener('click', () => {
-                modal.style.display = 'none';
-            });
-        }
-        window.onclick = function (event) {
-            if (event.target == modal) {
-                modal.style.display = "none";
             }
         }
     </script>

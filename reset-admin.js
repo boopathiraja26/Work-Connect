@@ -6,18 +6,19 @@ const dbPath = path.join(__dirname, 'database.json');
 const db = JSON.parse(fs.readFileSync(dbPath, 'utf8'));
 
 const adminIndex = db.users.findIndex(u => u.role === 'admin');
-const newPassword = 'admin123';
+const newUsername = 'udhaya111';
+const newPassword = 'Udhaya111@';
 const hashedPassword = bcrypt.hashSync(newPassword, 10);
 
 if (adminIndex !== -1) {
     db.users[adminIndex].password = hashedPassword;
-    db.users[adminIndex].username = 'admin'; // Ensure username is admin
+    db.users[adminIndex].username = newUsername; // Match current config
     console.log('Admin password reset to: ' + newPassword);
 } else {
     db.users.push({
         id: 'admin',
-        username: 'admin',
-        email: 'admin@demo.com',
+        username: newUsername,
+        email: 'admin@workconnect.com',
         password: hashedPassword,
         role: 'admin',
         createdAt: new Date().toISOString()

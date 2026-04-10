@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="en">
 
 <head>
@@ -795,7 +795,7 @@
 </head>
 
 <body>
-    <!-- Navigation – exact same as customer-dashboard.html -->
+    <!-- Navigation â€“ exact same as customer-dashboard.html -->
     <nav class="navbar">
         <div class="container nav-container">
             <a class="navbar-brand" href="customer-dashboard.html"
@@ -932,15 +932,15 @@
             <div class="contact-info" style="margin-top: 2rem;">
                 <h3 class="section-title">Contact & Location</h3>
                 <div class="contact-item">
-                    <span class="contact-icon">📞</span>
+                    <span class="contact-icon">ðŸ“ž</span>
                     <span id="contactPhone">N/A</span>
                 </div>
                 <div class="contact-item">
-                    <span class="contact-icon">✉️</span>
+                    <span class="contact-icon">âœ‰ï¸</span>
                     <span id="contactEmail">N/A</span>
                 </div>
                 <div class="contact-item" id="locationItem" style="display: none;">
-                    <span class="contact-icon">📍</span>
+                    <span class="contact-icon">ðŸ“</span>
                     <a id="locationLink" href="#" target="_blank" style="color: #38bdf8; text-decoration: none;">View on
                         Map</a>
                 </div>
@@ -1044,8 +1044,8 @@
                         <input type="number" id="duration" min="1" required placeholder="Hours">
                     </div>
                     <div>
-                        <label for="totalAmount">Amount (₹)</label>
-                        <input type="number" id="totalAmount" min="0" step="50" required placeholder="Cost">
+                        <label for="totalAmount">Amount (â‚¹)</label>
+                        <input type="number" id="totalAmount" min="1" step="1" required placeholder="Cost">
                     </div>
                 </div>
                 <button type="submit" class="submit-order-btn"
@@ -1255,7 +1255,7 @@
             if (expEl) expEl.textContent = currentWorker.experience ? `${currentWorker.experience} years` : 'N/A';
 
             const rateEl = document.getElementById('hourlyRate');
-            if (rateEl) rateEl.textContent = currentWorker.hourlyRate ? `₹${currentWorker.hourlyRate}/hr` : 'N/A';
+            if (rateEl) rateEl.textContent = currentWorker.hourlyRate ? `â‚¹${currentWorker.hourlyRate}/hr` : 'N/A';
 
             const descEl = document.getElementById('description');
             if (descEl) descEl.textContent = currentWorker.description || 'Professional worker available for hire.';
@@ -1440,7 +1440,7 @@
                 reviewsList.innerHTML = reviews.map(review => `
                     <div class="review-item">
                         <div class="review-header" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.5rem;">
-                            <span class="review-rating">${'★'.repeat(review.rating)}${'☆'.repeat(5 - review.rating)}</span>
+                            <span class="review-rating">${'â˜…'.repeat(review.rating)}${'â˜†'.repeat(5 - review.rating)}</span>
                             <span class="review-date" style="font-size: 0.75rem; color: #64748b;">${new Date(review.createdAt).toLocaleDateString()}</span>
                         </div>
                         <div class="review-comment" style="color: #e2e8f0; margin-bottom: 0.5rem;">${review.comment || 'No comment provided'}</div>
@@ -1492,15 +1492,15 @@
 
             if (skills.length === 0) {
                 services = [
-                    { name: 'General Consultation', price: '₹200' },
-                    { name: 'Hourly Service', price: `₹${currentWorker.hourlyRate || 300}/hr` },
-                    { name: 'Full Day Service', price: '₹2000' }
+                    { name: 'General Consultation', price: 'â‚¹200' },
+                    { name: 'Hourly Service', price: `â‚¹${currentWorker.hourlyRate || 300}/hr` },
+                    { name: 'Full Day Service', price: 'â‚¹2000' }
                 ];
             } else {
                 skills.forEach(skill => {
-                    services.push({ name: `${skill} Consultation`, price: '₹300' });
-                    services.push({ name: `${skill} Basic Service`, price: '₹500 - ₹1000' });
-                    services.push({ name: `${skill} Advanced Repair`, price: '₹1500+' });
+                    services.push({ name: `${skill} Consultation`, price: 'â‚¹300' });
+                    services.push({ name: `${skill} Basic Service`, price: 'â‚¹500 - â‚¹1000' });
+                    services.push({ name: `${skill} Advanced Repair`, price: 'â‚¹1500+' });
                 });
             }
 
@@ -1525,7 +1525,7 @@
             closePriceList();
             openOrderModal();
 
-            // Clean price string (remove ₹ and +)
+            // Clean price string (remove â‚¹ and +)
             const price = parseInt(priceStr.replace(/[^0-9]/g, '')) || 0;
 
             const serviceInput = document.getElementById('serviceType');
