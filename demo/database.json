@@ -131,7 +131,7 @@
       "username": "udhaya111",
       "email": "admin@workconnect.com",
       "phone": "",
-      "password": "$2a$10$.ABPmT0V76mVqz1LtL0O4ed7rjLaF4ztSvrmqyrWvakibseEkk9K2",
+      "password": "$2a$10$UZZX1l6ZAPnihryRwCjkA.q44JhiYC3DbuHmgo4MkEMKD4CXlMbwy",
       "role": "admin",
       "createdAt": "2025-08-05T10:19:59.538Z"
     },
@@ -1121,14 +1121,17 @@
       "duration": "1",
       "totalAmount": "1",
       "status": "completed",
-      "paymentStatus": "unpaid",
+      "paymentStatus": "paid",
       "createdAt": "2026-03-25T09:27:34.346Z",
       "updatedAt": "2026-03-25T09:38:50.554Z",
       "workerLiveLocation": {
         "latitude": 11.518984,
         "longitude": 77.395909,
         "timestamp": "2026-03-25T09:29:44.887Z"
-      }
+      },
+      "transactionId": "pay_SeqtrBBI0ZoKP5",
+      "paidAt": "2026-04-18T06:12:10.284Z",
+      "paymentMethod": "razorpay"
     },
     {
       "id": "1774435254865",
@@ -1229,6 +1232,60 @@
           "timestamp": "2026-04-10T05:41:46.690Z"
         }
       ]
+    },
+    {
+      "id": "1776491347391",
+      "customerId": "1773636230891",
+      "workerId": "1754383280269",
+      "serviceType": "painting",
+      "description": "Surface Preparation\nCleaning the surface, removing old paint, filling cracks or holes, sanding, and applying putty or primer.",
+      "duration": "1",
+      "totalAmount": "3000",
+      "status": "pending",
+      "paymentStatus": "unpaid",
+      "createdAt": "2026-04-18T05:49:07.392Z"
+    },
+    {
+      "id": "1776491999934",
+      "customerId": "1773636230891",
+      "workerId": "1773635625507",
+      "serviceType": "painting",
+      "description": "Surface Preparation\nCleaning the surface, removing old paint, filling cracks or holes, sanding, and applying putty or primer.",
+      "duration": "1",
+      "totalAmount": "3000",
+      "status": "completed",
+      "paymentStatus": "unpaid",
+      "createdAt": "2026-04-18T05:59:59.934Z",
+      "updatedAt": "2026-04-18T06:01:28.860Z",
+      "workerLiveLocation": {
+        "latitude": 11.518961560051128,
+        "longitude": 77.39594587308738,
+        "timestamp": "2026-04-18T06:01:26.663Z"
+      }
+    },
+    {
+      "id": "1776492232913",
+      "customerId": "1773636230891",
+      "workerId": "1773635625507",
+      "serviceType": "painting",
+      "description": "Surface Preparation\nCleaning the surface, removing old paint, filling cracks or holes, sanding, and applying putty or primer.",
+      "duration": "1",
+      "totalAmount": "3000",
+      "status": "pending",
+      "paymentStatus": "unpaid",
+      "createdAt": "2026-04-18T06:03:52.913Z"
+    },
+    {
+      "id": "1778561723655",
+      "customerId": "1773636230891",
+      "workerId": "1773635625507",
+      "serviceType": "construction ",
+      "description": "needed for the construction working for home",
+      "duration": "4",
+      "totalAmount": "11",
+      "status": "pending",
+      "paymentStatus": "unpaid",
+      "createdAt": "2026-05-12T04:55:23.655Z"
     }
   ],
   "payments": [
@@ -1414,6 +1471,20 @@
       "razorpayOrderId": "order_Sber5Ptwb16Qqq",
       "razorpayPaymentId": "pay_SberYMr5oBKECh",
       "razorpaySignature": "f54a2babe7f154f75f0165d6270fbef6864d6544071be1256b12eba44beb0bf8"
+    },
+    {
+      "id": "pay_razorpay_1776492730285",
+      "orderId": "1774430854346",
+      "customerId": "1773636230891",
+      "workerId": "1773635625507",
+      "amount": "1",
+      "method": "razorpay",
+      "transactionId": "pay_SeqtrBBI0ZoKP5",
+      "status": "success",
+      "createdAt": "2026-04-18T06:12:10.285Z",
+      "razorpayOrderId": "order_SeqtZph1RMrNh6",
+      "razorpayPaymentId": "pay_SeqtrBBI0ZoKP5",
+      "razorpaySignature": "fd7c3fd042f3d0fe0950993af0093fbfaa0c4fee9528bd3aee4ed092598381eb"
     }
   ],
   "supportTickets": [
@@ -1444,11 +1515,111 @@
   ],
   "notifications": [
     {
+      "id": "1778561723712",
+      "recipientId": "1773635625507",
+      "message": "New request for construction ",
+      "type": "info",
+      "read": false,
+      "relatedId": "1778561723655",
+      "link": "/worker-orders.html",
+      "createdAt": "2026-05-12T04:55:23.712Z"
+    },
+    {
+      "id": "1776492732265",
+      "recipientId": "1773636230891",
+      "message": "Your payment of ₹1 for Order #854346 was confirmed.",
+      "type": "success",
+      "read": true,
+      "relatedId": "1774430854346",
+      "link": "/payment.html?orderId=1774430854346",
+      "createdAt": "2026-04-18T06:12:12.265Z"
+    },
+    {
+      "id": "1776492732262",
+      "recipientId": "1773635625507",
+      "message": "Payment of ₹1 received via RAZORPAY for Order #854346",
+      "type": "success",
+      "read": false,
+      "relatedId": "1774430854346",
+      "link": "/worker-payments.html",
+      "createdAt": "2026-04-18T06:12:12.262Z"
+    },
+    {
+      "id": "1776492232925",
+      "recipientId": "1773635625507",
+      "message": "New request for painting",
+      "type": "info",
+      "read": false,
+      "relatedId": "1776492232913",
+      "link": "/worker-orders.html",
+      "createdAt": "2026-04-18T06:03:52.925Z"
+    },
+    {
+      "id": "1776492088882",
+      "recipientId": "1773636230891",
+      "message": "Order 999934 is now completed",
+      "type": "success",
+      "read": false,
+      "relatedId": "1776491999934",
+      "link": "/customer-orders.html",
+      "createdAt": "2026-04-18T06:01:28.882Z"
+    },
+    {
+      "id": "1776492088875",
+      "recipientId": "1773635625507",
+      "message": "Order 999934 updated to completed",
+      "type": "info",
+      "read": false,
+      "relatedId": "1776491999934",
+      "link": "/worker-orders.html",
+      "createdAt": "2026-04-18T06:01:28.875Z"
+    },
+    {
+      "id": "1776492084750",
+      "recipientId": "1773636230891",
+      "message": "Order 999934 is now accepted",
+      "type": "info",
+      "read": false,
+      "relatedId": "1776491999934",
+      "link": "/customer-orders.html",
+      "createdAt": "2026-04-18T06:01:24.750Z"
+    },
+    {
+      "id": "1776492084736",
+      "recipientId": "1773635625507",
+      "message": "Order 999934 updated to accepted",
+      "type": "info",
+      "read": false,
+      "relatedId": "1776491999934",
+      "link": "/worker-orders.html",
+      "createdAt": "2026-04-18T06:01:24.736Z"
+    },
+    {
+      "id": "1776491999962",
+      "recipientId": "1773635625507",
+      "message": "New request for painting",
+      "type": "info",
+      "read": false,
+      "relatedId": "1776491999934",
+      "link": "/worker-orders.html",
+      "createdAt": "2026-04-18T05:59:59.962Z"
+    },
+    {
+      "id": "1776491347469",
+      "recipientId": "1754383280269",
+      "message": "New request for painting",
+      "type": "info",
+      "read": false,
+      "relatedId": "1776491347391",
+      "link": "/worker-orders.html",
+      "createdAt": "2026-04-18T05:49:07.469Z"
+    },
+    {
       "id": "1775795328750",
       "recipientId": "1773636230891",
       "message": "Your payment of ₹1 for Order #194995 was confirmed.",
       "type": "success",
-      "read": false,
+      "read": true,
       "relatedId": "1775795194995",
       "link": "/payment.html?orderId=1775795194995",
       "createdAt": "2026-04-10T04:28:48.750Z"
@@ -1798,7 +1969,7 @@
       "recipientId": "1773636230891",
       "message": "Order 955391 is now accepted",
       "type": "info",
-      "read": false,
+      "read": true,
       "relatedId": "1773650955391",
       "link": "/customer-orders.html",
       "createdAt": "2026-03-16T08:51:15.818Z"
