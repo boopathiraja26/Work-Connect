@@ -1,0 +1,36 @@
+<ion-header [translucent]="true">
+  <ion-toolbar color="primary">
+    <ion-buttons slot="start">
+      <ion-back-button defaultHref="/customer-dashboard"></ion-back-button>
+    </ion-buttons>
+    <ion-title>Notifications</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content [fullscreen]="true">
+  <ion-refresher slot="fixed" (ionRefresh)="doRefresh($event)">
+    <ion-refresher-content></ion-refresher-content>
+  </ion-refresher>
+
+  <div *ngIf="loading" class="ion-padding ion-text-center">
+    <ion-spinner name="crescent"></ion-spinner>
+  </div>
+
+  <div *ngIf="!loading && notifications.length === 0" class="empty-state">
+    <ion-icon name="notifications-off-outline"></ion-icon>
+    <h3>No Notifications Yet</h3>
+    <p>We'll let you know when something important happens.</p>
+  </div>
+
+  <ion-list *ngIf="!loading && notifications.length > 0">
+    <ion-item *ngFor="let n of notifications" (click)="markAsRead(n)" [class.unread]="!n.read">
+      <ion-icon [name]="n.type === 'success' ? 'checkmark-circle' : 'information-circle'"
+        [color]="n.type === 'success' ? 'success' : 'primary'" slot="start"></ion-icon>
+      <ion-label>
+        <h2>{{n.message}}</h2>
+        <p>{{n.createdAt | date:'short'}}</p>
+      </ion-label>
+      <div *ngIf="!n.read" class="unread-dot" slot="end"></div>
+    </ion-item>
+  </ion-list>
+</ion-content>

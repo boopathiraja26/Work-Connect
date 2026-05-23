@@ -1,0 +1,119 @@
+<ion-header [translucent]="true">
+  <ion-toolbar color="primary">
+    <ion-buttons slot="start">
+      <ion-back-button defaultHref="/customer-dashboard"></ion-back-button>
+    </ion-buttons>
+    <ion-title>Worker Details</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content [fullscreen]="true" class="details-bg">
+  <div *ngIf="loading" class="loading-container">
+    <ion-spinner name="crescent"></ion-spinner>
+  </div>
+
+  <div *ngIf="!loading && worker" class="content-container">
+    <div class="profile-header">
+      <div class="header-overlay"></div>
+      <div class="profile-info">
+        <ion-avatar>
+          <img [src]="worker.profileImage || 'assets/default-avatar.png'"
+            (onerror)="$any($event.target).src='https://placehold.co/150x150?text=Avatar'">
+        </ion-avatar>
+        <h1>{{worker.name || worker.username}}</h1>
+        <p class="role">{{worker.skills?.[0] || 'Professional'}}</p>
+        <div class="rating-row">
+          <ion-icon name="star" color="warning"></ion-icon>
+          <span>{{worker.averageRating || '0.0'}} ({{worker.reviewsCount}} Reviews)</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="stats-row">
+      <div class="stat-item">
+        <span class="value">${{worker.hourlyRate}}</span>
+        <span class="label">Per Hour</span>
+      </div>
+      <div class="stat-item">
+        <span class="value">{{worker.experience || '0'}}+</span>
+        <span class="label">Years Exp.</span>
+      </div>
+      <div class="stat-item">
+        <span class="value">{{worker.availability}}</span>
+        <span class="label">Status</span>
+      </div>
+    </div>
+
+    <ion-segment [(ngModel)]="activeTab" mode="md">
+      <ion-segment-button value="about">
+        <ion-label>About</ion-label>
+      </ion-segment-button>
+      <ion-segment-button value="portfolio">
+        <ion-label>Portfolio</ion-label>
+      </ion-segment-button>
+      <ion-segment-button value="reviews">
+        <ion-label>Reviews</ion-label>
+      </ion-segment-button>
+    </ion-segment>
+
+    <div [ngSwitch]="activeTab" class="tab-content">
+      <!-- About Tab -->
+      <div *ngSwitchCase="'about'" class="about-tab anim-fade">
+        <section>
+          <h3>Description</h3>
+          <p>{{worker.description || 'No description provided.'}}</p>
+        </section>
+
+        <section>
+          <h3>Skills</h3>
+          <div class="skills-chips">
+            <ion-chip *ngFor="let skill of worker.skills">{{skill}}</ion-chip>
+          </div>
+        </section>
+
+        <section>
+          <h3>Location</h3>
+          <p><ion-icon name="location-outline"></ion-icon> {{worker.address?.city}}, {{worker.address?.state}}</p>
+        </section>
+      </div>
+
+      <!-- Portfolio Tab -->
+      <div *ngSwitchCase="'portfolio'" class="portfolio-tab anim-fade">
+        <div *ngIf="!worker.portfolio?.length" class="empty-state">
+          <ion-icon name="images-outline"></ion-icon>
+          <p>No portfolio items yet.</p>
+        </div>
+        <div class="portfolio-grid">
+          <img *ngFor="let img of worker.portfolio" [src]="img" (click)="openImage(img)">
+        </div>
+      </div>
+
+      <!-- Reviews Tab -->
+      <div *ngSwitchCase="'reviews'" class="reviews-tab anim-fade">
+        <div *ngIf="!reviews?.length" class="empty-state">
+          <ion-icon name="star-outline"></ion-icon>
+          <p>No reviews yet.</p>
+        </div>
+        <div class="review-item" *ngFor="let review of reviews">
+          <div class="review-header">
+            <span class="user">{{review.customerName || 'Customer'}}</span>
+            <div class="stars">
+              <ion-icon name="star" color="warning" *ngFor="let s of [1,2,3,4,5]"
+                [name]="review.rating >= s ? 'star' : 'star-outline'"></ion-icon>
+            </div>
+          </div>
+          <p class="comment">{{review.comment}}</p>
+          <span class="date">{{review.createdAt | date:'mediumDate'}}</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <ion-footer *ngIf="!loading && worker" collapse="fade">
+    <ion-toolbar color="primary">
+      <ion-button expand="block" (click)="bookNow()" class="book-btn">
+        Book Now - ${{worker.hourlyRate}}/hr
+      </ion-button>
+    </ion-toolbar>
+  </ion-footer>
+</ion-content>

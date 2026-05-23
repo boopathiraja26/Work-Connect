@@ -1,0 +1,1931 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>WorkConnect - Customer Dashboard</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+
+    <style>
+        /* Global layout – dark glassmorphism base (reverted) */
+        body {
+            min-height: 100vh;
+            background: radial-gradient(circle at top, #020617 0%, #020617 45%, #020617 100%);
+            color: #e5e7eb;
+            font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+            position: relative;
+            overflow-x: hidden;
+        }
+
+        .navbar {
+            background: rgba(15, 23, 42, 0.95);
+            border-bottom: 1px solid rgba(148, 163, 184, 0.2);
+            backdrop-filter: blur(16px);
+            position: sticky;
+            top: 0;
+            z-index: 20;
+        }
+
+        .navbar .nav-link {
+            position: relative;
+            color: #9ca3af;
+            padding-bottom: 0.25rem;
+            margin: 0 0.35rem;
+            transition: color 0.2s ease;
+        }
+
+        .navbar .nav-link::after {
+            content: '';
+            position: absolute;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            height: 2px;
+            border-radius: 999px;
+            background: linear-gradient(90deg, #38bdf8, #60a5fa);
+            transform: scaleX(0);
+            transform-origin: center;
+            transition: transform 0.2s ease-out;
+        }
+
+        .navbar .nav-link:hover {
+            color: #e5e7eb;
+        }
+
+        .navbar .nav-link:hover::after {
+            transform: scaleX(1);
+        }
+
+        .nav-notifications {
+            position: relative;
+            margin-right: 0.5rem;
+        }
+
+        .nav-notifications button {
+            background: transparent;
+            border: none;
+            color: #9ca3af;
+            position: relative;
+        }
+
+        .nav-notifications button:hover {
+            color: #e5e7eb;
+        }
+
+        .nav-notifications .badge {
+            position: absolute;
+            top: -4px;
+            right: -4px;
+            background: #ef4444;
+            color: #ffffff;
+            border-radius: 999px;
+            font-size: 10px;
+            padding: 0 4px;
+        }
+
+        .notifications-dropdown {
+            position: absolute;
+            right: 0;
+            top: 125%;
+            width: 280px;
+            background: rgba(15, 23, 42, 0.98);
+            border-radius: 0.75rem;
+            border: 1px solid rgba(148, 163, 184, 0.4);
+            box-shadow: 0 18px 45px rgba(15, 23, 42, 0.95);
+            padding: 0.5rem 0;
+            display: none;
+            z-index: 30;
+        }
+
+        .notifications-dropdown.show {
+            display: block;
+        }
+
+        .notifications-dropdown h6 {
+            font-size: 0.8rem;
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+            padding: 0.4rem 0.9rem;
+            margin-bottom: 0.25rem;
+            border-bottom: 1px solid rgba(148, 163, 184, 0.3);
+            color: #9ca3af;
+        }
+
+        .notifications-dropdown .notif-item {
+            padding: 0.35rem 0.9rem;
+            font-size: 0.8rem;
+            border-bottom: 1px solid rgba(30, 41, 59, 0.9);
+        }
+
+        .notifications-dropdown .notif-item:last-child {
+            border-bottom: none;
+        }
+
+        .notifications-dropdown .notif-title {
+            font-weight: 600;
+            color: #e5e7eb;
+        }
+
+        .notifications-dropdown .notif-meta {
+            color: #9ca3af;
+            font-size: 0.72rem;
+        }
+
+        .hero-wave {
+            background: radial-gradient(circle at top left, rgba(56, 189, 248, 0.15), transparent 60%),
+                radial-gradient(circle at bottom right, rgba(96, 165, 250, 0.18), transparent 60%),
+                rgba(15, 23, 42, 0.95);
+            border-bottom: 1px solid rgba(148, 163, 184, 0.25);
+        }
+
+        .hero-wave h1,
+        .hero-wave p {
+            color: #e5e7eb !important;
+        }
+
+        .section-title {
+            background: linear-gradient(135deg, #38bdf8, #60a5fa);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            font-weight: 700;
+            letter-spacing: 0.03em;
+            text-transform: uppercase;
+            font-size: 0.85rem;
+        }
+
+        /* Glass cards & hover */
+        .card {
+            background: radial-gradient(circle at top left, rgba(56, 189, 248, 0.12), transparent 55%),
+                radial-gradient(circle at bottom right, rgba(96, 165, 250, 0.12), transparent 55%),
+                rgba(15, 23, 42, 0.9);
+            border-radius: 1.25rem;
+            border: 1px solid rgba(148, 163, 184, 0.3);
+            box-shadow: 0 18px 45px rgba(15, 23, 42, 0.85);
+            padding: 18px;
+            transition: transform 0.25s ease, box-shadow 0.25s ease, border-color 0.25s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .card::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: radial-gradient(circle at top left, rgba(56, 189, 248, 0.2), transparent 60%);
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.25s ease;
+        }
+
+        .card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 26px 60px rgba(15, 23, 42, 0.95);
+            border-color: rgba(56, 189, 248, 0.7);
+        }
+
+        .card:hover::before {
+            opacity: 1;
+        }
+
+        /* Hero quick stats card special case for spacing on large screens */
+        .hero-stats-card {
+            max-width: 460px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        /* Ensure Quick Stats text is white for readability */
+        .hero-stats-card h5,
+        .hero-stats-card .h4,
+        .hero-stats-card small {
+            color: #ffffff !important;
+        }
+
+        /* Forms */
+        .form-control,
+        .form-select {
+            background: rgba(15, 23, 42, 0.9);
+            border: 1px solid rgba(148, 163, 184, 0.3);
+            color: #e5e7eb;
+            border-radius: 0.75rem;
+        }
+
+        .form-control::placeholder,
+        .form-select::placeholder {
+            color: #6b7280;
+        }
+
+        .form-control:focus,
+        .form-select:focus {
+            outline: none;
+            border-color: #38bdf8;
+            box-shadow: 0 0 0 3px rgba(56, 189, 248, 0.25);
+            background: rgba(15, 23, 42, 0.95);
+            color: #e5e7eb;
+        }
+
+        label.form-label {
+            color: #e5e7eb;
+        }
+
+        .text-secondary {
+            color: #9ca3af !important;
+        }
+
+        /* Buttons – same style as worker page */
+        .btn-primary {
+            background: linear-gradient(135deg, #38bdf8 0%, #60a5fa 100%);
+            border: none;
+            color: #ffffff;
+            font-weight: 600;
+            border-radius: 0.75rem;
+            padding: 0.6rem 1.1rem;
+            box-shadow: 0 10px 25px rgba(56, 189, 248, 0.35);
+            transition: all 0.25s ease;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 16px 40px rgba(56, 189, 248, 0.5);
+            color: #ffffff;
+        }
+
+        .btn-outline {
+            background: transparent;
+            border-radius: 0.75rem;
+            border: 1px solid rgba(148, 163, 184, 0.5);
+            color: #e5e7eb;
+            padding: 0.55rem 1rem;
+            transition: all 0.25s ease;
+        }
+
+        .btn-outline:hover {
+            background: rgba(15, 23, 42, 0.9);
+            border-color: #38bdf8;
+            color: #e5e7eb;
+        }
+
+        /* Workers grid */
+        #workersGrid .card-title,
+        #workersGrid .fw-bold {
+            color: #e5e7eb !important;
+        }
+
+        .availability-badge {
+            padding: 6px 12px;
+            border-radius: 999px;
+            font-size: 12px;
+            font-weight: 600;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .availability-badge i {
+            font-size: 8px;
+        }
+
+        .available {
+            background: rgba(22, 163, 74, 0.18);
+            color: #4ade80;
+        }
+
+        .busy {
+            background: rgba(250, 204, 21, 0.18);
+            color: #facc15;
+        }
+
+        .unavailable {
+            background: rgba(239, 68, 68, 0.18);
+            color: #fca5a5;
+        }
+
+        .skill-tag {
+            background: rgba(56, 189, 248, 0.1);
+            color: #38bdf8;
+            padding: 4px 12px;
+            border-radius: 6px;
+            font-size: 11px;
+            font-weight: 600;
+            display: inline-flex;
+            align-items: center;
+            margin: 2px;
+            border: 1px solid rgba(56, 189, 248, 0.2);
+            transition: all 0.2s ease;
+        }
+
+        .skill-tag:hover {
+            background: rgba(56, 189, 248, 0.2);
+            transform: translateY(-1px);
+        }
+
+        .worker-card {
+            background: rgba(15, 23, 42, 0.6);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(148, 163, 184, 0.1);
+            border-radius: 1.5rem;
+            overflow: hidden;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .worker-card:hover {
+            transform: translateY(-8px);
+            border-color: var(--primary);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4), 0 0 20px rgba(56, 189, 248, 0.1);
+        }
+
+        .worker-image-container {
+            position: relative;
+            padding: 1.5rem;
+            display: flex;
+            justify-content: center;
+        }
+
+        .worker-image {
+            width: 100px;
+            height: 100px;
+            border-radius: 2rem;
+            object-fit: cover;
+            border: 3px solid rgba(56, 189, 248, 0.2);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+        }
+
+        .verified-badge {
+            position: absolute;
+            bottom: 1rem;
+            right: 35%;
+            background: #0ea5e9;
+            color: white;
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 12px;
+            border: 2px solid #0f172a;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+        }
+
+        .worker-info {
+            padding: 0 1.5rem 1.5rem;
+            text-align: center;
+        }
+
+        .worker-name {
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: #fff;
+            margin-bottom: 0.25rem;
+        }
+
+        .worker-title {
+            color: #94a3b8;
+            font-size: 0.875rem;
+            margin-bottom: 1rem;
+        }
+
+        .worker-stats {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+            padding: 1rem;
+            background: rgba(30, 41, 59, 0.4);
+            border-radius: 1rem;
+        }
+
+        .stat-item {
+            text-align: center;
+        }
+
+        .stat-label {
+            color: #64748b;
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            margin-bottom: 0.25rem;
+        }
+
+        .stat-value {
+            color: #f1f5f9;
+            font-weight: 600;
+            font-size: 0.95rem;
+        }
+
+        .worker-price {
+            font-size: 1.25rem;
+            font-weight: 800;
+            color: #38bdf8;
+            margin-bottom: 1.5rem;
+        }
+
+        .worker-price span {
+            font-size: 0.875rem;
+            color: #64748b;
+            font-weight: 400;
+        }
+
+        /* Orders filters and stats – glass style */
+        .orders-filters {
+            background: rgba(15, 23, 42, 0.85);
+            border-radius: 1rem;
+            padding: 0.85rem 1rem;
+            border: 1px solid rgba(148, 163, 184, 0.4);
+            margin-bottom: 1rem;
+        }
+
+        .orders-stats {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 12px;
+            margin-bottom: 1rem;
+        }
+
+        .orders-stat-card {
+            flex: 1 1 160px;
+            padding: 12px 14px;
+            border-radius: 0.9rem;
+            background: rgba(15, 23, 42, 0.95);
+            border: 1px solid rgba(148, 163, 184, 0.35);
+            box-shadow: 0 18px 45px rgba(15, 23, 42, 0.9);
+            transition: transform 0.25s ease, box-shadow 0.25s ease, border-color 0.25s ease;
+        }
+
+        .orders-stat-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 26px 60px rgba(15, 23, 42, 1);
+            border-color: rgba(56, 189, 248, 0.8);
+        }
+
+        .orders-stat-label {
+            font-size: 11px;
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+            color: #9ca3af;
+        }
+
+        .orders-stat-value {
+            font-size: 18px;
+            font-weight: 700;
+            color: #e5e7eb;
+        }
+
+        .orders-stat-sub {
+            font-size: 11px;
+            color: #9ca3af;
+        }
+
+        /* Status badges for orders */
+        .status-badge {
+            padding: 6px 12px;
+            border-radius: 999px;
+            font-size: 11px;
+            font-weight: 600;
+        }
+
+        .status-pending {
+            background: #fff3cd;
+            color: #856404;
+        }
+
+        .status-accepted {
+            background: #d4edda;
+            color: #155724;
+        }
+
+        .status-completed {
+            background: #cce5ff;
+            color: #004085;
+        }
+
+        /* Animations */
+        .pulse-animation {
+            animation: pulse 2s ease-in-out infinite;
+        }
+
+        @keyframes pulse {
+            0% {
+                transform: scale(1);
+            }
+
+            50% {
+                transform: scale(1.05);
+            }
+
+            100% {
+                transform: scale(1);
+            }
+        }
+
+        .fade-in {
+            opacity: 0;
+            transform: translateY(8px);
+            animation: fadeInUp 0.45s ease forwards;
+        }
+
+        @keyframes fadeInUp {
+            0% {
+                opacity: 0;
+                transform: translateY(8px);
+            }
+
+            100% {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Chatbot – adapt to dark theme */
+        .chatbot-toggle {
+            position: fixed;
+            right: 20px;
+            bottom: 20px;
+            z-index: 50;
+        }
+
+        .chatbot-toggle button {
+            border-radius: 999px;
+            box-shadow: 0 18px 40px rgba(56, 189, 248, 0.6);
+        }
+
+        .chatbot-window {
+            position: fixed;
+            right: 20px;
+            bottom: 90px;
+            width: 320px;
+            max-height: 420px;
+            background: rgba(15, 23, 42, 0.98);
+            border-radius: 1rem;
+            box-shadow: 0 24px 60px rgba(15, 23, 42, 0.95);
+            border: 1px solid rgba(148, 163, 184, 0.4);
+            display: none;
+            flex-direction: column;
+            overflow: hidden;
+            z-index: 50;
+        }
+
+        .chatbot-header {
+            padding: 10px 14px;
+            background: radial-gradient(circle at top left, rgba(56, 189, 248, 0.5), transparent 55%),
+                radial-gradient(circle at bottom right, rgba(96, 165, 250, 0.5), transparent 55%),
+                rgba(15, 23, 42, 0.98);
+            color: #ffffff;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .chatbot-body {
+            padding: 10px 12px;
+            overflow-y: auto;
+            flex: 1;
+            background: radial-gradient(circle at top left, rgba(15, 23, 42, 1), transparent 55%),
+                rgba(15, 23, 42, 0.98);
+        }
+
+        .chatbot-message {
+            margin-bottom: 8px;
+            font-size: 13px;
+            line-height: 1.4;
+        }
+
+        .chatbot-message.user {
+            text-align: right;
+        }
+
+        .chatbot-bubble {
+            display: inline-block;
+            padding: 8px 10px;
+            border-radius: 14px;
+            max-width: 90%;
+        }
+
+        .chatbot-bubble.user {
+            background: linear-gradient(135deg, #38bdf8 0%, #60a5fa 100%);
+            color: #ffffff;
+            border-bottom-right-radius: 4px;
+        }
+
+        .chatbot-bubble.bot {
+            background: rgba(15, 23, 42, 0.9);
+            color: #e5e7eb;
+            border-bottom-left-radius: 4px;
+            border: 1px solid rgba(148, 163, 184, 0.5);
+        }
+
+        .chatbot-footer {
+            padding: 8px 10px;
+            border-top: 1px solid rgba(148, 163, 184, 0.4);
+            background: rgba(15, 23, 42, 0.98);
+        }
+
+        .chatbot-footer input {
+            font-size: 13px;
+            background: rgba(15, 23, 42, 0.95);
+            border: 1px solid rgba(148, 163, 184, 0.4);
+            color: #e5e7eb;
+            border-radius: 999px;
+        }
+
+        .chatbot-footer input::placeholder {
+            color: #6b7280;
+        }
+
+        /* Modal */
+        .modal-content {
+            background: rgba(15, 23, 42, 0.98);
+            border-radius: 1rem;
+            border: 1px solid rgba(148, 163, 184, 0.4);
+            box-shadow: 0 24px 60px rgba(15, 23, 42, 0.95);
+        }
+
+        .modal-header {
+            border-bottom: 1px solid rgba(148, 163, 184, 0.4);
+        }
+
+        .modal-title {
+            color: #e5e7eb;
+        }
+
+        /* Review form button alignment */
+        .review-form .btn-primary {
+            white-space: nowrap;
+        }
+
+        /* Responsive tweaks */
+        @media (max-width: 992px) {
+            .hero-wave .row {
+                text-align: center;
+            }
+
+            .hero-wave .col-lg-6:first-child {
+                margin-bottom: 1.5rem;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .orders-filters {
+                padding: 0.75rem;
+            }
+
+            .orders-stat-card {
+                flex: 1 1 100%;
+            }
+        }
+
+        /* Orders list text tweaks – make key text white for better contrast */
+        #ordersList .card-title,
+        #ordersList .card-title+.text-secondary,
+        #ordersList .card-body .mb-3 p.mb-1 {
+            color: #ffffff !important;
+        }
+
+        /* Make specific filter/search labels white for better visibility */
+        #searchForm .form-label,
+        #orders .orders-filters .form-label {
+            color: #ffffff !important;
+        }
+
+        /* Welcome Animation Overlay */
+        #welcomeOverlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: #020617;
+            z-index: 10000;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            transition: opacity 1s ease-out, visibility 1s;
+        }
+
+        .welcome-video-container {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+            z-index: -1;
+        }
+
+        .welcome-video {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            opacity: 0.5;
+            filter: grayscale(30%) contrast(110%);
+        }
+
+        .welcome-content {
+            text-align: center;
+            animation: welcomeTitleScale 1.5s ease-out forwards;
+        }
+
+        @keyframes welcomeTitleScale {
+            0% {
+                transform: scale(0.8);
+                opacity: 0;
+                filter: blur(10px);
+            }
+
+            100% {
+                transform: scale(1);
+                opacity: 1;
+                filter: blur(0);
+            }
+        }
+
+        .welcome-title {
+            font-size: 4rem;
+            font-weight: 800;
+            margin-bottom: 1rem;
+            background: linear-gradient(to right, #38bdf8, #818cf8);
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+            letter-spacing: -2px;
+        }
+
+        .welcome-subtitle {
+            font-size: 1.5rem;
+            color: #94a3b8;
+            font-weight: 400;
+        }
+
+        .welcome-logo {
+            font-size: 1.25rem;
+            color: #38bdf8;
+            margin-top: 2rem;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            justify-content: center;
+            opacity: 0.8;
+        }
+    </style>
+    <script src="config.js"></script>
+</head>
+
+<body style="overflow: hidden;">
+    <!-- Welcome Animation Overlay -->
+    <div id="welcomeOverlay">
+        <div class="welcome-video-container">
+            <video class="welcome-video" autoplay muted playsinline id="welcomeVideo">
+                <source
+                    src="https://assets.mixkit.co/videos/preview/mixkit-top-view-of-a-keyboard-and-a-cup-of-coffee-4235-large.mp4"
+                    type="video/mp4">
+            </video>
+        </div>
+        <div class="welcome-content">
+            <h1 class="welcome-title" id="welcomeUserTitle">Welcome back</h1>
+            <p class="welcome-subtitle">Your expert workspace is ready.</p>
+            <div class="welcome-logo">
+                <i class="fas fa-tools"></i>
+                <span>WorkConnect Premium</span>
+            </div>
+        </div>
+    </div>
+    <!-- Navigation -->
+    <nav class="navbar"
+        style="background: rgba(15, 23, 42, 0.95); border-bottom: 1px solid rgba(56, 189, 248, 0.2); backdrop-filter: blur(16px); padding: 0.75rem 0; position: sticky; top: 0; z-index: 1000; margin-bottom: 2rem;">
+        <div class="container"
+            style="display: flex; justify-content: space-between; align-items: center; max-width: 1200px;">
+            <a class="navbar-brand" href="customer-dashboard.html"
+                style="font-weight: 700; font-size: 1.5rem; background: linear-gradient(135deg, #38bdf8, #3b82f6); -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent; text-decoration: none;">
+                <i class="fas fa-tools me-2"></i>WorkConnect
+            </a>
+
+            <div style="display: flex; align-items: center; gap: 1.5rem;">
+                <a href="customer-dashboard.html"
+                    style="color: #fff; text-decoration: none; font-weight: 700; font-size: 0.95rem; transition: color 0.3s;">Dashboard</a>
+                <a href="customer-orders.html"
+                    style="color: #cbd5e1; text-decoration: none; font-weight: 500; font-size: 0.95rem; transition: color 0.3s;"
+                    onmouseover="this.style.color='#fff'" onmouseout="this.style.color='#cbd5e1'">My Orders</a>
+                <a href="customer-payments.html"
+                    style="color: #cbd5e1; text-decoration: none; font-weight: 500; font-size: 0.95rem; transition: color 0.3s;"
+                    onmouseover="this.style.color='#fff'" onmouseout="this.style.color='#cbd5e1'">Payments</a>
+                <a href="customer-help.html"
+                    style="color: #cbd5e1; text-decoration: none; font-weight: 500; font-size: 0.95rem; transition: color 0.3s;"
+                    onmouseover="this.style.color='#fff'" onmouseout="this.style.color='#cbd5e1'">Help</a>
+
+                <div class="nav-notifications">
+                    <button type="button" id="customerNotifBtn"
+                        style="background: none; border: none; color: #cbd5e1; position: relative; cursor: pointer;">
+                        <i class="fas fa-bell"></i>
+                        <span id="customerNotifCount"
+                            style="display: none; position: absolute; top: -5px; right: -5px; background: #ef4444; color: white; border-radius: 50%; padding: 2px 5px; font-size: 0.65rem; font-weight: bold;">0</span>
+                    </button>
+                    <div id="customerNotifDropdown" class="notifications-dropdown"
+                        style="position: absolute; top: 100%; right: 0; width: 300px; background: rgba(15, 23, 42, 0.98); border: 1px solid rgba(148, 163, 184, 0.3); border-radius: 0.75rem; display: none; z-index: 1000; padding: 0.5rem 0; box-shadow: 0 10px 40px rgba(0,0,0,0.5);">
+                        <h6
+                            style="padding: 0.5rem 1rem; border-bottom: 1px solid rgba(148, 163, 184, 0.2); color: #94a3b8; font-size: 0.8rem; text-transform: uppercase;">
+                            Notifications</h6>
+                        <div id="customerNotifList" style="max-height: 300px; overflow-y: auto;"></div>
+                    </div>
+                </div>
+
+                <div class="dropdown">
+                    <a href="customer-profile.html"
+                        style="color: #cbd5e1; text-decoration: none; font-weight: 500; font-size: 0.95rem; display: flex; align-items: center; gap: 0.5rem;"
+                        onmouseover="this.style.color='#fff'" onmouseout="this.style.color='#cbd5e1'">
+                        <i class="fas fa-user-circle" style="font-size: 1.2rem;"></i>
+                        <span id="navUserName">Profile</span>
+                    </a>
+                </div>
+
+                <button class="btn btn-outline-danger btn-sm" onclick="logout()" style="border-radius: 8px;">
+                    <i class="fas fa-sign-out-alt"></i>
+                </button>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="py-5 hero-wave">
+        <div class="container">
+            <div class="row align-items-center">
+                <div class="col-lg-6">
+                    <h1 class="display-4 fw-bold mb-3" style="color: #333333;">
+                        Find the perfect Worker for your project
+                    </h1>
+                    <p class="lead text-secondary mb-4" style="color: #6c757d;">
+                        Connect with skilled professionals and get your projects done efficiently.
+                    </p>
+                </div>
+                <div class="col-lg-6 text-center">
+                    <div class="card p-4 hero-stats-card">
+                        <h5 class="text-center mb-3">Quick Stats</h5>
+                        <div class="row text-center">
+                            <div class="col-4">
+                                <div class="h4 mb-1 pulse-animation" style="color: #007bff;">150+</div>
+                                <small class="text-secondary">Workers</small>
+                            </div>
+                            <div class="col-4">
+                                <div class="h4 mb-1 pulse-animation" style="color: #17a2b8; animation-delay: 0.5s;">500+
+                                </div>
+                                <small class="text-secondary">Projects</small>
+                            </div>
+                            <div class="col-4">
+                                <div class="h4 mb-1 pulse-animation" style="color: #28a745; animation-delay: 1s;">4.8★
+                                </div>
+                                <small class="text-secondary">Rating</small>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Main Content -->
+    <div class="container py-5">
+        <!-- Search Section -->
+        <section class="card p-4 mb-5">
+            <h4 class="mb-4 section-title">Find Workers</h4>
+            <form id="searchForm" class="row g-3">
+                <div class="col-md-4">
+                    <label for="nameSearch" class="form-label fw-bold" style="color: #333333;">Search by Name</label>
+                    <input type="text" class="form-control" id="nameSearch" placeholder="e.g., Udhaya Kumar">
+                </div>
+                <div class="col-md-4">
+                    <label for="skillSearch" class="form-label fw-bold" style="color: #333333;">Search by Skill</label>
+                    <input type="text" class="form-control" id="skillSearch" placeholder="e.g., Plumbing, Electrical">
+                </div>
+                <div class="col-md-4">
+                    <label for="maxRate" class="form-label fw-bold" style="color: #333333;">Max Hourly Rate</label>
+                    <input type="number" class="form-control" id="maxRate" placeholder="Enter max rate">
+                </div>
+                <div class="col-md-4">
+                    <label for="locationSearch" class="form-label fw-bold" style="color: #333333;">Location</label>
+                    <input type="text" class="form-control" id="locationSearch" placeholder="e.g., City, State">
+                </div>
+                <div class="col-md-4">
+                    <label for="availabilityFilter" class="form-label fw-bold"
+                        style="color: #333333;">Availability</label>
+                    <select class="form-select" id="availabilityFilter">
+                        <option value="">All</option>
+                        <option value="Available">Available</option>
+                        <option value="Busy">Busy</option>
+                    </select>
+                </div>
+                <div class="col-md-4 d-flex align-items-end">
+                    <button type="submit" class="btn btn-primary w-100">
+                        <i class="fas fa-search me-2"></i>Find Workers
+                    </button>
+                </div>
+            </form>
+        </section>
+
+        <!-- Workers Grid -->
+        <section id="workers" class="mb-5">
+            <h3 class="section-title mb-4">Available Workers</h3>
+            <div class="row" id="workersGrid">
+                <!-- Workers will be populated here -->
+            </div>
+        </section>
+
+        <!-- Orders Section
+        <section id="orders">
+            <h3 class="section-title mb-4">My Orders</h3>
+            <div class="orders-filters row g-2 align-items-end">
+                <div class="col-md-4">
+                    <label for="orderStatusFilter" class="form-label fw-bold" style="color:#333333;">Status</label>
+                    <select id="orderStatusFilter" class="form-select">
+                        <option value="">All</option>
+                        <option value="pending">Pending</option>
+                        <option value="accepted">Accepted</option>
+                        <option value="completed">Completed</option>
+                    </select>
+                </div>
+                <div class="col-md-4">
+                    <label for="paymentFilter" class="form-label fw-bold" style="color:#333333;">Payment</label>
+                    <select id="paymentFilter" class="form-select">
+                        <option value="">All</option>
+                        <option value="paid">Paid</option>
+                        <option value="unpaid">Unpaid</option>
+                    </select>
+                </div>
+                <div class="col-md-4">
+                    <label for="orderSort" class="form-label fw-bold" style="color:#333333;">Sort by</label>
+                    <select id="orderSort" class="form-select">
+                        <option value="newest">Newest first</option>
+                        <option value="oldest">Oldest first</option>
+                        <option value="amountHigh">Amount: High to Low</option>
+                        <option value="amountLow">Amount: Low to High</option>
+                    </select>
+                </div>
+            </div>
+            <div id="orderStats" class="orders-stats"></div>
+            <div class="row" id="ordersList">
+                <!-- Orders will be populated here -->
+    </div>
+    </section>
+    </div>
+
+    <!-- Order Modal -->
+    <div class="modal fade" id="orderModal" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title section-title">Place Order</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="orderForm">
+                        <div class="mb-3">
+                            <label for="serviceType" class="form-label">Service Type</label>
+                            <input type="text" class="form-control" id="serviceType" required
+                                placeholder="e.g., Plumbing repair">
+                        </div>
+                        <div class="mb-3">
+                            <label for="description" class="form-label">Description</label>
+                            <textarea class="form-control" id="description" rows="3" required
+                                placeholder="Describe the work needed"></textarea>
+                        </div>
+                        <div class="mb-3">
+                            <label for="duration" class="form-label">Duration (hours)</label>
+                            <input type="number" class="form-control" id="duration" min="1" required
+                                placeholder="Estimated hours">
+                        </div>
+                        <div class="mb-3">
+                            <label for="scheduledDate" class="form-label">Date & Time</label>
+                            <input type="datetime-local" class="form-control" id="scheduledDate" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="totalAmount" class="form-label">Total Amount (₹)</label>
+                            <input type="number" class="form-control" id="totalAmount" min="1" step="1" required
+                                placeholder="Total cost">
+                        </div>
+                        <button type="submit" class="btn btn-primary w-100">
+                            <i class="fas fa-paper-plane me-2"></i>Place Order
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Full Order View Modal -->
+    <!-- <div class="modal fade" id="fullOrderModal" tabindex="-1">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title section-title" id="fullOrderTitle">Order Details</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body" id="fullOrderBody">
+                    <!-- Full order details will be loaded here -->
+    <!-- </div>
+            </div>
+        </div>
+    </div>  -->
+
+    <!-- Floating Particles -->
+    <div class="floating-particles">
+        <div class="particle"></div>
+        <div class="particle"></div>
+        <div class="particle"></div>
+        <div class="particle"></div>
+        <div class="particle"></div>
+        <div class="particle"></div>
+        <div class="particle"></div>
+        <div class="particle"></div>
+        <div class="particle"></div>
+        <div class="particle"></div>
+    </div>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+    <script>
+        let currentUser = null;
+        let selectedWorker = null;
+        let allWorkers = [];
+        let allOrders = [];
+
+        // Check if user is logged in and is a customer
+        document.addEventListener('DOMContentLoaded', function () {
+            let user;
+            try {
+                const userStr = localStorage.getItem('user');
+                user = userStr ? JSON.parse(userStr) : null;
+            } catch (e) {
+                user = null;
+            }
+            if (!user) {
+                window.location.href = 'login.html';
+                return;
+            }
+
+            if (user.role !== 'customer') {
+                window.location.href = 'dashboard.html';
+                return;
+            }
+
+            currentUser = user;
+            loadWorkers();
+            loadOrders();
+            loadNotifications();
+            setInterval(loadNotifications, 10000);
+
+            // Update nav user name
+            const navUserName = document.getElementById('navUserName');
+            if (navUserName && currentUser) {
+                const firstName = (currentUser.name || currentUser.username).split(' ')[0];
+                navUserName.textContent = firstName;
+
+                // Personalize welcome animation
+                const welcomeTitle = document.getElementById('welcomeUserTitle');
+                if (welcomeTitle) {
+                    welcomeTitle.textContent = `Welcome back, ${firstName}`;
+                }
+            }
+
+            // Hide welcome overlay after animation
+            const welcomeOverlay = document.getElementById('welcomeOverlay');
+            if (welcomeOverlay) {
+                setTimeout(() => {
+                    welcomeOverlay.style.opacity = '0';
+                    welcomeOverlay.style.visibility = 'hidden';
+                    document.body.style.overflow = 'auto'; // Restore scrolling
+                }, 3500);
+            }
+        });
+
+        async function loadWorkers() {
+            try {
+                const response = await fetch(getApiUrl('/api/workers'));
+                if (response.ok) {
+                    allWorkers = await response.json();
+                    displayWorkers(allWorkers);
+                }
+            } catch (error) {
+                console.error('Error loading workers:', error);
+            }
+        }
+
+        function displayWorkers(workers) {
+            const workersGrid = document.getElementById('workersGrid');
+
+            if (workers.length === 0) {
+                workersGrid.innerHTML = `
+                    <div class="col-12 text-center py-5">
+                        <i class="fas fa-users fa-3x mb-3" style="color: #a0a0a0;"></i>
+                        <p class="text-secondary">No workers found</p>
+                    </div>
+                `;
+                return;
+            }
+
+            workersGrid.innerHTML = workers.map(worker => {
+                const isAvailable = worker.availability?.toLowerCase() === 'available';
+                const rating = Number(worker.averageRating || 0).toFixed(1);
+                const stars = 'â˜…'.repeat(Math.floor(worker.averageRating || 0));
+
+                return `
+                <div class="col-lg-4 col-md-6 mb-4">
+                    <div class="worker-card h-100">
+                        <div class="worker-image-container">
+                            <img src="${worker.profileImage || 'https://placehold.co/100x100?text=Avatar'}" 
+                                 alt="${worker.name || worker.username}" 
+                                 class="worker-image">
+                            ${worker.approved === 'approved' ? `
+                                <div class="verified-badge" title="Verified Professional">
+                                    <i class="fas fa-check"></i>
+                                </div>
+                            ` : ''}
+                            <div class="availability-badge ${isAvailable ? 'available' : (worker.availability === 'Busy' ? 'busy' : 'unavailable')}" 
+                                 style="position: absolute; top: 1.5rem; right: 1.5rem;">
+                                <i class="fas fa-circle me-1"></i>${worker.availability || 'Available'}
+                            </div>
+                        </div>
+                        
+                        <div class="worker-info">
+                            <h3 class="worker-name">${worker.name || worker.username}</h3>
+                            <div class="worker-title">${worker.skills?.[0] || 'Professional Worker'}</div>
+                            
+                            <div class="mb-2 small text-secondary">
+                                <i class="fas fa-map-marker-alt me-1" style="color: #ef4444;"></i>
+                                ${worker.address?.city || 'Unknown City'}, ${worker.address?.state || 'India'}
+                            </div>
+
+                            <div class="d-flex justify-content-center gap-1 mb-3">
+                                ${StarsHtml(worker.averageRating || 0)}
+                                <span class="ms-1 text-muted small">(${worker.reviewsCount || 0})</span>
+                            </div>
+
+                            <div class="worker-stats">
+                                <div class="stat-item">
+                                    <div class="stat-label">Experience</div>
+                                    <div class="stat-value">${worker.experience || 'N/A'} Yrs</div>
+                                </div>
+                                <div class="stat-item">
+                                    <div class="stat-label">Rating</div>
+                                    <div class="stat-value text-warning">${rating} ★</div>
+                                </div>
+                            </div>
+
+                            <div class="worker-price">
+                                ₹${worker.hourlyRate || 'N/A'}<span>/hour</span>
+                            </div>
+
+                            <div class="d-grid gap-2">
+                                <button class="btn btn-primary" 
+                                        onclick="openOrderModal('${worker.id}')"
+                                        ${worker.availability === 'Unavailable' ? 'disabled' : ''}>
+                                    <i class="fas fa-calendar-plus me-2"></i>Book Now
+                                </button>
+                                <button class="btn btn-outline" style="border-radius: 0.75rem;" onclick="viewWorkerDetails('${worker.id}')">
+                                    <i class="fas fa-id-card me-2"></i>Full Profile
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `;
+            }).join('');
+        }
+
+        function StarsHtml(rating) {
+            let html = '';
+            const fullStars = Math.floor(rating);
+            const hasHalf = rating % 1 >= 0.5;
+            for (let i = 0; i < 5; i++) {
+                if (i < fullStars) html += '<i class="fas fa-star text-warning"></i>';
+                else if (i === fullStars && hasHalf) html += '<i class="fas fa-star-half-alt text-warning"></i>';
+                else html += '<i class="far fa-star text-muted"></i>';
+            }
+            return html;
+        }
+
+        // Search functionality
+        document.getElementById('searchForm').addEventListener('submit', function (e) {
+            e.preventDefault();
+
+            const nameSearch = document.getElementById('nameSearch').value.toLowerCase();
+            const skillSearch = document.getElementById('skillSearch').value.toLowerCase();
+            const maxRate = document.getElementById('maxRate').value;
+            const locationSearch = document.getElementById('locationSearch').value.toLowerCase();
+            const availabilityFilter = document.getElementById('availabilityFilter').value;
+
+            let filteredWorkers = allWorkers;
+
+            if (nameSearch) {
+                filteredWorkers = filteredWorkers.filter(worker =>
+                    (worker.name || worker.username).toLowerCase().includes(nameSearch)
+                );
+            }
+
+            if (skillSearch) {
+                filteredWorkers = filteredWorkers.filter(worker =>
+                    worker.skills && worker.skills.some(skill =>
+                        skill.toLowerCase().includes(skillSearch)
+                    )
+                );
+            }
+
+            if (maxRate) {
+                filteredWorkers = filteredWorkers.filter(worker =>
+                    worker.hourlyRate && worker.hourlyRate <= parseFloat(maxRate)
+                );
+            }
+
+            if (locationSearch) {
+                filteredWorkers = filteredWorkers.filter(worker => {
+                    const city = worker.address?.city?.toLowerCase() || '';
+                    const state = worker.address?.state?.toLowerCase() || '';
+                    return city.includes(locationSearch) || state.includes(locationSearch);
+                });
+            }
+
+            if (availabilityFilter) {
+                filteredWorkers = filteredWorkers.filter(worker =>
+                    worker.availability === availabilityFilter
+                );
+            }
+
+            displayWorkers(filteredWorkers);
+        });
+
+        function openOrderModal(workerId) {
+            selectedWorker = allWorkers.find(worker => worker.id === workerId);
+            const modal = new bootstrap.Modal(document.getElementById('orderModal'));
+            modal.show();
+        }
+
+        function viewWorkerDetails(workerId) {
+            window.location.href = `worker-details.html?id=${workerId}`;
+        }
+
+        // Handle order form submission
+        document.getElementById('orderForm').addEventListener('submit', async function (e) {
+            e.preventDefault();
+
+            if (!selectedWorker) {
+                alert('No worker selected');
+                return;
+            }
+
+            const formData = {
+                customerId: currentUser.id,
+                workerId: selectedWorker.id,
+                serviceType: document.getElementById('serviceType').value,
+                description: document.getElementById('description').value,
+                scheduledDate: document.getElementById('scheduledDate').value,
+                duration: document.getElementById('duration').value,
+                totalAmount: document.getElementById('totalAmount').value
+            };
+
+            try {
+                const response = await fetch(getApiUrl('/api/orders'), {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(formData)
+                });
+
+                if (response.ok) {
+                    alert('Order placed successfully!');
+                    const modal = bootstrap.Modal.getInstance(document.getElementById('orderModal'));
+                    modal.hide();
+                    document.getElementById('orderForm').reset();
+                    selectedWorker = null;
+                    loadOrders();
+                } else {
+                    const error = await response.json();
+                    alert('Error placing order: ' + error.message);
+                }
+            } catch (error) {
+                console.error('Error placing order:', error);
+                alert('Error placing order');
+            }
+        });
+
+        async function loadOrders() {
+            try {
+                const response = await fetch(getApiUrl(`/api/orders/customer/${currentUser.id}`));
+                if (response.ok) {
+                    const orders = await response.json();
+                    allOrders = orders || [];
+                    applyOrderFiltersAndRender();
+                    attachOrderFilterHandlers();
+                    updateCustomerNotifications();
+                }
+            } catch (error) {
+                console.error('Error loading orders:', error);
+            }
+        }
+
+        function applyOrderFiltersAndRender() {
+            let filtered = [...allOrders];
+            const statusFilter = document.getElementById('orderStatusFilter')?.value || '';
+            const paymentFilter = document.getElementById('paymentFilter')?.value || '';
+            const sortBy = document.getElementById('orderSort')?.value || 'newest';
+
+            if (statusFilter) {
+                filtered = filtered.filter(o => o.status === statusFilter);
+            }
+            if (paymentFilter) {
+                filtered = filtered.filter(o => (o.paymentStatus || 'unpaid') === paymentFilter);
+            }
+
+            filtered.sort((a, b) => {
+                if (sortBy === 'oldest') {
+                    return new Date(a.createdAt) - new Date(b.createdAt);
+                }
+                if (sortBy === 'amountHigh') {
+                    return (b.totalAmount || 0) - (a.totalAmount || 0);
+                }
+                if (sortBy === 'amountLow') {
+                    return (a.totalAmount || 0) - (b.totalAmount || 0);
+                }
+                // newest
+                return new Date(b.createdAt) - new Date(a.createdAt);
+            });
+
+            renderOrderStats(allOrders);
+            displayOrders(filtered);
+        }
+
+        function attachOrderFilterHandlers() {
+            const statusEl = document.getElementById('orderStatusFilter');
+            const payEl = document.getElementById('paymentFilter');
+            const sortEl = document.getElementById('orderSort');
+            if (statusEl && !statusEl._hasListener) {
+                statusEl.addEventListener('change', applyOrderFiltersAndRender);
+                statusEl._hasListener = true;
+            }
+            if (payEl && !payEl._hasListener) {
+                payEl.addEventListener('change', applyOrderFiltersAndRender);
+                payEl._hasListener = true;
+            }
+            if (sortEl && !sortEl._hasListener) {
+                sortEl.addEventListener('change', applyOrderFiltersAndRender);
+                sortEl._hasListener = true;
+            }
+        }
+
+        function renderOrderStats(orders) {
+            const statsEl = document.getElementById('orderStats');
+            if (!statsEl) return;
+
+            if (!orders || orders.length === 0) {
+                statsEl.innerHTML = '';
+                return;
+            }
+
+            const totalOrders = orders.length;
+            const completed = orders.filter(o => o.status === 'completed').length;
+            const paid = orders.filter(o => (o.paymentStatus || 'unpaid') === 'paid').length;
+            const totalSpent = orders
+                .filter(o => (o.paymentStatus || 'unpaid') === 'paid')
+                .reduce((sum, o) => sum + (Number(o.totalAmount) || 0), 0);
+
+            const reviewedOrders = orders.filter(o => o.reviewed && o.review && o.review.rating);
+            let avgRatingGiven = null;
+            if (reviewedOrders.length > 0) {
+                const sumRatings = reviewedOrders.reduce((sum, o) => sum + Number(o.review.rating || 0), 0);
+                avgRatingGiven = (sumRatings / reviewedOrders.length).toFixed(2);
+            }
+
+            statsEl.innerHTML = `
+                <div class="orders-stat-card fade-in">
+                    <div class="orders-stat-label">Total Orders</div>
+                    <div class="orders-stat-value">${totalOrders}</div>
+                    <div class="orders-stat-sub">Completed: ${completed}</div>
+                </div>
+                <div class="orders-stat-card fade-in" style="animation-delay:0.05s;">
+                    <div class="orders-stat-label">Payments</div>
+                    <div class="orders-stat-value">${paid}</div>
+                    <div class="orders-stat-sub">Paid orders</div>
+                </div>
+                <div class="orders-stat-card fade-in" style="animation-delay:0.1s;">
+                    <div class="orders-stat-label">Total Spent</div>
+                    <div class="orders-stat-value">₹${totalSpent.toFixed(2)}</div>
+                    <div class="orders-stat-sub">On paid orders</div>
+                </div>
+                <div class="orders-stat-card fade-in" style="animation-delay:0.15s;">
+                    <div class="orders-stat-label">Avg Rating Given</div>
+                    <div class="orders-stat-value">${avgRatingGiven !== null ? avgRatingGiven + '★' : '—'}</div>
+                    <div class="orders-stat-sub">${reviewedOrders.length} review(s)</div>
+                </div>
+            `;
+        }
+
+        function displayOrders(orders) {
+            const ordersList = document.getElementById('ordersList');
+
+            if (!orders || orders.length === 0) {
+                ordersList.innerHTML = `
+                    <div class="col-12 text-center py-5">
+                        <i class="fas fa-clipboard-list fa-3x mb-3" style="color: #a0a0a0;"></i>
+                        <p class="text-secondary">No orders yet</p>
+                    </div>
+                `;
+                return;
+            }
+
+            ordersList.innerHTML = orders.map(order => {
+                let reviewForm = '';
+                if (order.status === 'completed' && !order.reviewed) {
+                    reviewForm = `
+                        <form class="review-form mt-3" data-order-id="${order.id}" data-worker-id="${order.workerId}">
+                            <div class="row g-2 align-items-stretch">
+                                <div class="col-md-4">
+                                    <select name="rating" class="form-select" required>
+                                        <option value="">Select Rating</option>
+                                        <option value="5">5 - Excellent</option>
+                                        <option value="4">4 - Good</option>
+                                        <option value="3">3 - Average</option>
+                                        <option value="2">2 - Poor</option>
+                                        <option value="1">1 - Terrible</option>
+                                    </select>
+                                </div>
+                                <div class="col-md-6">
+                                    <input type="text" name="comment" class="form-control" placeholder="Write a review (optional)">
+                                </div>
+                                <div class="col-md-2 d-grid">
+                                    <button type="submit" class="btn btn-primary w-100">Submit</button>
+                                </div>
+                            </div>
+                        </form>
+                    `;
+                }
+
+                const paymentStatus = order.paymentStatus || 'unpaid';
+                const canPay = paymentStatus !== 'paid' && (order.status === 'accepted' || order.status === 'completed');
+                const paymentInfo = `
+                    <div class="mt-2">
+                        <small class="text-secondary">Payment: ${paymentStatus === 'paid' ? 'Paid' : 'Not paid'}</small>
+                    </div>
+                `;
+                const payButton = canPay ? `
+                    <button class="btn btn-primary btn-sm ms-2" onclick="payForOrder('${order.id}', ${order.totalAmount})">
+                        <i class="fas fa-credit-card me-1"></i>Pay Now
+                    </button>
+                ` : '';
+                const reviewSummary = order.reviewed && order.review ? `
+                    <div class="mt-2">
+                        <small class="text-secondary">Your review: ${'⭐'.repeat(order.review.rating || 0)}${order.review.comment ? ` - ${order.review.comment}` : ''}</small>
+                    </div>
+                    <div class="mt-1">
+                        <button class="btn btn-outline btn-sm me-2" onclick="event.stopPropagation(); editReview('${order.id}', '${order.workerId}')">
+                            <i class="fas fa-pen me-1"></i>Edit Review
+                        </button>
+                        <button class="btn btn-outline btn-sm text-danger border-danger" onclick="event.stopPropagation(); deleteReview('${order.id}', '${order.workerId}')">
+                            <i class="fas fa-trash me-1"></i>Delete
+                        </button>
+                    </div>
+                ` : '';
+                return `
+                    <div class="col-lg-6 col-md-12 mb-3">
+                        <div class="card h-100 fade-in" style="border-left: 4px solid #007bff;">
+                            <div class="card-body">
+                                <div class="d-flex justify-content-between align-items-start mb-3">
+                                    <div>
+                                        <h6 class="card-title mb-1">Order #${order.id.slice(-6)}</h6>
+                                        <p class="text-secondary mb-0">${order.serviceType}</p>
+                                    </div>
+                                    <span class="status-badge status-${order.status}">${order.status.charAt(0).toUpperCase() + order.status.slice(1)}</span>
+                                </div>
+                                <div class="mb-3">
+                                    <small class="text-secondary">Description:</small>
+                                    <p class="mb-1">${order.description}</p>
+                                    <small class="text-secondary">Duration: ${order.duration} hours | Amount: $${order.totalAmount}</small><br>
+                                    <small class="text-secondary">Worker: ${order.worker.username}</small><br>
+                                    <small class="text-secondary">Worker: ${order.worker.username}</small><br>
+                                    <small class="text-secondary">Date: ${new Date(order.scheduledDate || order.createdAt).toLocaleString()}</small>
+                                </div>
+                                <button class="btn btn-outline btn-sm" onclick="viewFullOrder('${order.id}')">
+                                    <i class="fas fa-eye me-1"></i>View Full Details
+                                </button>
+                                ${payButton}
+                                ${paymentInfo}
+                                ${reviewSummary}
+                                ${reviewForm}
+                            </div>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+
+            // Attach review form handlers
+            document.querySelectorAll('.review-form').forEach(form => {
+                form.addEventListener('submit', async function (e) {
+                    e.preventDefault();
+                    const orderId = form.getAttribute('data-order-id');
+                    const workerId = form.getAttribute('data-worker-id');
+                    const rating = form.rating.value;
+                    const comment = form.comment.value;
+                    try {
+                        const res = await fetch(getApiUrl(`/api/worker/${workerId}/review`), {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify({
+                                customerId: currentUser.id,
+                                customerName: currentUser.username,
+                                rating,
+                                comment,
+                                orderId
+                            })
+                        });
+                        const data = await res.json();
+                        if (res.ok) {
+                            alert('Review submitted!');
+                            loadOrders();
+                        } else {
+                            alert(data.message || 'Error submitting review');
+                        }
+                    } catch (err) {
+                        alert('Error submitting review');
+                    }
+                });
+            });
+        }
+
+        async function editReview(orderId, workerId) {
+            const order = allOrders.find(o => o.id === orderId);
+            if (!order || !order.review) {
+                alert('No review found to edit.');
+                return;
+            }
+            const currentRating = order.review.rating || 5;
+            const currentComment = order.review.comment || '';
+            const newRatingStr = prompt('Update rating (1-5):', currentRating);
+            if (!newRatingStr) return;
+            const newRating = Number(newRatingStr);
+            if (isNaN(newRating) || newRating < 1 || newRating > 5) {
+                alert('Rating must be between 1 and 5.');
+                return;
+            }
+            const newComment = prompt('Update comment (optional):', currentComment) ?? '';
+
+            try {
+                const res = await fetch(getApiUrl(`/api/worker/${workerId}/review`), {
+                    method: 'PUT',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        customerId: currentUser.id,
+                        orderId,
+                        rating: newRating,
+                        comment: newComment
+                    })
+                });
+                const data = await res.json();
+                if (res.ok) {
+                    alert('Review updated successfully!');
+                    loadOrders();
+                } else {
+                    alert(data.message || 'Error updating review');
+                }
+            } catch (err) {
+                alert('Error updating review');
+            }
+        }
+
+        async function deleteReview(orderId, workerId) {
+            if (!confirm('Are you sure you want to delete this review?')) return;
+            try {
+                const res = await fetch(getApiUrl(`/api/worker/${workerId}/review`), {
+                    method: 'DELETE',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        customerId: currentUser.id,
+                        orderId
+                    })
+                });
+                const data = await res.json();
+                if (res.ok) {
+                    alert('Review deleted.');
+                    loadOrders();
+                } else {
+                    alert(data.message || 'Error deleting review');
+                }
+            } catch (err) {
+                alert('Error deleting review');
+            }
+        }
+
+        function logout() {
+            localStorage.removeItem('user');
+            window.location.href = 'index.html';
+        }
+
+        // Real-Time Notifications logic
+        async function loadNotifications() {
+            if (!currentUser) return;
+            try {
+                const res = await fetch(getApiUrl(`/api/notifications/${currentUser.id}`));
+                if (res.ok) {
+                    const notifications = await res.json();
+                    renderNotifications(notifications);
+                }
+            } catch (e) {
+                console.error('Error loading notifications', e);
+            }
+        }
+
+        function renderNotifications(notifications) {
+            const listEl = document.getElementById('customerNotifList');
+            const countEl = document.getElementById('customerNotifCount');
+            if (!listEl || !countEl) return;
+
+            const unread = notifications.filter(n => !n.read);
+            countEl.textContent = unread.length > 9 ? '9+' : unread.length;
+            countEl.style.display = unread.length > 0 ? 'inline-block' : 'none';
+
+            if (notifications.length === 0) {
+                listEl.innerHTML = '<div class="p-3 text-center text-muted small">No notifications</div>';
+                return;
+            }
+
+            listEl.innerHTML = notifications.map(n => `
+                <div class="notif-item ${n.read ? '' : 'unread'}" onclick="markAsRead('${n._id || n.id}', '${n.link}')" style="cursor: pointer; padding: 10px; border-bottom: 1px solid rgba(148, 163, 184, 0.1); ${n.read ? '' : 'background: rgba(56, 189, 248, 0.05); border-left: 3px solid #38bdf8;'}">
+                    <div class="notif-title" style="color: #e5e7eb; font-size: 0.85rem; margin-bottom: 4px; ${n.read ? '' : 'font-weight: 700;'}">${n.message}</div>
+                    <div class="notif-meta" style="color: #9ca3af; font-size: 0.7rem;">${new Date(n.createdAt).toLocaleString([], { month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' })}</div>
+                </div>
+            `).join('');
+        }
+
+        async function markAsRead(notifId, link) {
+            try {
+                await fetch(getApiUrl(`/api/notifications/${notifId}/read`), { method: 'PUT' });
+                if (link && link !== 'null' && link !== 'undefined') {
+                    window.location.href = link;
+                } else {
+                    loadNotifications();
+                }
+            } catch (e) {
+                console.error('Error marking as read', e);
+            }
+        }
+
+        (function initCustomerNotifToggle() {
+            const btn = document.getElementById('customerNotifBtn');
+            const dropdown = document.getElementById('customerNotifDropdown');
+            if (!btn || !dropdown) return;
+            btn.addEventListener('click', (e) => {
+                e.stopPropagation();
+                dropdown.classList.toggle('show');
+            });
+            document.addEventListener('click', () => {
+                dropdown.classList.remove('show');
+            });
+        })();
+
+        async function viewFullOrder(orderId) {
+            try {
+                const response = await fetch(getApiUrl(`/api/order/${orderId}`));
+                const order = await response.json();
+
+                document.getElementById('fullOrderTitle').textContent = `Order #${order.id.slice(-6)}`;
+
+                const orderBody = document.getElementById('fullOrderBody');
+                orderBody.innerHTML = `
+                    <div class="row mb-4">
+                        <div class="col-md-4 mb-3">
+                            <div class="card">
+                                <div class="card-body text-center">
+                                    <h6 class="text-secondary">Order ID</h6>
+                                    <h5 class="mb-0" style="color: #007bff;">#${order.id.slice(-6)}</h5>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-4 mb-3">
+                            <div class="card">
+                                <div class="card-body text-center">
+                                    <h6 class="text-secondary">Status</h6>
+                                    <span class="status-badge status-${order.status}">${order.status.charAt(0).toUpperCase() + order.status.slice(1)}</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-4 mb-3">
+                            <div class="card">
+                                <div class="card-body text-center">
+                                    <h6 class="text-secondary">Amount</h6>
+                                    <h5 class="mb-0" style="color: #28a745;">$${order.totalAmount}</h5>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-4 mb-3">
+                            <div class="card">
+                                <div class="card-body text-center">
+                                    <h6 class="text-secondary">Payment</h6>
+                                    <p class="mb-1 fw-bold">${order.paymentStatus === 'paid' ? 'Paid' : 'Not paid'}</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="row mb-4">
+                        <div class="col-md-6">
+                            <h6 class="text-secondary">Service Type</h6>
+                            <p class="fw-bold">${order.serviceType}</p>
+                        </div>
+                        <div class="col-md-6">
+                            <h6 class="text-secondary">Duration</h6>
+                            <p class="fw-bold">${order.duration} hours</p>
+                        </div>
+                    </div>
+                    
+                    <div class="mb-4">
+                        <h6 class="text-secondary">Description</h6>
+                        <p class="fw-bold">${order.description}</p>
+                    </div>
+                    
+                    ${order.worker ? `
+                        <div class="card mb-4">
+                            <div class="card-body">
+                                <h6 class="text-secondary mb-3">Assigned Worker</h6>
+                                <div class="row align-items-center">
+                                    <div class="col-md-2">
+                                        <img src="${order.worker.profileImage || 'https://placehold.co/100x100?text=Avatar'}" alt="${order.worker.username}" class="img-fluid rounded-circle" style="width: 60px; height: 60px; object-fit: cover;">
+                                    </div>
+                                    <div class="col-md-10">
+                                        <h6 class="mb-1">${order.worker.name || order.worker.username}</h6>
+                                        <small class="text-secondary">Phone: ${order.worker.phone} | Email: ${order.worker.email}</small><br>
+                                        <small class="text-secondary">Experience: ${order.worker.experience || 'N/A'} years | Rate: $${order.worker.hourlyRate || 'N/A'}/hour</small>
+                                        ${order.worker.location && order.worker.location.link ? `
+                                            <br><small class="text-secondary">Location: <a href="${order.worker.location.link}" target="_blank" class="text-decoration-none" style="color: #17a2b8;">📍 View on Map</a></small>
+                                        ` : ''}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    ` : ''}
+                    
+                    ${order.status === 'completed' && !order.reviewed ? `
+                        <div class="card">
+                            <div class="card-body">
+                                <h6 class="text-secondary mb-3">Review & Rating</h6>
+                                <form onsubmit="submitReviewFromFullView(event, '${order.id}', '${order.workerId}')">
+                                    <div class="row g-3">
+                                        <div class="col-md-6">
+                                            <label class="form-label">Rating</label>
+                                            <select name="rating" class="form-select" required>
+                                                <option value="">Select rating</option>
+                                                <option value="5">5 - Excellent</option>
+                                                <option value="4">4 - Good</option>
+                                                <option value="3">3 - Average</option>
+                                                <option value="2">2 - Poor</option>
+                                                <option value="1">1 - Terrible</option>
+                                            </select>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <label class="form-label">Comment (optional)</label>
+                                            <textarea name="comment" class="form-control" rows="3" placeholder="Share your experience..."></textarea>
+                                        </div>
+                                        <div class="col-12">
+                                            <button type="submit" class="btn btn-primary w-100">
+                                                <i class="fas fa-star me-2"></i>Submit Review
+                                            </button>
+                                        </div>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    ` : ''}
+                    
+                    ${order.reviewed ? `
+                        <div class="card">
+                            <div class="card-body">
+                                <h6 class="text-secondary mb-3">Your Review</h6>
+                                <div class="mb-2">
+                                    <strong>Rating:</strong> ${'⭐'.repeat(order.review.rating)}
+                                </div>
+                                ${order.review.comment ? `
+                                    <div>
+                                        <strong>Comment:</strong> ${order.review.comment}
+                                    </div>
+                                ` : ''}
+                            </div>
+                        </div>
+                    ` : ''}
+                `;
+
+                const modal = new bootstrap.Modal(document.getElementById('fullOrderModal'));
+                modal.show();
+            } catch (error) {
+                console.error('Error loading order details:', error);
+                alert('Error loading order details');
+            }
+        }
+
+        async function submitReviewFromFullView(event, orderId, workerId) {
+            event.preventDefault();
+
+            const form = event.target;
+            const rating = form.rating.value;
+            const comment = form.comment.value;
+
+            try {
+                const response = await fetch(getApiUrl(`/api/worker/${workerId}/review`), {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        customerId: currentUser.id,
+                        customerName: currentUser.username,
+                        rating,
+                        comment,
+                        orderId
+                    })
+                });
+
+                const result = await response.json();
+                if (response.ok) {
+                    alert('Review submitted successfully!');
+                    const modal = bootstrap.Modal.getInstance(document.getElementById('fullOrderModal'));
+                    modal.hide();
+                    loadOrders();
+                } else {
+                    alert(result.message || 'Error submitting review');
+                }
+            } catch (error) {
+                alert('Error submitting review');
+            }
+        }
+
+        async function payForOrder(orderId, amount) {
+            // Redirect to dedicated payment page
+            window.location.href = `payment.html?orderId=${orderId}`;
+        }
+
+        // Simple help chatbot
+        function toggleChatbot() {
+            const win = document.getElementById('chatbotWindow');
+            if (!win) return;
+            const isOpen = win.style.display === 'flex';
+            win.style.display = isOpen ? 'none' : 'flex';
+            if (!isOpen) {
+                ensureChatbotWelcome();
+                setTimeout(() => document.getElementById('chatbotInput')?.focus(), 100);
+            }
+        }
+
+        function ensureChatbotWelcome() {
+            const body = document.getElementById('chatbotMessages');
+            if (!body || body.dataset.hasWelcome) return;
+            body.dataset.hasWelcome = '1';
+            addChatbotMessage('bot', 'Hi! I\'m your WorkConnect assistant. You can ask me about:<br>- How to find or filter workers<br>- How orders, payments, and reviews work<br>- Any issue you are facing on this page.');
+            addChatbotMessage('bot', 'Example: "How do I edit my review?" or "Show me payment filters".');
+        }
+
+        function addChatbotMessage(type, html) {
+            const body = document.getElementById('chatbotMessages');
+            if (!body) return;
+            const wrapper = document.createElement('div');
+            wrapper.className = `chatbot-message ${type}`;
+            const bubble = document.createElement('div');
+            bubble.className = `chatbot-bubble ${type}`;
+            bubble.innerHTML = html;
+            wrapper.appendChild(bubble);
+            body.appendChild(wrapper);
+            body.scrollTop = body.scrollHeight;
+        }
+
+        function sendChatbotMessage() {
+            const input = document.getElementById('chatbotInput');
+            if (!input) return;
+            const text = input.value.trim();
+            if (!text) return;
+            addChatbotMessage('user', text);
+            input.value = '';
+            respondChatbot(text);
+        }
+
+        function respondChatbot(question) {
+            const q = question.toLowerCase();
+            let answer = "I'm not sure about that yet. You can ask about workers, orders, payments, or reviews on this page.";
+
+            if (q.includes('filter') || q.includes('search') || q.includes('find worker')) {
+                answer = 'Use the "Find Workers" section at the top: search by skill, limit by max hourly rate, and filter by availability. You can combine all of them and click Search.';
+            } else if (q.includes('order') && (q.includes('status') || q.includes('track'))) {
+                answer = 'In the "My Orders" section, each card shows the current status badge (Pending, Accepted, Completed). You can also open full details using "View Full Details".';
+            } else if (q.includes('payment')) {
+                answer = 'For payments, look for orders with status Accepted or Completed and click "Pay Now". You will be redirected to the secure payment page, and your paid orders and total spent are summarized above the order list.';
+            } else if (q.includes('review') && q.includes('edit')) {
+                answer = 'To edit a review, find the order card that shows "Your review" and click "Edit Review". Update the rating and comment when prompted, then save.';
+            } else if (q.includes('review') && q.includes('delete')) {
+                answer = 'To delete a review, go to the order card that shows "Your review" and click the red "Delete" button. The review will be removed from both the order and the worker profile.';
+            } else if (q.includes('rating') && q.includes('average')) {
+                answer = 'Your personal "Avg Rating Given" is shown in the small report cards above the order list. It is computed from all the reviews you have submitted for workers.';
+            } else if (q.includes('help') || q.includes('support')) {
+                answer = 'If you need further assistance, you can log out and log back in, or contact support from the payment page help section. For now, I can guide you through using this dashboard.';
+            }
+
+            addChatbotMessage('bot', answer);
+        }
+    </script>
+</body>
+
+</html>

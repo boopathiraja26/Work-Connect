@@ -1,0 +1,1282 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>WorkConnect - Payment</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="stylesheet" href="styles.css">
+
+    <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+    <script src="https://sdk.cashfree.com/js/v3/cashfree.js"></script>
+
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: {
+                            50: '#eff6ff',
+                            100: '#dbeafe',
+                            200: '#bfdbfe',
+                            300: '#93c5fd',
+                            400: '#60a5fa',
+                            500: '#3b82f6',
+                            600: '#2563eb',
+                            700: '#1d4ed8',
+                            800: '#1e40af',
+                            900: '#1e3a8a',
+                        },
+                        dark: {
+                            50: '#f8fafc',
+                            100: '#f1f5f9',
+                            200: '#e2e8f0',
+                            300: '#cbd5e1',
+                            400: '#94a3b8',
+                            500: '#64748b',
+                            600: '#475569',
+                            700: '#334155',
+                            800: '#1e293b',
+                            900: '#0f172a',
+                            950: '#020617',
+                        }
+                    },
+                    fontFamily: {
+                        'sans': ['Inter', 'system-ui', 'sans-serif'],
+                    },
+                    keyframes: {
+                        float: {
+                            '0%, 100%': { transform: 'translateY(0)' },
+                            '50%': { transform: 'translateY(-10px)' },
+                        },
+                        slideUp: {
+                            'from': { opacity: '0', transform: 'translateY(20px)' },
+                            'to': { opacity: '1', transform: 'translateY(0)' }
+                        },
+                        fadeIn: {
+                            'from': { opacity: '0' },
+                            'to': { opacity: '1' }
+                        },
+                        'scan-line': {
+                            '0%': { top: '0', opacity: '0' },
+                            '5%': { opacity: '1' },
+                            '95%': { opacity: '1' },
+                            '100%': { top: '100%', opacity: '0' }
+                        }
+                    },
+                    animation: {
+                        'float': 'float 3s ease-in-out infinite',
+                        'pulse-slow': 'pulse 3s ease-in-out infinite',
+                        'slide-up': 'slideUp 0.4s ease-out',
+                        'fade-in': 'fadeIn 0.5s ease-out',
+                        'scan-line': 'scan-line 2s linear infinite'
+                    },
+                    backdropBlur: {
+                        'xs': '2px',
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap');
+
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+
+        /* Custom scrollbar */
+        ::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: #1e293b;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: #475569;
+            border-radius: 3px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: #64748b;
+        }
+
+        .glass-effect {
+            background: rgba(15, 23, 42, 0.7);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(148, 163, 184, 0.1);
+        }
+
+        .gradient-bg {
+            background: linear-gradient(135deg, #020617 0%, #0f172a 40%, #1e293b 100%);
+        }
+
+        .card-hover {
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .card-hover:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+        }
+
+        .text-gradient {
+            background: linear-gradient(135deg, #f1f5f9 0%, #94a3b8 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .loading-spinner {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 3px solid rgba(59, 130, 246, 0.3);
+            border-radius: 50%;
+            border-top-color: #3b82f6;
+            animation: spin 1s ease-in-out infinite;
+        }
+
+        .method-option.active>div {
+            border-color: #3b82f6 !important;
+            background: rgba(59, 130, 246, 0.1) !important;
+        }
+
+        @keyframes spin {
+            to {
+                transform: rotate(360deg);
+            }
+        }
+    </style>
+    <script src="config.js"></script>
+</head>
+
+<body class="gradient-bg min-h-screen text-gray-100">
+
+    <!-- Navigation -->
+    <nav class="glass-effect border-b border-gray-800/50 px-6 py-3 sticky top-0 z-50">
+        <div class="max-w-7xl mx-auto flex items-center justify-between h-[42px]">
+            <!-- Brand -->
+            <a href="customer-dashboard.html" class="flex items-center space-x-3 h-full">
+                <div
+                    class="w-10 h-10 rounded-xl bg-gradient-to-br from-primary-500 to-primary-700 flex items-center justify-center shadow-lg shadow-primary-500/20">
+                    <i class="fas fa-tools text-white text-base"></i>
+                </div>
+                <span
+                    class="text-xl font-extrabold bg-gradient-to-r from-primary-400 to-primary-600 bg-clip-text text-transparent tracking-tight">
+                    WorkConnect
+                </span>
+            </a>
+
+            <!-- Right Actions -->
+            <div class="flex items-center space-x-4 h-full">
+                <!-- Notifications -->
+                <div class="relative flex items-center h-full">
+                    <button id="customerNotifBtn" class="p-2.5 rounded-xl hover:bg-white/5 transition-all group">
+                        <i class="fas fa-bell text-gray-400 group-hover:text-primary-400 text-xl transition-colors"></i>
+                        <span id="customerNotifCount"
+                            class="absolute top-1 right-1 w-4 h-4 bg-red-500 text-white text-[10px] font-bold rounded-full flex items-center justify-center border-2 border-[#0f172a]"
+                            style="display: none;">0</span>
+                    </button>
+                    <!-- Enhanced Notification Dropdown -->
+                    <div id="customerNotifDropdown"
+                        class="absolute top-full right-0 mt-4 w-80 glass-effect rounded-2xl shadow-2xl border border-white/10 overflow-hidden transform origin-top-right transition-all duration-300 scale-95 opacity-0 pointer-events-none z-[60]">
+                        <div class="px-5 py-4 border-b border-white/5 bg-white/5 flex items-center justify-between">
+                            <h6 class="text-xs font-bold text-gray-400 uppercase tracking-widest">Notifications</h6>
+                            <span
+                                class="text-[10px] bg-primary-500/20 text-primary-400 px-2 py-0.5 rounded-full font-bold">RECENT</span>
+                        </div>
+                        <div id="customerNotifList" class="max-h-80 overflow-y-auto scrollbar-hide py-2">
+                            <!-- JS loaded -->
+                        </div>
+                    </div>
+                </div>
+
+                <!-- User Profile -->
+                <div
+                    class="hidden md:flex items-center px-3 py-1.5 rounded-xl bg-white/5 border border-white/10 space-x-3">
+                    <div
+                        class="w-8 h-8 rounded-full bg-primary-500/20 flex items-center justify-center border border-primary-500/30">
+                        <i class="fas fa-user text-primary-400 text-xs"></i>
+                    </div>
+                    <div class="text-left">
+                        <div id="navUser" class="text-sm font-bold text-gray-100 leading-tight">Loading...</div>
+                        <div class="text-[10px] text-gray-400 uppercase tracking-wider font-semibold">Customer</div>
+                    </div>
+                </div>
+
+                <!-- Dashboard Action -->
+                <button onclick="goBackToDashboard()"
+                    class="h-[42px] px-5 rounded-xl bg-white/5 border border-white/10 hover:border-primary-500/50 hover:bg-primary-500/10 transition-all duration-300 flex items-center space-x-3 group text-gray-300 hover:text-white">
+                    <i class="fas fa-arrow-left text-sm group-hover:-translate-x-1 transition-transform"></i>
+                    <span class="text-sm font-bold">Dashboard</span>
+                </button>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="max-w-7xl mx-auto px-4 py-8 lg:px-8 lg:py-12">
+        <div id="mainContent" class="animate-fade-in">
+            <!-- Loading State -->
+            <div
+                class="flex flex-col items-center justify-center min-h-[60vh] glass-effect rounded-2xl p-8 text-center">
+                <div class="loading-spinner w-12 h-12 mb-6"></div>
+                <h3 class="text-xl font-semibold text-gray-200 mb-2">Loading Payment Details</h3>
+                <p class="text-gray-400">Please wait while we fetch your order information...</p>
+            </div>
+        </div>
+    </main>
+
+    <script>
+        // Mock API Database (same as original)
+        const mockDatabase = {
+            users: [
+                {
+                    id: 'cus_001',
+                    username: 'john_doe',
+                    name: 'John Doe',
+                    email: 'john@example.com',
+                    phone: '+919876543210',
+                    role: 'customer'
+                }
+            ],
+            workers: [
+                {
+                    id: 'wrk_001',
+                    username: 'raj_kumar',
+                    name: 'Raj Kumar',
+                    email: 'raj@example.com',
+                    phone: '+919512345678',
+                    upiId: 'rajkumar.9876543210@okhdfcbank',
+                    services: ['Plumbing', 'Electrical']
+                }
+            ],
+            orders: [
+                {
+                    id: 'ord_001',
+                    customerId: 'cus_001',
+                    workerId: 'wrk_001',
+                    serviceType: 'Plumbing - Pipe Repair',
+                    description: 'Kitchen sink pipe leakage repair',
+                    totalAmount: 1500,
+                    status: 'accepted',
+                    paymentStatus: 'pending',
+                    createdAt: '2024-01-15T10:30:00Z',
+                    acceptedAt: '2024-01-15T11:00:00Z',
+                    worker: {
+                        id: 'wrk_001',
+                        name: 'Raj Kumar',
+                        upiId: 'rajkumar.9876543210@okhdfcbank'
+                    }
+                }
+            ],
+            payments: []
+        };
+
+        // Global variables
+        let currentUser = null;
+        let currentOrder = null;
+        let selectedMethod = 'upi';
+        let screenshotFile = null;
+
+        // Initialize application
+        document.addEventListener('DOMContentLoaded', async () => {
+            console.log('DOM loaded, initializing...');
+
+            // Check authentication
+            const user = await checkAuthentication();
+            if (!user) {
+                console.log('No user found, redirecting to login...');
+                window.location.href = 'login.html';
+                return;
+            }
+
+            currentUser = user;
+            document.getElementById('navUser').textContent = (user.name || user.username).split(' ')[0];
+
+            // Notifications logic
+            loadNotifications();
+            setInterval(loadNotifications, 10000);
+            initCustomerNotifToggle();
+
+            // Get order ID from URL
+            const params = new URLSearchParams(window.location.search);
+            const orderId = params.get('orderId');
+
+            console.log('Order ID from URL:', orderId);
+
+            if (!orderId) {
+                console.log('No order ID found in URL');
+                showErrorState('Order ID is missing. Please access this page from your dashboard.');
+                return;
+            }
+
+            // Load order data
+            await loadOrderData(orderId);
+
+            // Check for Cashfree verification redirect
+            if (params.get('cf_verify') === '1' && params.get('cf_id')) {
+                const cfOrderId = params.get('cf_id');
+                verifyCashfreePayment(cfOrderId, orderId);
+            }
+        });
+
+        // Authentication check
+        async function checkAuthentication() {
+            try {
+                // Try to get user from localStorage first
+                const userStr = localStorage.getItem('user');
+                if (userStr) {
+                    const user = JSON.parse(userStr);
+                    console.log('User from localStorage:', user);
+                    return user;
+                }
+
+                // Fallback to mock user for demo
+                console.log('Using mock user');
+                return mockDatabase.users[0];
+            } catch (e) {
+                console.error('Auth error:', e);
+                return null;
+            }
+        }
+
+        // Show error state
+        function showErrorState(message) {
+            const mainContent = document.getElementById('mainContent');
+            mainContent.innerHTML = `
+                <div class="animate-fade-in">
+                    <div class="glass-effect rounded-2xl p-8 text-center">
+                        <div class="w-20 h-20 mx-auto mb-6 rounded-full bg-red-500/10 flex items-center justify-center">
+                            <i class="fas fa-exclamation-triangle text-red-400 text-3xl"></i>
+                        </div>
+                        <h3 class="text-2xl font-bold text-gray-200 mb-3">Order Not Found</h3>
+                        <p class="text-gray-400 mb-8 max-w-md mx-auto">${message}</p>
+                        <div class="flex flex-col sm:flex-row gap-4 justify-center">
+                            <button onclick="goBackToDashboard()" 
+                                    class="px-6 py-3 bg-gradient-to-r from-primary-500 to-primary-600 hover:from-primary-600 hover:to-primary-700 rounded-lg font-semibold text-white transition-all duration-300 transform hover:-translate-y-0.5 shadow-lg hover:shadow-primary-500/25 flex items-center justify-center space-x-2">
+                                <i class="fas fa-arrow-left"></i>
+                                <span>Back to Dashboard</span>
+                            </button>
+                            <button onclick="retryLoad()" 
+                                    class="px-6 py-3 border border-gray-700 hover:border-primary-500 hover:bg-primary-500/10 rounded-lg font-medium text-gray-300 hover:text-gray-200 transition-all duration-300 flex items-center justify-center space-x-2">
+                                <i class="fas fa-redo"></i>
+                                <span>Try Again</span>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        // Load order data
+        async function loadOrderData(orderId) {
+            try {
+                console.log('Loading order data for ID:', orderId);
+
+                // Try real API first, fallback to mock data if fails
+                let order;
+                try {
+                    const res = await fetch(getApiUrl(`/api/order/${orderId}`));
+                    if (!res.ok) throw new Error('API request failed');
+                    order = await res.json();
+                    console.log('Order from API:', order);
+                } catch (apiError) {
+                    console.log('API failed, using mock data:', apiError);
+                    // Fallback to mock data
+                    await new Promise(resolve => setTimeout(resolve, 1000));
+                    order = mockDatabase.orders.find(o => o.id === orderId);
+
+                    if (!order) {
+                        throw new Error(`Order with ID "${orderId}" not found`);
+                    }
+                }
+
+                // Security check
+                if (order.customerId !== currentUser.id) {
+                    showErrorState('Access denied: This order does not belong to you.');
+                    return;
+                }
+
+                currentOrder = order;
+
+                // Check if payment can be made
+                if (order.status !== 'accepted' && order.status !== 'completed') {
+                    showErrorState('This order is not yet accepted by the worker. Payment can only be made after the worker accepts the order.');
+                    return;
+                }
+
+                if (order.paymentStatus === 'paid') {
+                    showErrorState(`This order has already been paid. Transaction ID: ${order.transactionId || 'N/A'}`);
+                    return;
+                }
+
+                // Show payment interface
+                showPaymentInterface(order);
+
+            } catch (error) {
+                console.error('Error loading order:', error);
+                showErrorState(error.message || 'Failed to load order details. Please try again.');
+            }
+        }
+
+        // Show payment interface - Tailwind CSS Version
+        function showPaymentInterface(order) {
+            const mainContent = document.getElementById('mainContent');
+            mainContent.innerHTML = `
+                <div class="animate-slide-up">
+                    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 lg:gap-8">
+                        <!-- Left Column: Payment Section -->
+                        <div class="lg:col-span-2 space-y-6">
+                            <!-- Main Payment Card -->
+                            <div class="glass-effect rounded-2xl p-6 card-hover">
+                                <!-- Premium Price Summary Header -->
+                                <div class="bg-gradient-to-r from-primary-600 to-primary-700 rounded-2xl p-6 mb-8 shadow-lg relative overflow-hidden group">
+                                    <div class="absolute -right-4 -top-4 w-24 h-24 bg-white/10 rounded-full blur-2xl group-hover:scale-150 transition-transform duration-700"></div>
+                                    <div class="absolute -left-4 -bottom-4 w-32 h-32 bg-primary-400/20 rounded-full blur-3xl"></div>
+                                    <div class="relative flex flex-col md:flex-row md:items-center justify-between gap-6">
+                                        <div class="flex items-center space-x-4">
+                                            <div class="w-12 h-12 bg-white rounded-xl flex items-center justify-center shadow-lg shadow-primary-900/20">
+                                                <i class="fas fa-tools text-primary-600 text-xl"></i>
+                                            </div>
+                                            <div>
+                                                <div class="text-white text-xl font-black italic tracking-tighter">WorkConnect</div>
+                                                <div class="text-primary-100 text-[10px] font-bold uppercase tracking-widest flex items-center">
+                                                    <span class="w-1 h-1 bg-primary-200 rounded-full mr-2"></span>
+                                                    SECURE CHECKOUT
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="bg-white/10 backdrop-blur-md rounded-2xl p-4 border border-white/20 min-w-[200px]">
+                                            <div class="text-primary-100 text-xs font-semibold mb-1 uppercase tracking-tight opacity-80">Price Summary</div>
+                                            <div class="text-white text-3xl font-black leading-none">₹${order.totalAmount || 0}</div>
+                                        </div>
+                                        <div class="flex items-center space-x-3 bg-primary-800/40 px-4 py-3 rounded-xl border border-white/5 backdrop-blur-sm self-start md:self-center">
+                                            <div class="w-8 h-8 rounded-full bg-primary-400/20 flex items-center justify-center border border-white/10">
+                                                <i class="fas fa-user-check text-white text-xs"></i>
+                                            </div>
+                                            <div class="text-left">
+                                                <div class="text-[10px] text-primary-200 uppercase font-bold">Authenticated as</div>
+                                                <div class="text-xs text-white font-bold leading-none mt-0.5">${currentUser.name || currentUser.username}</div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Payment Methods Selection -->
+                                <div class="mb-8">
+                                    <div class="flex items-center space-x-2 text-sm font-semibold text-gray-400 uppercase tracking-wider mb-4">
+                                        <div class="w-1 h-4 bg-primary-500 rounded-full"></div>
+                                        <span>Select Payment Method</span>
+                                    </div>
+                                    <div class="grid grid-cols-1 md:grid-cols-3 gap-3">
+                                        <div class="method-option active" data-method="upi" onclick="selectMethod('upi')">
+                                            <div class="flex flex-col items-center justify-center p-4 rounded-xl border-2 border-dark-700 hover:border-primary-500 transition-all duration-300 cursor-pointer bg-dark-800/20 relative group">
+                                                <div class="w-10 h-10 rounded-lg bg-emerald-500/10 flex items-center justify-center mb-2 group-hover:scale-110 transition-transform">
+                                                    <i class="fas fa-mobile-alt text-emerald-400"></i>
+                                                </div>
+                                                <div class="text-xs font-bold text-gray-200">UPI Apps</div>
+                                                <div class="checkmark absolute top-2 right-2 w-5 h-5 rounded-full bg-emerald-500 flex items-center justify-center opacity-0 scale-75 transition-all">
+                                                    <i class="fas fa-check text-white text-[10px]"></i>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="method-option" data-method="card" onclick="selectMethod('card')">
+                                            <div class="flex flex-col items-center justify-center p-4 rounded-xl border-2 border-dark-700 hover:border-primary-500 transition-all duration-300 cursor-pointer bg-dark-800/20 relative group">
+                                                <div class="w-10 h-10 rounded-lg bg-blue-500/10 flex items-center justify-center mb-2 group-hover:scale-110 transition-transform">
+                                                    <i class="far fa-credit-card text-blue-400"></i>
+                                                </div>
+                                                <div class="text-xs font-bold text-gray-200">Card</div>
+                                                <div class="checkmark absolute top-2 right-2 w-5 h-5 rounded-full bg-emerald-500 flex items-center justify-center opacity-0 scale-75 transition-all">
+                                                    <i class="fas fa-check text-white text-[10px]"></i>
+                                                </div>
+                                            </div>
+                                        </div>
+                                         <div class="method-option" data-method="cash" onclick="selectMethod('cash')">
+                                            <div class="flex flex-col items-center justify-center p-4 rounded-xl border-2 border-dark-700 hover:border-primary-500 transition-all duration-300 cursor-pointer bg-dark-800/20 relative group">
+                                                <div class="w-10 h-10 rounded-lg bg-amber-500/10 flex items-center justify-center mb-2 group-hover:scale-110 transition-transform">
+                                                    <i class="fas fa-money-bill-wave text-amber-400"></i>
+                                                </div>
+                                                <div class="text-xs font-bold text-gray-200">Cash</div>
+                                                <div class="checkmark absolute top-2 right-2 w-5 h-5 rounded-full bg-emerald-500 flex items-center justify-center opacity-0 scale-75 transition-all">
+                                                    <i class="fas fa-check text-white text-[10px]"></i>
+                                                </div>
+                                            </div>
+                                        </div>
+                                         <div class="method-option" data-method="cashfree" onclick="selectMethod('cashfree')">
+                                            <div class="flex flex-col items-center justify-center p-4 rounded-xl border-2 border-dark-700 hover:border-primary-500 transition-all duration-300 cursor-pointer bg-dark-800/20 relative group">
+                                                <div class="w-10 h-10 rounded-lg bg-indigo-500/10 flex items-center justify-center mb-2 group-hover:scale-110 transition-transform">
+                                                    <i class="fas fa-rocket text-indigo-400"></i>
+                                                </div>
+                                                <div class="text-xs font-bold text-gray-200">Cashfree</div>
+                                                <div class="checkmark absolute top-2 right-2 w-5 h-5 rounded-full bg-emerald-500 flex items-center justify-center opacity-0 scale-75 transition-all">
+                                                    <i class="fas fa-check text-white text-[10px]"></i>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Dynamic Blocks -->
+                                <div id="upiBlock" class="mb-8 hidden animate-fade-in">
+                                    <div class="glass-effect border border-white/5 rounded-2xl p-6 bg-white/[0.02]">
+                                        <div class="grid grid-cols-3 gap-3 mb-6">
+                                            <button onclick="payWithApp('google_pay')" class="p-4 rounded-xl border border-dark-700 bg-dark-800/30 hover:border-primary-500 transition-all flex flex-col items-center space-y-2 group">
+                                                <img src="https://uxwing.com/wp-content/themes/uxwing/download/brands-and-social-media/google-pay-icon.png" class="h-6 grayscale group-hover:grayscale-0 transition-all">
+                                                <span class="text-[9px] font-black text-gray-500 group-hover:text-white uppercase">G-Pay</span>
+                                            </button>
+                                            <button onclick="payWithApp('phonepe')" class="p-4 rounded-xl border border-dark-700 bg-dark-800/30 hover:border-primary-500 transition-all flex flex-col items-center space-y-2 group">
+                                                <img src="https://uxwing.com/wp-content/themes/uxwing/download/brands-and-social-media/phonepe-icon.png" class="h-6 grayscale group-hover:grayscale-0 transition-all">
+                                                <span class="text-[9px] font-black text-gray-500 group-hover:text-white uppercase">PhonePe</span>
+                                            </button>
+                                            <button onclick="payWithApp('paytm')" class="p-4 rounded-xl border border-dark-700 bg-dark-800/30 hover:border-primary-500 transition-all flex flex-col items-center space-y-2 group">
+                                                <img src="https://uxwing.com/wp-content/themes/uxwing/download/brands-and-social-media/paytm-icon.png" class="h-6 grayscale group-hover:grayscale-0 transition-all">
+                                                <span class="text-[9px] font-black text-gray-500 group-hover:text-white uppercase">Paytm</span>
+                                            </button>
+                                        </div>
+
+                                        <div class="flex flex-col items-center justify-center p-8 bg-white rounded-3xl relative overflow-hidden group/qr mb-6">
+                                            <div class="absolute inset-x-0 h-0.5 bg-primary-500 shadow-[0_0_15px_rgba(59,130,246,0.8)] z-20 animate-scan-line top-0"></div>
+                                            <img src="https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=upi://pay?pa=${order.worker?.upiId || ''}%26pn=${order.worker?.name || 'Worker'}%26am=${order.totalAmount}%26cu=INR" 
+                                                alt="UPI QR" class="w-40 h-40 p-2 relative z-10 transition-transform group-hover/qr:scale-105">
+                                            <div class="mt-4 text-[10px] font-black text-gray-400 uppercase tracking-widest">Scan with any UPI App</div>
+                                        </div>
+
+                                        <div class="relative py-4 mb-6">
+                                            <div class="absolute inset-x-0 top-1/2 -translate-y-1/2 flex items-center justify-center"><span class="bg-[#0f172a] px-3 text-[9px] font-black text-gray-500 uppercase tracking-widest">OR USE UPI ID</span></div>
+                                            <div class="border-t border-white/5 h-0"></div>
+                                        </div>
+
+                                        <div class="relative">
+                                            <input type="text" id="upiIdInput" placeholder="username@upi" 
+                                                class="w-full bg-dark-900 border border-dark-700 rounded-2xl px-5 py-4 text-white placeholder-gray-600 focus:border-primary-500 outline-none transition-all pr-32">
+                                            <button onclick="confirmPaid()" class="absolute right-2 top-2 bottom-2 bg-primary-600 hover:bg-primary-500 text-white text-[10px] font-black uppercase tracking-wider px-6 rounded-xl transition-all shadow-lg active:scale-95">Verify & Pay</button>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div id="cardBlock" class="mb-8 hidden animate-fade-in">
+                                    <div class="glass-effect border border-white/5 rounded-full p-2 bg-white/[0.02] flex items-center justify-center space-x-4 grayscale opacity-40 mb-6">
+                                        <i class="fab fa-cc-visa text-2xl"></i>
+                                        <i class="fab fa-cc-mastercard text-2xl"></i>
+                                        <i class="fab fa-cc-amex text-2xl"></i>
+                                        <i class="fab fa-cc-discover text-2xl"></i>
+                                    </div>
+                                    <div class="bg-gradient-to-br from-gray-800 to-black rounded-2xl p-8 border border-white/10 shadow-2xl relative overflow-hidden text-center">
+                                         <div class="relative z-10">
+                                            <i class="fas fa-shield-check text-primary-400 text-4xl mb-4"></i>
+                                            <h3 class="text-white font-bold mb-2">PCI-DSS Secure Portal</h3>
+                                            <p class="text-xs text-gray-400 px-12">You'll be redirected to our encrypted gateway for card processing. We never store your card data.</p>
+                                         </div>
+                                         <div class="absolute -right-8 -bottom-8 w-32 h-32 bg-primary-500/10 rounded-full blur-3xl"></div>
+                                    </div>
+                                </div>
+
+                                <!-- Premium Screenshot Upload Zone -->
+                                <div id="screenshotSection" class="mb-8">
+                                    <div class="flex items-center space-x-2 text-sm font-semibold text-gray-400 uppercase tracking-wider mb-4">
+                                        <div class="w-1 h-4 bg-primary-500 rounded-full"></div>
+                                        <span>Payment Confirmation</span>
+                                    </div>
+                                    <div id="dropZone" class="relative group">
+                                        <input type="file" id="screenshotInput" accept="image/*" class="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-20">
+                                        <div class="glass-effect border-2 border-dashed border-dark-700 group-hover:border-primary-500/50 rounded-2xl p-8 transition-all duration-300 text-center bg-white/[0.01]">
+                                            <div id="uploadPlaceholder" class="space-y-4">
+                                                <div class="w-16 h-16 rounded-2xl bg-primary-500/10 border border-primary-500/20 flex items-center justify-center mx-auto group-hover:scale-110 transition-transform">
+                                                    <i class="fas fa-cloud-upload-alt text-primary-400 text-2xl"></i>
+                                                </div>
+                                                <div>
+                                                    <div class="font-bold text-gray-100 mb-1">Upload Receipt Screenshot</div>
+                                                    <p class="text-[10px] text-gray-500 max-w-xs mx-auto uppercase tracking-wider">Already paid? Upload proof for instant manual verification.</p>
+                                                </div>
+                                            </div>
+                                            <div id="screenshotPreview" class="hidden relative inline-block">
+                                                <img id="previewImg" src="" class="max-h-64 rounded-xl border border-white/10 shadow-2xl">
+                                                <button onclick="removeScreenshot()" class="absolute -top-3 -right-3 w-8 h-8 rounded-full bg-red-500 text-white flex items-center justify-center shadow-lg hover:bg-red-600 transition-colors z-30">
+                                                    <i class="fas fa-times text-xs"></i>
+                                                </button>
+                                                <div class="absolute bottom-3 inset-x-3 bg-black/60 backdrop-blur-md rounded-lg p-2 flex items-center justify-between border border-white/10">
+                                                    <div class="text-[10px] text-white font-bold uppercase truncate" id="fileName">screenshot.png</div>
+                                                    <div class="text-[10px] text-emerald-400 font-black">READY</div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Main Action Buttons -->
+                                <div class="space-y-4">
+                                    <button id="payBtn" onclick="confirmPaid()"
+                                            class="w-full py-4 rounded-xl bg-gradient-to-r from-primary-500 to-primary-600 hover:from-primary-600 hover:to-primary-700 transition-all transform hover:-translate-y-1 shadow-lg shadow-primary-500/25 flex items-center justify-center space-x-3">
+                                        <i class="fas fa-shield-check text-lg"></i>
+                                        <span id="payBtnText" class="font-bold text-lg">Secure Checkout</span>
+                                    </button>
+                                    <button onclick="goBackToDashboard()" class="w-full py-3 text-gray-500 hover:text-white text-sm font-bold uppercase tracking-widest transition-colors">
+                                        Cancel & Return to Dashboard
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Right Column: History & Breakdown -->
+                        <div class="space-y-6">
+                             <!-- Breakdown Card -->
+                            <div class="glass-effect rounded-2xl p-6 border border-white/5">
+                                <div class="text-sm font-bold text-gray-400 uppercase tracking-wider mb-6 pb-4 border-b border-white/5">Order Summary</div>
+                                <div class="space-y-4">
+                                    <div class="flex justify-between items-center">
+                                        <span class="text-gray-400 text-xs">Base Work Charge</span>
+                                        <span class="text-white font-mono text-sm">₹${Math.round(order.totalAmount * 0.82)}</span>
+                                    </div>
+                                    <div class="flex justify-between items-center text-xs">
+                                        <span class="text-gray-400">Platform Services</span>
+                                        <span class="text-white font-mono">₹${Math.round(order.totalAmount * 0.05)}</span>
+                                    </div>
+                                    <div class="flex justify-between items-center text-xs">
+                                        <span class="text-gray-400">GST (18%)</span>
+                                        <span class="text-white font-mono">₹${Math.round(order.totalAmount * 0.13)}</span>
+                                    </div>
+                                    <div class="pt-4 mt-4 border-t border-white/5">
+                                        <div class="flex justify-between items-center">
+                                            <span class="text-white font-black uppercase tracking-wider">Total Payable</span>
+                                            <span class="text-primary-400 text-2xl font-black">₹${order.totalAmount}</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- History Card -->
+                            <div class="glass-effect rounded-2xl p-6 border border-white/5 overflow-hidden">
+                                <div class="flex items-center justify-between mb-6">
+                                    <div class="text-sm font-bold text-gray-400 uppercase tracking-wider">Your History</div>
+                                    <button onclick="loadPaymentHistory()" class="text-primary-400 text-xs font-black hover:underline">REFRESH</button>
+                                </div>
+                                <div id="historyList" class="space-y-3 min-h-[150px]">
+                                    <div class="flex flex-col items-center justify-center py-10 opacity-30">
+                                        <div class="loading-spinner w-6 h-6 mb-2"></div>
+                                        <span class="text-[10px] font-bold">Syncing Records...</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `;
+
+            initializeUI();
+        }
+
+        // Initialize UI after template is loaded
+        function initializeUI() {
+            // Set up screenshot upload
+            const screenshotInput = document.getElementById('screenshotInput');
+            if (screenshotInput) {
+                screenshotInput.addEventListener('change', handleScreenshotUpload);
+            }
+
+            // Load payment history
+            loadPaymentHistory();
+
+            // Set default view
+            selectMethod('upi');
+        }
+
+        // Select payment method
+        function selectMethod(method) {
+            selectedMethod = method;
+
+            document.querySelectorAll('.method-option').forEach(el => {
+                el.classList.remove('active');
+                const checkmark = el.querySelector('.checkmark');
+                if (checkmark) { checkmark.style.opacity = '0'; checkmark.style.transform = 'scale(0.75)'; }
+            });
+
+            const selectedEl = document.querySelector(`.method-option[data-method="${method}"]`);
+            if (selectedEl) {
+                selectedEl.classList.add('active');
+                const checkmark = selectedEl.querySelector('.checkmark');
+                if (checkmark) { checkmark.style.opacity = '1'; checkmark.style.transform = 'scale(1)'; }
+            }
+
+            // Show/hide blocks
+            const upiBlock = document.getElementById('upiBlock');
+            const cardBlock = document.getElementById('cardBlock');
+            const screenshotSection = document.getElementById('screenshotSection');
+
+            if (upiBlock) {
+                upiBlock.classList.toggle('hidden', (method !== 'upi'));
+                upiBlock.style.display = (method === 'upi') ? 'block' : 'none';
+            }
+            if (cardBlock) {
+                cardBlock.classList.toggle('hidden', (method !== 'card'));
+                cardBlock.style.display = (method === 'card') ? 'block' : 'none';
+            }
+
+            // Auto-update button text
+            const payBtnText = document.getElementById('payBtnText');
+            if (payBtnText) {
+                if (method === 'cash') payBtnText.textContent = 'Confirm Cash Payment';
+                else if (method === 'cashfree') payBtnText.textContent = 'Secure Checkout via Cashfree';
+                else if (screenshotFile) payBtnText.textContent = 'Submit Manual Verification';
+                else payBtnText.textContent = 'Secure Checkout via Razorpay';
+            }
+        }
+
+        async function confirmPaid() {
+            if (!currentOrder) return showMessage('Order not loaded', 'error');
+
+            // 1. Handle Cash
+            if (selectedMethod === 'cash') {
+                if (confirm('Mark this as cash payment? You will pay directly to the worker.')) {
+                    await submitManualPayment('cash');
+                }
+                return;
+            }
+
+            // 2. Handle Manual Screenshot Submission (For any digital method)
+            if (screenshotFile) {
+                if (confirm('Submit this screenshot for manual payment verification?')) {
+                    await submitManualPayment(selectedMethod);
+                }
+                return;
+            }
+
+            // 3. Digital Payment via Cashfree
+            if (selectedMethod === 'cashfree') {
+                await payWithCashfree();
+                return;
+            }
+
+            // 4. Digital Payment via Razorpay Gateway
+            await payWithRazorpay();
+        }
+
+        async function payWithApp(app) {
+            if (!currentOrder) return showMessage('Order not loaded', 'error');
+            await payWithRazorpay(app);
+        }
+
+        async function payWithRazorpay(preferredApp = null) {
+            try {
+                const payBtn = document.getElementById('payBtn');
+                payBtn.disabled = true;
+                payBtn.innerHTML = '<span class="loading-spinner mr-2"></span> Initializing Gateway...';
+
+                // 1. Get Razorpay Config
+                const configRes = await fetch(getApiUrl('/api/config'));
+                const { razorpayKeyId } = await configRes.json();
+
+                // 2. Create Razorpay Order
+                const orderRes = await fetch(getApiUrl('/api/create-razorpay-order'), {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        amount: currentOrder.totalAmount,
+                        receipt: 'rcpt_' + currentOrder.id.slice(-6)
+                    })
+                });
+                const rzpOrder = await orderRes.json();
+
+                const options = {
+                    "key": razorpayKeyId,
+                    "amount": rzpOrder.amount,
+                    "currency": "INR",
+                    "name": "WorkConnect",
+                    "description": `Payment for ${currentOrder.serviceType}`,
+                    "order_id": rzpOrder.id,
+                    "handler": async function (response) {
+                        payBtn.innerHTML = '<span class="loading-spinner mr-2"></span> Verifying Payment...';
+
+                        // 3. Verify Payment
+                        const verifyRes = await fetch(getApiUrl('/api/verify-payment'), {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify({
+                                razorpay_order_id: response.razorpay_order_id,
+                                razorpay_payment_id: response.razorpay_payment_id,
+                                razorpay_signature: response.razorpay_signature,
+                                orderId: currentOrder.id,
+                                amount: currentOrder.totalAmount
+                            })
+                        });
+
+                        const result = await verifyRes.json();
+                        if (result.success) {
+                            handlePaymentSuccess(response.razorpay_payment_id);
+                        } else {
+                            showMessage('Verification failed. Please contact support.', 'error');
+                            payBtn.disabled = false;
+                            payBtn.textContent = 'Retry Payment';
+                        }
+                    },
+                    "prefill": {
+                        "name": currentUser.name || currentUser.username,
+                        "email": currentUser.email || "",
+                        "contact": currentUser.phone || ""
+                    },
+                    "theme": { "color": "#3b82f6" },
+                    "modal": {
+                        "ondismiss": function () {
+                            payBtn.disabled = false;
+                            payBtn.innerHTML = '<i class="fas fa-shield-check text-lg"></i><span id="payBtnText" class="font-bold text-lg">Secure Checkout via Razorpay</span>';
+                        }
+                    }
+                };
+
+                // Add app specific config for direct UPI app opening
+                if (preferredApp) {
+                    options.method = 'upi';
+                    options.config = {
+                        display: {
+                            blocks: {
+                                banks: {
+                                    name: 'Pay using UPI',
+                                    instruments: [{ method: 'upi' }]
+                                }
+                            },
+                            hide: [
+                                { method: 'card' },
+                                { method: 'netbanking' },
+                                { method: 'wallet' },
+                                { method: 'paylater' }
+                            ],
+                            sequence: ['block.banks'],
+                            preferences: { show_default_blocks: false }
+                        }
+                    };
+                    options.prefill.method = 'upi';
+                    const appNames = {
+                        'google_pay': 'Google Pay',
+                        'phonepe': 'PhonePe',
+                        'paytm': 'Paytm'
+                    };
+                    const appName = appNames[preferredApp] || 'your preferred app';
+                    showMessage(`Opening payment gateway. Please select ${appName} from UPI options.`, 'info');
+                }
+
+                const rzp1 = new Razorpay(options);
+                rzp1.open();
+
+                rzp1.on('payment.failed', function (response) {
+                    console.error('Razorpay Payment Failed:', response.error);
+                    showMessage(`Payment Failed: ${response.error.description || 'Reason unknown'}`, 'error');
+                    payBtn.disabled = false;
+                    payBtn.innerHTML = '<i class="fas fa-exclamation-circle mr-2"></i><span>Payment Failed - Try Again</span>';
+                });
+            } catch (error) {
+                console.error('Payment Error:', error);
+                showMessage(error.message || 'Failed to initialize payment gateway. Please try again.', 'error');
+                const payBtn = document.getElementById('payBtn');
+                if (payBtn) {
+                    payBtn.disabled = false;
+                    payBtn.innerHTML = '<i class="fas fa-shield-check text-lg"></i><span id="payBtnText" class="font-bold text-lg">Secure Checkout via Razorpay</span>';
+                }
+            }
+        }
+
+        function handlePaymentSuccess(paymentId) {
+            const mainContent = document.getElementById('mainContent');
+            mainContent.innerHTML = `
+                <div class="animate-fade-in flex flex-col items-center justify-center min-h-[50vh] text-center p-8">
+                    <div class="w-20 h-20 bg-emerald-500 rounded-full flex items-center justify-center mb-6 shadow-lg shadow-emerald-500/30">
+                        <i class="fas fa-check text-white text-3xl"></i>
+                    </div>
+                    <h2 class="text-3xl font-bold text-gray-100 mb-2">Payment Successful!</h2>
+                    <p class="text-gray-400 mb-8">Your payment has been verified and processed. Transaction ID: <span class="text-primary-400 font-mono">${paymentId}</span></p>
+                    <button onclick="goBackToDashboard()" 
+                            class="px-8 py-3 bg-gradient-to-r from-primary-600 to-primary-700 hover:from-primary-700 hover:to-primary-800 rounded-xl font-bold text-white transition-all shadow-lg hover:translate-y-[-2px]">
+                        Return to Dashboard
+                    </button>
+                </div>
+            `;
+        }
+
+        async function submitManualPayment(method) {
+            try {
+                const payBtn = document.getElementById('payBtn');
+                payBtn.disabled = true;
+                payBtn.innerHTML = '<span class="loading-spinner mr-2"></span> Submitting...';
+
+                const formData = new FormData();
+                formData.append('method', method);
+                formData.append('customerId', currentUser.id);
+                if (screenshotFile) formData.append('screenshot', screenshotFile);
+
+                const res = await fetch(getApiUrl(`/api/orders/${currentOrder.id}/pay`), {
+                    method: 'POST',
+                    body: formData
+                });
+
+                const result = await res.json();
+                if (res.ok) {
+                    handlePaymentSuccess(result.payment.transactionId);
+                } else {
+                    throw new Error(result.message || 'Payment failed');
+                }
+            } catch (err) {
+                showMessage(err.message, 'error');
+                payBtn.disabled = false;
+                payBtn.innerHTML = '<i class="fas fa-redo-alt mr-2"></i><span>Retry Transaction</span>';
+            }
+        }
+
+        // Handle screenshot upload
+        function handleScreenshotUpload(e) {
+            const file = e.target.files ? e.target.files[0] : null;
+            if (!file) return;
+            if (!file.type.startsWith('image/')) return showMessage('Please upload an image file', 'error');
+            if (file.size > 5 * 1024 * 1024) return showMessage('Image size should be less than 5MB', 'error');
+
+            screenshotFile = file;
+
+            // Visual Update
+            document.getElementById('uploadPlaceholder').classList.add('hidden');
+            document.getElementById('screenshotPreview').classList.remove('hidden');
+            document.getElementById('fileName').textContent = file.name;
+
+            // Update Pay Button
+            const payBtnText = document.getElementById('payBtnText');
+            if (payBtnText) payBtnText.textContent = 'Submit Manual Verification';
+
+            const reader = new FileReader();
+            reader.onload = function (event) {
+                const previewImg = document.getElementById('previewImg');
+                if (previewImg) {
+                    previewImg.src = event.target.result;
+                    previewImg.onclick = () => window.open(event.target.result, '_blank');
+                }
+            };
+            reader.readAsDataURL(file);
+            showMessage('Payment proof attached successfully!', 'success');
+        }
+
+        function removeScreenshot() {
+            screenshotFile = null;
+            document.getElementById('screenshotInput').value = '';
+            document.getElementById('uploadPlaceholder').classList.remove('hidden');
+            document.getElementById('screenshotPreview').classList.add('hidden');
+
+            // Revert Pay Button
+            const payBtnText = document.getElementById('payBtnText');
+            if (payBtnText) {
+                if (selectedMethod === 'cash') payBtnText.textContent = 'Confirm Cash Payment';
+                else payBtnText.textContent = 'Secure Checkout via Razorpay';
+            }
+            showMessage('Screenshot removed', 'info');
+        }
+
+        // Load payment history
+        async function loadPaymentHistory() {
+            try {
+                const historyList = document.getElementById('historyList');
+                if (!historyList) return;
+
+                let payments;
+                try {
+                    // Try real API first
+                    const res = await fetch(getApiUrl(`/api/payments/customer/${currentUser.id}`));
+                    if (!res.ok) throw new Error('API request failed');
+                    payments = await res.json();
+                } catch (apiError) {
+                    console.log('API failed, using mock data:', apiError);
+                    // Fallback to mock data
+                    await new Promise(resolve => setTimeout(resolve, 300));
+                    payments = mockDatabase.payments
+                        .filter(p => p.customerId === currentUser.id)
+                        .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+                }
+
+                if (!payments || payments.length === 0) {
+                    historyList.innerHTML = `
+                        <div class="flex flex-col items-center justify-center py-8">
+                            <i class="fas fa-history text-3xl text-gray-600 mb-3"></i>
+                            <div class="text-gray-400 mb-1">No payment history found</div>
+                            <div class="text-sm text-gray-500">Your payment history will appear here</div>
+                        </div>
+                    `;
+                    return;
+                }
+
+                historyList.innerHTML = payments.map(payment => `
+                    <div class="payment-history-item p-4 rounded-xl border border-dark-700 hover:border-primary-500/50 bg-gradient-to-r from-dark-800/30 to-dark-900/30 mb-3 transition-all duration-300">
+                        <div class="flex flex-col sm:flex-row sm:items-start justify-between gap-3 mb-3">
+                            <div>
+                                <div class="text-xl font-bold text-gray-100 mb-1">₹${payment.amount}</div>
+                                <div class="text-sm text-gray-400 mb-1">
+                                    ${payment.method === 'upi' ? 'UPI Payment' :
+                        payment.method === 'card' ? 'Card Payment' : 'Cash Payment'}
+                                </div>
+                                <div class="text-sm text-gray-500">
+                                    ${new Date(payment.createdAt).toLocaleDateString('en-IN', {
+                            day: '2-digit',
+                            month: 'short',
+                            year: 'numeric'
+                        })}
+                                </div>
+                            </div>
+                            <div class="text-right">
+                                <div class="inline-flex items-center px-2 py-1 rounded-full ${payment.status === 'pending' ? 'bg-amber-500/10 border-amber-500/30' : payment.status === 'failed' ? 'bg-red-500/10 border-red-500/30' : 'bg-emerald-500/10 border-emerald-500/30'} mb-2">
+                                    <span class="text-xs font-semibold ${payment.status === 'pending' ? 'text-amber-300' : payment.status === 'failed' ? 'text-red-300' : 'text-emerald-300'}">${payment.status || 'success'}</span>
+                                </div>
+                                <div class="text-sm text-gray-400">${payment.transactionId}</div>
+                            </div>
+                        </div>
+                        ${payment.screenshot ? `
+                            <div class="mt-3 pt-3 border-t border-dark-700">
+                                <img src="${payment.screenshot}" alt="Payment Proof" 
+                                     class="w-20 h-20 object-cover rounded-lg border border-dark-600 cursor-pointer"
+                                     onclick="window.open('${payment.screenshot}', '_blank')">
+                                <div class="mt-2">
+                                    <a href="${payment.screenshot}" target="_blank" 
+                                       class="inline-flex items-center text-sm text-primary-400 hover:text-primary-300 transition-colors">
+                                        <i class="fas fa-external-link-alt mr-1 text-xs"></i>
+                                        <span>View Proof</span>
+                                    </a>
+                                </div>
+                            </div>
+                        ` : ''}
+                    </div>
+                `).join('');
+
+            } catch (error) {
+                console.error('Error loading payment history:', error);
+                const historyList = document.getElementById('historyList');
+                if (historyList) {
+                    historyList.innerHTML = `
+                        <div class="flex flex-col items-center justify-center py-8 text-red-400">
+                            <i class="fas fa-exclamation-circle text-xl mb-2"></i>
+                            <div class="text-center">Failed to load payment history</div>
+                            <div class="text-sm text-gray-500">${error.message}</div>
+                        </div>
+                    `;
+                }
+            }
+        }
+
+        // Copy UPI ID
+        function copyUPI(upi) {
+            if (!upi) return;
+            navigator.clipboard.writeText(upi).then(() => {
+                showMessage('Worker UPI ID copied to clipboard!', 'success');
+            }).catch(err => {
+                console.error('Copy failed:', err);
+                showMessage('Failed to copy UPI ID', 'error');
+            });
+        }
+
+        // Show message
+        function showMessage(text, type = 'info') {
+            const messageEl = document.getElementById('paymentMessage');
+            if (!messageEl) return;
+
+            const icons = {
+                success: 'fa-check-circle',
+                error: 'fa-exclamation-circle',
+                warning: 'fa-exclamation-triangle',
+                info: 'fa-info-circle'
+            };
+
+            const colors = {
+                success: 'emerald',
+                error: 'red',
+                warning: 'amber',
+                info: 'blue'
+            };
+
+            const bgColor = type === 'success' ? 'bg-emerald-500/10' : type === 'error' ? 'bg-red-500/10' : 'bg-blue-500/10';
+            const textColor = type === 'success' ? 'text-emerald-400' : type === 'error' ? 'text-red-400' : 'text-blue-400';
+            const borderColor = type === 'success' ? 'border-emerald-500/30' : type === 'error' ? 'border-red-500/30' : 'border-blue-500/30';
+
+            messageEl.innerHTML = `
+                <div class="p-4 rounded-xl ${bgColor} border ${borderColor} flex items-start space-x-3 animate-fade-in mb-4">
+                    <i class="fas ${icons[type]} ${textColor} text-lg mt-0.5"></i>
+                    <div class="${textColor}">${text}</div>
+                </div>
+            `;
+
+            // Auto-hide messages after 5 seconds
+            setTimeout(() => {
+                messageEl.innerHTML = '';
+            }, 5000);
+        }
+
+        // Retry loading
+        function retryLoad() {
+            const params = new URLSearchParams(window.location.search);
+            const orderId = params.get('orderId');
+            if (orderId) {
+                window.location.reload();
+            } else {
+                goBackToDashboard();
+            }
+        }
+
+        // Navigate back to dashboard
+        function goBackToDashboard() {
+            window.location.href = 'customer-dashboard.html';
+        }
+
+        async function payWithCashfree() {
+            try {
+                const payBtn = document.getElementById('payBtn');
+                payBtn.disabled = true;
+                payBtn.innerHTML = '<span class="loading-spinner mr-2"></span> Initializing Cashfree...';
+
+                // 1. Get Cashfree Config
+                const configRes = await fetch(getApiUrl('/api/cashfree-config'));
+                const { cashfreeAppId, isSandbox } = await configRes.json();
+
+                const cashfree = Cashfree({
+                    mode: isSandbox ? "sandbox" : "production"
+                });
+
+                // 2. Create Cashfree Order
+                const orderRes = await fetch(getApiUrl('/api/create-cashfree-order'), {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        orderId: currentOrder.id,
+                        amount: currentOrder.totalAmount,
+                        customerName: currentUser.name || currentUser.username,
+                        customerEmail: currentUser.email || "",
+                        customerPhone: currentUser.phone || "9999999999",
+                        workerId: currentOrder.workerId
+                    })
+                });
+                const cfOrder = await orderRes.json();
+
+                if (!cfOrder.payment_session_id) {
+                    throw new Error(cfOrder.message || 'Failed to create payment session');
+                }
+
+                const checkoutOptions = {
+                    paymentSessionId: cfOrder.payment_session_id,
+                    redirectTarget: "_self",
+                };
+
+                cashfree.checkout(checkoutOptions).then((result) => {
+                    if (result.error) {
+                        console.error('Cashfree Error:', result.error);
+                        showMessage(result.error.message, 'error');
+                        payBtn.disabled = false;
+                        payBtn.innerHTML = '<i class="fas fa-shield-check text-lg"></i><span id="payBtnText" class="font-bold text-lg">Secure Checkout</span>';
+                    }
+                });
+
+            } catch (error) {
+                console.error('Cashfree Error:', error);
+                showMessage(error.message || 'Failed to initialize Cashfree. Please try again.', 'error');
+                const payBtn = document.getElementById('payBtn');
+                if (payBtn) {
+                    payBtn.disabled = false;
+                    payBtn.innerHTML = '<i class="fas fa-shield-check text-lg"></i><span id="payBtnText" class="font-bold text-lg">Secure Checkout</span>';
+                }
+            }
+        }
+
+        async function verifyCashfreePayment(cfOrderId, internalOrderId) {
+            try {
+                showMessage('Verifying your Cashfree payment...', 'info');
+
+                const res = await fetch(getApiUrl('/api/verify-cashfree-payment'), {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        orderId: cfOrderId,
+                        cf_payment_id: 'CF_REDIRECT_' + Date.now()
+                    })
+                });
+
+                const result = await res.json();
+                if (result.success) {
+                    handlePaymentSuccess(cfOrderId);
+                } else {
+                    showMessage('Payment verification unsuccessful. If amount was deducted, please contact support.', 'error');
+                }
+            } catch (err) {
+                console.error('Cashfree Verification Error:', err);
+                showMessage('An error occurred while verifying your payment.', 'error');
+            }
+        }
+
+        // --- Notification Handlers ---
+        async function loadNotifications() {
+            if (!currentUser) return;
+            try {
+                const res = await fetch(getApiUrl(`/api/notifications/${currentUser.id}`));
+                if (res.ok) {
+                    const notifications = await res.json();
+                    renderNotifications(notifications);
+                }
+            } catch (e) {
+                console.error('Error loading notifications', e);
+            }
+        }
+
+        function renderNotifications(notifications) {
+            const listEl = document.getElementById('customerNotifList');
+            const countEl = document.getElementById('customerNotifCount');
+            if (!listEl || !countEl) return;
+
+            const unread = notifications.filter(n => !n.read);
+            countEl.textContent = unread.length > 9 ? '9+' : unread.length;
+            countEl.style.display = unread.length > 0 ? 'inline-block' : 'none';
+
+            if (notifications.length === 0) {
+                listEl.innerHTML = '<div class="p-4 text-center text-gray-500 text-sm">No new notifications</div>';
+                return;
+            }
+
+            listEl.innerHTML = notifications.map(n => `
+                <div class="notif-item ${n.read ? '' : 'unread'} p-3 border-b border-white/5 cursor-pointer hover:bg-white/5 transition-colors" onclick="markAsRead('${n._id || n.id}', '${n.link}')">
+                    <div class="notif-title text-sm text-gray-200 ${n.read ? '' : 'font-bold'}">${n.message}</div>
+                    <div class="notif-meta text-xs text-gray-500 mt-1 flex items-center">
+                        <i class="far fa-clock mr-1"></i>
+                        ${new Date(n.createdAt).toLocaleString([], { month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' })}
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        async function markAsRead(notifId, link) {
+            try {
+                await fetch(getApiUrl(`/api/notifications/${notifId}/read`), { method: 'PUT' });
+                if (link && link !== 'null' && link !== 'undefined') {
+                    window.location.href = link;
+                } else {
+                    loadNotifications();
+                }
+            } catch (e) {
+                console.error('Error marking as read', e);
+            }
+        }
+
+        function initCustomerNotifToggle() {
+            const btn = document.getElementById('customerNotifBtn');
+            const dropdown = document.getElementById('customerNotifDropdown');
+            if (!btn || !dropdown) return;
+            btn.addEventListener('click', (e) => {
+                e.stopPropagation();
+                dropdown.classList.toggle('scale-100');
+                dropdown.classList.toggle('opacity-100');
+                dropdown.classList.toggle('pointer-events-auto');
+            });
+            document.addEventListener('click', () => {
+                dropdown.classList.remove('scale-100', 'opacity-100', 'pointer-events-auto');
+            });
+        }
+    </script>
+</body>
+
+</html>

@@ -1,0 +1,144 @@
+<ion-header [translucent]="true">
+  <ion-toolbar color="primary">
+    <ion-title>Worker Dashboard</ion-title>
+    <ion-buttons slot="end">
+      <ion-button routerLink="/notifications">
+        <ion-icon slot="icon-only" name="notifications-outline"></ion-icon>
+      </ion-button>
+      <ion-button routerLink="/support">
+        <ion-icon slot="icon-only" name="help-circle-outline"></ion-icon>
+      </ion-button>
+      <ion-button (click)="logout()">
+        <ion-icon slot="icon-only" name="log-out-outline"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content [fullscreen]="true" class="dashboard-bg">
+  <ion-refresher slot="fixed" (ionRefresh)="doRefresh($event)">
+    <ion-refresher-content></ion-refresher-content>
+  </ion-refresher>
+
+  <div class="stats-grid">
+    <div class="stat-card blue">
+      <ion-icon name="clipboard-outline"></ion-icon>
+      <div class="stat-info">
+        <h3>{{orders.length}}</h3>
+        <p>Total Orders</p>
+      </div>
+    </div>
+    <div class="stat-card purple">
+      <ion-icon name="star-outline"></ion-icon>
+      <div class="stat-info">
+        <h3>{{worker?.averageRating?.toFixed(1) || '0.0'}}</h3>
+        <p>Rating</p>
+      </div>
+    </div>
+  </div>
+
+  <ion-segment [(ngModel)]="activeTab" mode="md">
+    <ion-segment-button value="orders">
+      <ion-label>Orders</ion-label>
+    </ion-segment-button>
+    <ion-segment-button value="profile">
+      <ion-label>Profile</ion-label>
+    </ion-segment-button>
+    <ion-segment-button value="portfolio">
+      <ion-label>Portfolio</ion-label>
+    </ion-segment-button>
+  </ion-segment>
+
+  <div [ngSwitch]="activeTab" class="tab-content">
+    <!-- Orders Tab -->
+    <div *ngSwitchCase="'orders'" class="anim-fade">
+      <div *ngIf="orders.length === 0" class="empty-state">
+        <ion-icon name="cafe-outline"></ion-icon>
+        <h4>No orders yet</h4>
+        <p>Keep your profile updated to get more work!</p>
+      </div>
+
+      <ion-card *ngFor="let order of orders" class="order-card">
+        <ion-card-header>
+          <div class="order-header">
+            <ion-badge [color]="getStatusColor(order.status)">{{order.status}}</ion-badge>
+            <span class="order-date">{{order.createdAt | date:'shortDate'}}</span>
+          </div>
+          <ion-card-title>{{order.customerName}}</ion-card-title>
+          <ion-card-subtitle>{{order.serviceName}}</ion-card-subtitle>
+        </ion-card-header>
+        <ion-card-content>
+          <p><ion-icon name="location-outline"></ion-icon> {{order.address}}</p>
+          <div class="order-actions" *ngIf="order.status !== 'Completed' && order.status !== 'Cancelled'">
+            <ion-button *ngIf="order.status === 'Pending'" size="small"
+              (click)="updateStatus(order, 'Accepted')">Accept</ion-button>
+            <ion-button *ngIf="order.status === 'Accepted'" size="small" color="success"
+              (click)="updateStatus(order, 'Completed')">Finish</ion-button>
+            <ion-button size="small" color="danger" fill="clear"
+              (click)="updateStatus(order, 'Cancelled')">Decline</ion-button>
+          </div>
+        </ion-card-content>
+      </ion-card>
+    </div>
+
+    <!-- Profile Tab -->
+    <div *ngSwitchCase="'profile'" class="anim-fade profile-section">
+      <div class="profile-header">
+        <div class="avatar-container">
+          <img [src]="worker?.profileImage || 'assets/default-avatar.png'"
+            (onerror)="$any($event.target).src='https://placehold.co/100x100?text=Avatar'">
+          <ion-button color="primary" size="small" (click)="selectImage()">
+            <ion-icon name="camera-outline"></ion-icon>
+          </ion-button>
+        </div>
+        <h2>{{worker?.name || 'Set your name'}}</h2>
+        <p>{{userData?.email}}</p>
+      </div>
+
+      <ion-list lines="none">
+        <ion-item class="custom-input">
+          <ion-select label="Availability" labelPlacement="floating" [(ngModel)]="editData.availability">
+            <ion-select-option value="Available">Available</ion-select-option>
+            <ion-select-option value="Busy">Busy</ion-select-option>
+            <ion-select-option value="Unavailable">Unavailable</ion-select-option>
+          </ion-select>
+        </ion-item>
+
+        <ion-item class="custom-input">
+          <ion-input label="Full Name" labelPlacement="floating" [(ngModel)]="editData.name"></ion-input>
+        </ion-item>
+
+        <ion-item class="custom-input">
+          <ion-input label="Hourly Rate ($)" labelPlacement="floating" type="number"
+            [(ngModel)]="editData.hourlyRate"></ion-input>
+        </ion-item>
+
+        <ion-item class="custom-input">
+          <ion-textarea label="Description" labelPlacement="floating" [(ngModel)]="editData.description"
+            [autoGrow]="true"></ion-textarea>
+        </ion-item>
+      </ion-list>
+
+      <ion-button expand="block" (click)="saveProfile()" class="save-btn">
+        <ion-spinner *ngIf="saving" name="crescent"></ion-spinner>
+        <span *ngIf="!saving">Save Changes</span>
+      </ion-button>
+    </div>
+
+    <!-- Portfolio Tab -->
+    <div *ngSwitchCase="'portfolio'" class="anim-fade">
+      <div class="portfolio-grid">
+        <div *ngFor="let img of worker?.portfolio" class="portfolio-item">
+          <img [src]="img">
+          <ion-button color="danger" size="small" class="delete-img" (click)="deletePortfolio(img)">
+            <ion-icon name="trash-outline"></ion-icon>
+          </ion-button>
+        </div>
+        <div class="add-portfolio" (click)="addPortfolio()">
+          <ion-icon name="add-outline"></ion-icon>
+          <p>Add Image</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</ion-content>

@@ -1,0 +1,959 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>WorkConnect - My Payments</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+
+    <style>
+        body {
+            min-height: 100vh;
+            background: radial-gradient(ellipse at top, #020617 0%, #0f172a 40%, #1e293b 100%);
+            color: #e5e7eb;
+            font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+            overflow-x: hidden;
+        }
+
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: rgba(15, 23, 42, 0.5);
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: rgba(56, 189, 248, 0.3);
+            border-radius: 4px;
+        }
+
+        .navbar {
+            background: rgba(15, 23, 42, 0.98);
+            border-bottom: 1px solid rgba(56, 189, 248, 0.2);
+            backdrop-filter: blur(16px);
+            box-shadow: 0 4px 30px rgba(0, 0, 0, 0.3);
+        }
+
+        .navbar-brand {
+            font-weight: 700;
+            background: linear-gradient(135deg, #38bdf8, #60a5fa, #3b82f6);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            letter-spacing: -0.5px;
+        }
+
+        .navbar .nav-link {
+            color: #cbd5e1;
+            transition: all 0.3s ease;
+            position: relative;
+            padding: 0.5rem 1rem;
+        }
+
+        .navbar .nav-link:hover {
+            color: #ffffff;
+            transform: translateY(-2px);
+        }
+
+        .navbar .nav-link.active {
+            color: #38bdf8;
+            font-weight: 600;
+        }
+
+        .navbar .nav-link.active::after {
+            content: '';
+            position: absolute;
+            bottom: -1px;
+            left: 1rem;
+            right: 1rem;
+            height: 2px;
+            background: linear-gradient(90deg, #38bdf8, #3b82f6);
+            border-radius: 2px;
+        }
+
+        .btn-outline {
+            border: 1px solid rgba(56, 189, 248, 0.4);
+            color: #38bdf8;
+            background: transparent;
+            transition: all 0.3s ease;
+        }
+
+        .btn-outline:hover {
+            background: rgba(56, 189, 248, 0.1);
+            border-color: #38bdf8;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(56, 189, 248, 0.2);
+        }
+
+        .page-header {
+            padding: 2.5rem 0 2rem;
+            position: relative;
+        }
+
+        .page-title {
+            font-size: 2.25rem;
+            font-weight: 800;
+            background: linear-gradient(135deg, #f8fafc, #cbd5e1);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 0.5rem;
+            letter-spacing: -0.5px;
+        }
+
+        .page-subtitle {
+            color: #94a3b8;
+            font-size: 1rem;
+            max-width: 600px;
+        }
+
+        /* Payment Cards */
+        .payment-card {
+            background: linear-gradient(145deg, rgba(15, 23, 42, 0.95), rgba(30, 41, 59, 0.9));
+            border-radius: 20px;
+            border: 1px solid rgba(56, 189, 248, 0.15);
+            box-shadow: 0 10px 30px rgba(15, 23, 42, 0.5);
+            padding: 24px;
+            height: 100%;
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.1);
+            position: relative;
+            overflow: hidden;
+            backdrop-filter: blur(10px);
+        }
+
+        .payment-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 1px;
+            background: linear-gradient(90deg, transparent, rgba(56, 189, 248, 0.5), transparent);
+        }
+
+        .payment-card:hover {
+            transform: translateY(-10px);
+            border-color: rgba(56, 189, 248, 0.4);
+            box-shadow: 0 20px 40px rgba(15, 23, 42, 0.7), 0 0 0 1px rgba(56, 189, 248, 0.1);
+        }
+
+        .payment-card:hover::after {
+            opacity: 1;
+        }
+
+        .payment-card::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(56, 189, 248, 0.05), transparent);
+            transition: left 0.7s ease;
+        }
+
+        .payment-card:hover::after {
+            left: 100%;
+        }
+
+        .badge-success-soft {
+            background: rgba(16, 185, 129, 0.2);
+            color: #6ee7b7;
+            border-radius: 20px;
+            padding: 6px 14px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            border: 1px solid rgba(16, 185, 129, 0.3);
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            transition: all 0.3s ease;
+        }
+
+        .payment-card:hover .badge-success-soft {
+            transform: scale(1.05);
+            box-shadow: 0 4px 12px rgba(16, 185, 129, 0.2);
+        }
+
+        .text-secondary {
+            color: #94a3b8 !important;
+        }
+
+        .pill {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.5rem 0.9rem;
+            border-radius: 50px;
+            font-size: 0.8rem;
+            background: rgba(15, 23, 42, 0.7);
+            border: 1px solid rgba(148, 163, 184, 0.3);
+            transition: all 0.3s ease;
+            margin-bottom: 0.5rem;
+        }
+
+        .payment-card:hover .pill {
+            background: rgba(30, 41, 59, 0.9);
+            border-color: rgba(56, 189, 248, 0.3);
+            transform: translateY(-2px);
+        }
+
+        .amount-display {
+            font-size: 2rem;
+            font-weight: 700;
+            background: linear-gradient(135deg, #38bdf8, #3b82f6);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin: 0.5rem 0;
+        }
+
+        .screenshot-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 8px 16px;
+            border-radius: 10px;
+            background: rgba(56, 189, 248, 0.1);
+            color: #38bdf8;
+            text-decoration: none;
+            border: 1px solid rgba(56, 189, 248, 0.2);
+            transition: all 0.3s ease;
+            margin-top: 1rem;
+        }
+
+        .screenshot-link:hover {
+            background: rgba(56, 189, 248, 0.2);
+            border-color: #38bdf8;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(56, 189, 248, 0.2);
+            color: #7dd3fc;
+        }
+
+        /* Empty State */
+        .empty-state {
+            text-align: center;
+            padding: 4rem 2rem;
+            border-radius: 20px;
+            background: rgba(15, 23, 42, 0.5);
+            border: 2px dashed rgba(56, 189, 248, 0.3);
+        }
+
+        .empty-state-icon {
+            font-size: 4rem;
+            background: linear-gradient(135deg, #38bdf8, #3b82f6);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 1.5rem;
+        }
+
+        /* Filter Tabs */
+        .filter-tabs {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 2rem;
+            flex-wrap: wrap;
+        }
+
+        .filter-tab {
+            padding: 0.75rem 1.5rem;
+            border-radius: 12px;
+            background: rgba(15, 23, 42, 0.7);
+            border: 1px solid rgba(148, 163, 184, 0.2);
+            color: #cbd5e1;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .filter-tab:hover {
+            background: rgba(30, 41, 59, 0.9);
+            border-color: rgba(56, 189, 248, 0.4);
+            transform: translateY(-2px);
+        }
+
+        .filter-tab.active {
+            background: rgba(56, 189, 248, 0.1);
+            border-color: #38bdf8;
+            color: #38bdf8;
+            font-weight: 600;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .page-title {
+                font-size: 1.75rem;
+            }
+
+            .payment-card {
+                padding: 20px;
+            }
+
+            .amount-display {
+                font-size: 1.75rem;
+            }
+
+            .navbar-nav {
+                padding: 1rem 0;
+            }
+
+            .filter-tabs {
+                justify-content: center;
+            }
+        }
+
+        @media (max-width: 576px) {
+            .page-header {
+                padding: 1.5rem 0 1.5rem;
+                text-align: center;
+            }
+
+            .payment-card {
+                padding: 16px;
+            }
+
+            .pill {
+                padding: 0.4rem 0.8rem;
+                font-size: 0.75rem;
+            }
+        }
+
+        /* Animation for cards */
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .payment-card {
+            animation: fadeInUp 0.6s ease forwards;
+            opacity: 0;
+        }
+
+        .payment-card:nth-child(1) {
+            animation-delay: 0.1s;
+        }
+
+        .payment-card:nth-child(2) {
+            animation-delay: 0.2s;
+        }
+
+        .payment-card:nth-child(3) {
+            animation-delay: 0.3s;
+        }
+
+        .payment-card:nth-child(4) {
+            animation-delay: 0.4s;
+        }
+
+        .payment-card:nth-child(5) {
+            animation-delay: 0.5s;
+        }
+
+        .payment-card:nth-child(6) {
+            animation-delay: 0.6s;
+        }
+
+        /* Stats Header */
+        .stats-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+
+        .stats-box {
+            background: rgba(15, 23, 42, 0.7);
+            border-radius: 16px;
+            padding: 1.25rem;
+            border: 1px solid rgba(56, 189, 248, 0.1);
+            min-width: 180px;
+            transition: all 0.3s ease;
+        }
+
+        .stats-box:hover {
+            border-color: rgba(56, 189, 248, 0.3);
+            transform: translateY(-5px);
+        }
+
+        .stats-value {
+            font-size: 1.75rem;
+            font-weight: 700;
+            color: #38bdf8;
+            line-height: 1;
+        }
+
+        .stats-label {
+            font-size: 0.9rem;
+            color: #94a3b8;
+            margin-top: 0.5rem;
+        }
+
+        /* Notifications */
+        .nav-notifications {
+            position: relative;
+            margin-right: 1.5rem;
+        }
+
+        #customerNotifBtn {
+            background: none;
+            border: none;
+            color: #94a3b8;
+            font-size: 1.25rem;
+            padding: 5px;
+            cursor: pointer;
+            transition: color 0.3s ease;
+            position: relative;
+        }
+
+        #customerNotifBtn:hover {
+            color: #38bdf8;
+        }
+
+        #customerNotifCount {
+            position: absolute;
+            top: 0;
+            right: 0;
+            background: #ef4444;
+            color: white;
+            font-size: 0.65rem;
+            padding: 2px 5px;
+            border-radius: 10px;
+            font-weight: bold;
+            transform: translate(25%, -25%);
+        }
+
+        .notifications-dropdown {
+            position: absolute;
+            top: 100%;
+            right: 0;
+            width: 300px;
+            background: rgba(15, 23, 42, 0.98);
+            border: 1px solid rgba(148, 163, 184, 0.3);
+            border-radius: 0.75rem;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5);
+            margin-top: 10px;
+            display: none;
+            z-index: 1000;
+            overflow: hidden;
+            backdrop-filter: blur(12px);
+        }
+
+        .notifications-dropdown.show {
+            display: block;
+        }
+
+        .notifications-dropdown h6 {
+            padding: 12px 15px;
+            margin: 0;
+            border-bottom: 1px solid rgba(148, 163, 184, 0.1);
+            font-size: 0.85rem;
+            color: #94a3b8;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        .notif-item {
+            padding: 12px 15px;
+            border-bottom: 1px solid rgba(148, 163, 184, 0.1);
+            cursor: pointer;
+            transition: background 0.2s ease;
+        }
+
+        .notif-item:last-child {
+            border-bottom: none;
+        }
+
+        .notif-item:hover {
+            background: rgba(255, 255, 255, 0.05);
+        }
+
+        .notif-item.unread {
+            background: rgba(56, 189, 248, 0.05);
+            border-left: 3px solid #38bdf8;
+        }
+
+        .notif-title {
+            font-size: 0.85rem;
+            color: #e5e7eb;
+            margin-bottom: 3px;
+        }
+
+        .notif-item.unread .notif-title {
+            font-weight: 700;
+        }
+
+        .notif-meta {
+            font-size: 0.7rem;
+            color: #94a3b8;
+        }
+    </style>
+    <script src="config.js"></script>
+</head>
+
+<body>
+    <nav class="navbar"
+        style="background: rgba(15, 23, 42, 0.95); border-bottom: 1px solid rgba(56, 189, 248, 0.2); backdrop-filter: blur(16px); padding: 0.75rem 0; position: sticky; top: 0; z-index: 1000; margin-bottom: 2rem;">
+        <div class="container"
+            style="display: flex; justify-content: space-between; align-items: center; max-width: 1200px;">
+            <a class="navbar-brand" href="customer-dashboard.html"
+                style="font-weight: 700; font-size: 1.5rem; background: linear-gradient(135deg, #38bdf8, #3b82f6); -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent; text-decoration: none;">
+                <i class="fas fa-tools me-2"></i>WorkConnect
+            </a>
+
+            <div style="display: flex; align-items: center; gap: 1.5rem;">
+                <a href="customer-dashboard.html"
+                    style="color: #cbd5e1; text-decoration: none; font-weight: 500; font-size: 0.95rem; transition: color 0.3s;"
+                    onmouseover="this.style.color='#fff'" onmouseout="this.style.color='#cbd5e1'">Dashboard</a>
+                <a href="customer-orders.html"
+                    style="color: #cbd5e1; text-decoration: none; font-weight: 500; font-size: 0.95rem; transition: color 0.3s;"
+                    onmouseover="this.style.color='#fff'" onmouseout="this.style.color='#cbd5e1'">My Orders</a>
+                <a href="customer-payments.html"
+                    style="color: #fff; text-decoration: none; font-weight: 700; font-size: 0.95rem; transition: color 0.3s;">Payments</a>
+                <a href="customer-help.html"
+                    style="color: #cbd5e1; text-decoration: none; font-weight: 500; font-size: 0.95rem; transition: color 0.3s;"
+                    onmouseover="this.style.color='#fff'" onmouseout="this.style.color='#cbd5e1'">Help</a>
+
+                <div class="nav-notifications">
+                    <button type="button" id="customerNotifBtn"
+                        style="background: none; border: none; color: #cbd5e1; position: relative; cursor: pointer;">
+                        <i class="fas fa-bell"></i>
+                        <span id="customerNotifCount"
+                            style="display: none; position: absolute; top: -5px; right: -5px; background: #ef4444; color: white; border-radius: 50%; padding: 2px 5px; font-size: 0.65rem; font-weight: bold;">0</span>
+                    </button>
+                    <div id="customerNotifDropdown" class="notifications-dropdown"
+                        style="position: absolute; top: 100%; right: 0; width: 300px; background: rgba(15, 23, 42, 0.98); border: 1px solid rgba(148, 163, 184, 0.3); border-radius: 0.75rem; display: none; z-index: 1000; padding: 0.5rem 0; box-shadow: 0 10px 40px rgba(0,0,0,0.5);">
+                        <h6
+                            style="padding: 0.5rem 1rem; border-bottom: 1px solid rgba(148, 163, 184, 0.2); color: #94a3b8; font-size: 0.8rem; text-transform: uppercase;">
+                            Notifications</h6>
+                        <div id="customerNotifList" style="max-height: 300px; overflow-y: auto;"></div>
+                    </div>
+                </div>
+
+                <div class="dropdown">
+                    <a href="customer-profile.html"
+                        style="color: #cbd5e1; text-decoration: none; font-weight: 500; font-size: 0.95rem; display: flex; align-items: center; gap: 0.5rem;"
+                        onmouseover="this.style.color='#fff'" onmouseout="this.style.color='#cbd5e1'">
+                        <i class="fas fa-user-circle" style="font-size: 1.2rem;"></i>
+                        <span id="navUserName">Profile</span>
+                    </a>
+                </div>
+
+                <button class="btn btn-outline-danger btn-sm" onclick="logout()" style="border-radius: 8px;">
+                    <i class="fas fa-sign-out-alt"></i>
+                </button>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container py-4">
+        <header class="page-header">
+            <div class="stats-header">
+                <div>
+                    <h1 class="page-title">My Payments</h1>
+                    <p class="page-subtitle">Track and manage all your payment transactions in one place.</p>
+                </div>
+                <div class="d-flex flex-wrap gap-3">
+                    <div class="stats-box">
+                        <div class="stats-value" id="totalPayments">0</div>
+                        <div class="stats-label">Total Payments</div>
+                    </div>
+                    <div class="stats-box">
+                        <div class="stats-value" id="totalAmount">₹0</div>
+                        <div class="stats-label">Total Amount</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="filter-tabs">
+                <div class="filter-tab active" onclick="filterPayments('all')">All Payments</div>
+                <div class="filter-tab" onclick="filterPayments('recent')">Last 30 Days</div>
+                <div class="filter-tab" onclick="filterPayments('high')">High Amount</div>
+                <div class="filter-tab" onclick="filterPayments('online')">Online</div>
+            </div>
+        </header>
+
+        <section id="paymentsSection">
+            <div id="paymentsList" class="row g-4"></div>
+        </section>
+    </div>
+
+    <script>
+        let currentUser = null;
+        let allPayments = [];
+
+        document.addEventListener('DOMContentLoaded', () => {
+            try {
+                const userStr = localStorage.getItem('user');
+                currentUser = userStr ? JSON.parse(userStr) : null;
+            } catch {
+                currentUser = null;
+            }
+
+            if (!currentUser) {
+                window.location.href = 'login.html';
+                return;
+            }
+            if (currentUser.role !== 'customer') {
+                window.location.href = 'dashboard.html';
+                return;
+            }
+
+            loadPayments();
+            loadNotifications();
+            initCustomerNotifToggle();
+            setInterval(loadNotifications, 10000);
+
+            // Update nav user name
+            const navUserName = document.getElementById('navUserName');
+            if (navUserName && currentUser) {
+                navUserName.textContent = (currentUser.name || currentUser.username).split(' ')[0];
+            }
+        });
+
+        // Helper function to parse amount safely
+        function parseAmount(amount) {
+            if (amount === null || amount === undefined) return 0;
+
+            // If it's already a number, return it
+            if (typeof amount === 'number') return amount;
+
+            // If it's a string, try to extract the number
+            if (typeof amount === 'string') {
+                // Remove currency symbols and commas
+                const cleaned = amount.replace(/[₹$,]/g, '').trim();
+                const parsed = parseFloat(cleaned);
+                return isNaN(parsed) ? 0 : parsed;
+            }
+
+            // For any other type, try to convert to number
+            const parsed = Number(amount);
+            return isNaN(parsed) ? 0 : parsed;
+        }
+
+        async function loadPayments() {
+            const listEl = document.getElementById('paymentsList');
+            try {
+                const res = await fetch(getApiUrl(`/api/payments/customer/${currentUser.id}`));
+                if (!res.ok) {
+                    listEl.innerHTML = `
+                        <div class="col-12">
+                            <div class="empty-state">
+                                <div class="empty-state-icon">
+                                    <i class="fas fa-exclamation-triangle"></i>
+                                </div>
+                                <h4 class="mb-2">Unable to Load Payments</h4>
+                                <p class="text-secondary mb-0">Please check your connection and try again.</p>
+                            </div>
+                        </div>`;
+                    return;
+                }
+
+                allPayments = await res.json() || [];
+
+                // Log for debugging
+                console.log('Loaded payments:', allPayments);
+
+                // Update stats with proper number parsing
+                updateStats(allPayments);
+
+                if (!allPayments.length) {
+                    listEl.innerHTML = `
+                        <div class="col-12">
+                            <div class="empty-state">
+                                <div class="empty-state-icon">
+                                    <i class="fas fa-receipt"></i>
+                                </div>
+                                <h4 class="mb-2">No Payments Yet</h4>
+                                <p class="text-secondary mb-4">When you make payments for orders, they will appear here.</p>
+                                <a href="customer-orders.html" class="screenshot-link">
+                                    <i class="fas fa-shopping-cart me-2"></i>View Your Orders
+                                </a>
+                            </div>
+                        </div>`;
+                    return;
+                }
+
+                renderPayments(allPayments);
+            } catch (e) {
+                console.error('Error loading payments:', e);
+                document.getElementById('paymentsList').innerHTML = `
+                    <div class="col-12">
+                        <div class="empty-state">
+                            <div class="empty-state-icon">
+                                <i class="fas fa-exclamation-circle"></i>
+                            </div>
+                            <h4 class="mb-2">Something Went Wrong</h4>
+                            <p class="text-secondary mb-0">We're having trouble loading your payments. Please try again later.</p>
+                        </div>
+                    </div>`;
+            }
+        }
+
+        function updateStats(payments) {
+            const totalPayments = payments.length;
+
+            // Calculate total amount using safe parsing
+            const totalAmount = payments.reduce((sum, payment) => {
+                return sum + parseAmount(payment.amount);
+            }, 0);
+
+            // Log for debugging
+            console.log('Total amount calculation:', {
+                totalPayments,
+                totalAmount,
+                paymentAmounts: payments.map(p => ({ amount: p.amount, parsed: parseAmount(p.amount) }))
+            });
+
+            document.getElementById('totalPayments').textContent = totalPayments;
+            document.getElementById('totalAmount').textContent = `₹${totalAmount.toLocaleString('en-IN', {
+                minimumFractionDigits: 2,
+                maximumFractionDigits: 2
+            })}`;
+        }
+
+        function renderPayments(payments) {
+            const listEl = document.getElementById('paymentsList');
+
+            listEl.innerHTML = payments
+                .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))
+                .map(p => {
+                    const date = new Date(p.createdAt);
+                    const dateStr = date.toLocaleDateString('en-IN', {
+                        day: 'numeric',
+                        month: 'short',
+                        year: 'numeric'
+                    });
+                    const timeStr = date.toLocaleTimeString('en-IN', {
+                        hour: '2-digit',
+                        minute: '2-digit'
+                    });
+                    const orderCode = p.orderId ? p.orderId.slice(-6) : '—';
+
+                    // Parse amount for display
+                    const displayAmount = parseAmount(p.amount);
+
+                    // Determine payment method icon
+                    let methodIcon = 'fa-credit-card';
+                    let methodLabel = p.method || 'Online';
+
+                    if (p.method && p.method.toLowerCase().includes('upi')) {
+                        methodIcon = 'fa-mobile-alt';
+                        methodLabel = 'UPI';
+                    } else if (p.method && p.method.toLowerCase().includes('bank')) {
+                        methodIcon = 'fa-university';
+                        methodLabel = 'Bank Transfer';
+                    } else if (p.method && p.method.toLowerCase().includes('cash')) {
+                        methodIcon = 'fa-money-bill-wave';
+                        methodLabel = 'Cash';
+                    }
+
+                    return `
+                        <div class="col-xl-4 col-lg-6 col-md-12">
+                            <div class="payment-card">
+                                <div class="d-flex justify-content-between align-items-start mb-3">
+                                    <div>
+                                        <div class="small text-secondary mb-1">Transaction ID</div>
+                                        <div class="fw-semibold" style="letter-spacing: -0.3px;">${p.transactionId || 'N/A'}</div>
+                                    </div>
+                                    <span class="badge-success-soft">
+                                        <i class="fas fa-check-circle me-1"></i>Paid
+                                    </span>
+                                </div>
+                                
+                                <div class="mb-3">
+                                    <div class="small text-secondary mb-1">Amount Paid</div>
+                                    <div class="amount-display">₹${displayAmount.toLocaleString('en-IN', {
+                        minimumFractionDigits: 2,
+                        maximumFractionDigits: 2
+                    })}</div>
+                                </div>
+                                
+                                <div class="d-flex flex-wrap gap-2 mb-3">
+                                    <span class="pill">
+                                        <i class="fas fa-hashtag"></i>
+                                        Order #${orderCode}
+                                    </span>
+                                    <span class="pill">
+                                        <i class="fas ${methodIcon}"></i>
+                                        ${methodLabel}
+                                    </span>
+                                    <span class="pill">
+                                        <i class="fas fa-calendar-day"></i>
+                                        ${dateStr}
+                                    </span>
+                                    <span class="pill">
+                                        <i class="fas fa-clock"></i>
+                                        ${timeStr}
+                                    </span>
+                                </div>
+                                
+                                ${p.screenshot ? `
+                                    <div class="mt-4">
+                                        <a href="${p.screenshot}" target="_blank" class="screenshot-link">
+                                            <i class="fas fa-image me-2"></i>View Payment Screenshot
+                                        </a>
+                                    </div>` : ''}
+                                    
+                                <div class="mt-3 pt-3 border-top border-secondary border-opacity-25">
+                                    <small class="text-secondary">
+                                        <i class="fas fa-info-circle me-1"></i>
+                                        Payment processed successfully
+                                    </small>
+                                </div>
+                            </div>
+                        </div>
+                    `;
+                }).join('');
+        }
+
+        function filterPayments(filterType) {
+            // Update active tab
+            document.querySelectorAll('.filter-tab').forEach(tab => {
+                tab.classList.remove('active');
+            });
+            event.target.classList.add('active');
+
+            let filtered = [...allPayments];
+
+            switch (filterType) {
+                case 'recent':
+                    const thirtyDaysAgo = new Date();
+                    thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
+                    filtered = filtered.filter(p => new Date(p.createdAt) >= thirtyDaysAgo);
+                    break;
+
+                case 'high':
+                    filtered = filtered.filter(p => parseAmount(p.amount) >= 1000);
+                    filtered.sort((a, b) => parseAmount(b.amount) - parseAmount(a.amount));
+                    break;
+
+                case 'online':
+                    filtered = filtered.filter(p =>
+                        !p.method ||
+                        p.method.toLowerCase().includes('online') ||
+                        p.method.toLowerCase().includes('card') ||
+                        p.method.toLowerCase().includes('upi')
+                    );
+                    break;
+
+                default:
+                    // 'all' - show everything
+                    break;
+            }
+
+            if (filtered.length === 0) {
+                document.getElementById('paymentsList').innerHTML = `
+                    <div class="col-12">
+                        <div class="empty-state">
+                            <div class="empty-state-icon">
+                                <i class="fas fa-search"></i>
+                            </div>
+                            <h4 class="mb-2">No Payments Found</h4>
+                            <p class="text-secondary mb-0">Try selecting a different filter.</p>
+                        </div>
+                    </div>`;
+            } else {
+                renderPayments(filtered);
+            }
+
+            // Update stats for filtered results
+            updateStats(filtered);
+        }
+
+        function logout() {
+            localStorage.removeItem('user');
+            window.location.href = 'index.html';
+        }
+
+        // Real-Time Notifications logic
+        async function loadNotifications() {
+            if (!currentUser) return;
+            try {
+                const res = await fetch(getApiUrl(`/api/notifications/${currentUser.id}`));
+                if (res.ok) {
+                    const notifications = await res.json();
+                    renderNotifications(notifications);
+                }
+            } catch (e) {
+                console.error('Error loading notifications', e);
+            }
+        }
+
+        function renderNotifications(notifications) {
+            const listEl = document.getElementById('customerNotifList');
+            const countEl = document.getElementById('customerNotifCount');
+            if (!listEl || !countEl) return;
+
+            const unread = notifications.filter(n => !n.read);
+            countEl.textContent = unread.length > 9 ? '9+' : unread.length;
+            countEl.style.display = unread.length > 0 ? 'inline-block' : 'none';
+
+            if (notifications.length === 0) {
+                listEl.innerHTML = '<div class="p-3 text-center text-muted small">No notifications</div>';
+                return;
+            }
+
+            listEl.innerHTML = notifications.map(n => `
+                <div class="notif-item ${n.read ? '' : 'unread'}" onclick="markAsRead('${n._id || n.id}', '${n.link}')" style="cursor: pointer; padding: 10px; border-bottom: 1px solid rgba(148, 163, 184, 0.1); ${n.read ? '' : 'background: rgba(56, 189, 248, 0.05); border-left: 3px solid #38bdf8;'}">
+                    <div class="notif-title" style="color: #e5e7eb; font-size: 0.85rem; margin-bottom: 4px; ${n.read ? '' : 'font-weight: 700;'}">${n.message}</div>
+                    <div class="notif-meta" style="color: #9ca3af; font-size: 0.7rem;">${new Date(n.createdAt).toLocaleString([], { month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' })}</div>
+                </div>
+            `).join('');
+        }
+
+        function initCustomerNotifToggle() {
+            const btn = document.getElementById('customerNotifBtn');
+            const dropdown = document.getElementById('customerNotifDropdown');
+            if (!btn || !dropdown) return;
+            btn.addEventListener('click', (e) => {
+                e.stopPropagation();
+                dropdown.classList.toggle('show');
+            });
+            document.addEventListener('click', () => {
+                dropdown.classList.remove('show');
+            });
+        }
+
+        async function markAsRead(notifId, link) {
+            try {
+                await fetch(getApiUrl(`/api/notifications/${notifId}/read`), { method: 'PUT' });
+                if (link && link !== 'null' && link !== 'undefined') {
+                    window.location.href = link;
+                } else {
+                    loadNotifications();
+                }
+            } catch (e) {
+                console.error('Error marking as read', e);
+            }
+        }
+
+        (function initCustomerNotifToggle() {
+            const btn = document.getElementById('customerNotifBtn');
+            const dropdown = document.getElementById('customerNotifDropdown');
+            if (!btn || !dropdown) return;
+            btn.addEventListener('click', (e) => {
+                e.stopPropagation();
+                dropdown.classList.toggle('show');
+            });
+            document.addEventListener('click', () => {
+                dropdown.classList.remove('show');
+            });
+        })();
+    </script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+
+</html>

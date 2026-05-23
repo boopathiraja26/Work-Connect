@@ -1,0 +1,104 @@
+<ion-header [translucent]="true">
+  <ion-toolbar color="primary">
+    <ion-title>WorkConnect</ion-title>
+    <ion-buttons slot="end">
+      <ion-button routerLink="/notifications" id="notif-btn">
+        <ion-icon slot="icon-only" name="notifications-outline"></ion-icon>
+        <ion-badge *ngIf="unreadCount > 0" color="danger"
+          style="position:absolute;top:4px;right:4px;font-size:9px;min-width:14px;height:14px;border-radius:8px;">{{unreadCount}}</ion-badge>
+      </ion-button>
+      <ion-button routerLink="/support">
+        <ion-icon slot="icon-only" name="help-circle-outline"></ion-icon>
+      </ion-button>
+      <ion-button (click)="logout()">
+        <ion-icon slot="icon-only" name="log-out-outline"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+  </ion-toolbar>
+  <ion-toolbar color="primary">
+    <ion-searchbar [(ngModel)]="searchQuery" (ionInput)="onSearch($event)"
+      placeholder="Search for workers (e.g. Plumber)"></ion-searchbar>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content [fullscreen]="true" class="dashboard-bg">
+  <ion-segment [(ngModel)]="activeTab" mode="md">
+    <ion-segment-button value="find">
+      <ion-label>Find Workers</ion-label>
+    </ion-segment-button>
+    <ion-segment-button value="my-orders">
+      <ion-label>My Orders</ion-label>
+    </ion-segment-button>
+  </ion-segment>
+
+  <div [ngSwitch]="activeTab" class="tab-content">
+    <!-- Find Workers Tab -->
+    <div *ngSwitchCase="'find'" class="anim-fade">
+      <div *ngIf="loading" class="loading-state">
+        <ion-spinner name="crescent"></ion-spinner>
+      </div>
+
+      <div *ngIf="!loading && filteredWorkers.length === 0" class="empty-state">
+        <ion-icon name="search-outline"></ion-icon>
+        <h4>No workers found</h4>
+        <p>Try searching for a different skill or name.</p>
+      </div>
+
+      <div class="worker-grid">
+        <ion-card *ngFor="let worker of filteredWorkers" class="worker-card" (click)="viewWorker(worker)">
+          <div class="worker-img">
+            <img [src]="worker.profileImage || 'assets/default-avatar.png'"
+              (onerror)="$any($event.target).src='https://placehold.co/200x200?text=Avatar'">
+            <div class="rating-badge" *ngIf="worker.averageRating">
+              <ion-icon name="star"></ion-icon>
+              <span>{{worker.averageRating.toFixed(1)}}</span>
+            </div>
+          </div>
+          <ion-card-header>
+            <ion-card-title>{{worker.name || worker.username}}</ion-card-title>
+            <ion-card-subtitle>{{worker.skills?.[0] || 'General Worker'}}</ion-card-subtitle>
+          </ion-card-header>
+          <ion-card-content>
+            <div class="price-info">
+              <span class="price">${{worker.hourlyRate}}/hr</span>
+              <ion-badge
+                [color]="worker.availability === 'Available' ? 'success' : 'warning'">{{worker.availability}}</ion-badge>
+            </div>
+            <ion-button expand="block" size="small" class="hire-btn">Hire Now</ion-button>
+          </ion-card-content>
+        </ion-card>
+      </div>
+    </div>
+
+    <!-- My Orders Tab -->
+    <div *ngSwitchCase="'my-orders'" class="anim-fade">
+      <div *ngIf="orders.length === 0" class="empty-state">
+        <ion-icon name="document-text-outline"></ion-icon>
+        <h4>No orders found</h4>
+        <p>You haven't hired anyone yet.</p>
+      </div>
+
+      <ion-card *ngFor="let order of orders" class="order-card">
+        <ion-card-header>
+          <div class="order-header">
+            <ion-badge [color]="getStatusColor(order.status)">{{order.status}}</ion-badge>
+            <span class="order-date">{{order.createdAt | date:'shortDate'}}</span>
+          </div>
+          <ion-card-title>{{order.workerName}}</ion-card-title>
+          <ion-card-subtitle>{{order.serviceName}}</ion-card-subtitle>
+        </ion-card-header>
+        <ion-card-content>
+          <div class="order-details">
+            <p><ion-icon name="cash-outline"></ion-icon> Amount: ${{order.amount}}</p>
+            <p><ion-icon name="calendar-outline"></ion-icon> Date: {{order.orderDate | date:'medium'}}</p>
+          </div>
+          <ion-button *ngIf="order.status === 'Completed'" size="small" fill="outline" color="warning"
+            (click)="leaveReview(order)">
+            <ion-icon name="star-outline" slot="start"></ion-icon>
+            Leave a Review
+          </ion-button>
+        </ion-card-content>
+      </ion-card>
+    </div>
+  </div>
+</ion-content>

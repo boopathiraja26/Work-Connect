@@ -1,0 +1,627 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Register - WorkConnect</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background-color: #0f172a;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+            color: #e2e8f0;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 500px;
+        }
+
+        .form-card {
+            background-color: #1e293b;
+            padding: 40px;
+            border-radius: 20px;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            animation: fadeIn 0.5s ease-out;
+            position: relative;
+            overflow: hidden;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        h1 {
+            text-align: center;
+            font-size: 28px;
+            font-weight: 700;
+            margin-bottom: 24px;
+            color: #f8fafc;
+        }
+
+        /* Progress Bar */
+        .progress-bar-container {
+            width: 100%;
+            height: 6px;
+            background-color: #334155;
+            border-radius: 3px;
+            margin-bottom: 30px;
+            overflow: hidden;
+        }
+
+        .progress {
+            height: 100%;
+            background: linear-gradient(90deg, #38bdf8, #3b82f6);
+            width: 0%;
+            transition: width 0.3s ease;
+            border-radius: 3px;
+        }
+
+        /* Steps */
+        .form-step {
+            display: none;
+            animation: slideIn 0.4s ease-out;
+        }
+
+        .form-step.active {
+            display: block;
+        }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateX(20px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+
+        h2 {
+            font-size: 18px;
+            color: #94a3b8;
+            margin-bottom: 20px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            color: #cbd5e1;
+            font-weight: 500;
+            font-size: 14px;
+        }
+
+        input[type="text"],
+        input[type="email"],
+        input[type="tel"],
+        input[type="password"],
+        input[type="url"],
+        input[type="file"],
+        select {
+            width: 100%;
+            padding: 12px 16px;
+            background-color: #0f172a;
+            border: 1px solid #334155;
+            border-radius: 12px;
+            color: #f8fafc;
+            font-size: 15px;
+            transition: all 0.3s ease;
+        }
+
+        input:focus,
+        select:focus {
+            outline: none;
+            border-color: #38bdf8;
+            box-shadow: 0 0 0 3px rgba(56, 189, 248, 0.1);
+        }
+
+        /* Buttons */
+        .button-group {
+            display: flex;
+            gap: 15px;
+            margin-top: 30px;
+        }
+
+        .btn {
+            flex: 1;
+            padding: 12px;
+            border: none;
+            border-radius: 10px;
+            font-size: 15px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .btn-primary {
+            background-color: #3b82f6;
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background-color: #2563eb;
+            transform: translateY(-1px);
+        }
+
+        .btn-secondary {
+            background-color: #334155;
+            color: #cbd5e1;
+        }
+
+        .btn-secondary:hover {
+            background-color: #475569;
+            color: white;
+        }
+
+        .btn-success {
+            background-color: #10b981;
+            color: white;
+            width: 100%;
+            padding: 12px;
+            margin-top: 10px;
+            border-radius: 10px;
+            border: none;
+            cursor: pointer;
+        }
+
+        .btn-success:hover {
+            background-color: #059669;
+        }
+
+        /* Role Selection */
+        .role-options {
+            display: flex;
+            gap: 15px;
+        }
+
+        .role-option {
+            flex: 1;
+        }
+
+        .role-option input[type="radio"] {
+            display: none;
+        }
+
+        .role-option label {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+            background-color: #0f172a;
+            border: 2px solid #334155;
+            border-radius: 12px;
+            cursor: pointer;
+            transition: all 0.2s;
+            height: 100%;
+            margin-bottom: 0;
+            color: #94a3b8;
+        }
+
+        .role-option input[type="radio"]:checked+label {
+            border-color: #38bdf8;
+            background-color: rgba(56, 189, 248, 0.1);
+            color: #38bdf8;
+        }
+
+        .role-option label i {
+            font-size: 24px;
+            margin-bottom: 8px;
+        }
+
+        /* Password Strength */
+        .password-strength {
+            margin-top: 8px;
+        }
+
+        .strength-bar {
+            height: 4px;
+            background-color: #334155;
+            border-radius: 2px;
+            overflow: hidden;
+            margin-bottom: 4px;
+        }
+
+        .strength-fill {
+            height: 100%;
+            width: 0;
+            transition: width 0.3s, background-color 0.3s;
+        }
+
+        .strength-text {
+            font-size: 12px;
+            color: #94a3b8;
+        }
+
+        .error {
+            color: #ef4444;
+            font-size: 13px;
+            margin-top: 5px;
+            display: block;
+        }
+
+        .form-footer {
+            text-align: center;
+            margin-top: 24px;
+            font-size: 14px;
+            color: #94a3b8;
+        }
+
+        .form-footer a {
+            color: #38bdf8;
+            text-decoration: none;
+            font-weight: 500;
+        }
+
+        .form-footer a:hover {
+            text-decoration: underline;
+        }
+
+        #map,
+        #customerMap {
+            /* Fix invisible map rendering issues */
+            background-color: #0f172a;
+            border: 1px solid #334155;
+        }
+
+        small {
+            color: #64748b !important;
+        }
+
+        .message {
+            padding: 12px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            text-align: center;
+            font-size: 14px;
+            animation: slideDown 0.3s ease-out;
+        }
+
+        .message.success {
+            background-color: rgba(16, 185, 129, 0.2);
+            color: #34d399;
+            border: 1px solid #059669;
+        }
+
+        .message.error {
+            background-color: rgba(239, 68, 68, 0.2);
+            color: #fca5a5;
+            border: 1px solid #b91c1c;
+        }
+
+        @keyframes slideDown {
+            from {
+                opacity: 0;
+                transform: translateY(-10px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @media (max-width: 480px) {
+            .form-card {
+                padding: 30px 20px;
+            }
+        }
+    </style>
+    <script src="config.js"></script>
+</head>
+
+<body>
+    <div class="container">
+        <div class="form-card">
+            <h1>Create Account</h1>
+            <div class="progress-bar-container">
+                <div class="progress" id="progress"></div>
+            </div>
+
+            <form id="registrationForm">
+                <!-- Step 1: Username -->
+                <div class="form-step active" id="step1">
+                    <h2>Username</h2>
+                    <div class="form-group">
+                        <label for="username">Choose a Username</label>
+                        <input type="text" id="username" name="username" required placeholder="e.g. john_doe">
+                        <span class="error" id="username-error"></span>
+                    </div>
+                    <div class="button-group">
+                        <button type="button" class="btn btn-primary" onclick="nextStep(1)">Next Step</button>
+                    </div>
+                </div>
+
+                <!-- Step 2: Email -->
+                <div class="form-step" id="step2">
+                    <h2>Email Address</h2>
+                    <div class="form-group">
+                        <label for="email">Enter your Email</label>
+                        <input type="email" id="email" name="email" required placeholder="name@example.com">
+                        <span class="error" id="email-error"></span>
+                    </div>
+                    <div class="button-group">
+                        <button type="button" class="btn btn-secondary" onclick="prevStep(2)">Back</button>
+                        <button type="button" class="btn btn-primary" onclick="nextStep(2)">Next Step</button>
+                    </div>
+                </div>
+
+                <!-- Step 3: Phone Number -->
+                <div class="form-step" id="step3">
+                    <h2>Phone Number</h2>
+                    <div class="form-group">
+                        <label for="phone">Mobile Number</label>
+                        <input type="tel" id="phone" name="phone" required placeholder="10-digit number">
+                        <span class="error" id="phone-error"></span>
+                    </div>
+                    <div class="button-group">
+                        <button type="button" class="btn btn-secondary" onclick="prevStep(3)">Back</button>
+                        <button type="button" class="btn btn-primary" onclick="nextStep(3)">Next Step</button>
+                    </div>
+                </div>
+
+                <!-- Step 4: Password -->
+                <div class="form-step" id="step4">
+                    <h2>Secure your Account</h2>
+                    <div class="form-group">
+                        <label for="password">Password</label>
+                        <input type="password" id="password" name="password" required
+                            placeholder="Create a strong password">
+                        <div class="password-strength" id="password-strength">
+                            <div class="strength-bar">
+                                <div class="strength-fill" id="strength-fill"></div>
+                            </div>
+                            <span class="strength-text" id="strength-text">Strength</span>
+                        </div>
+                        <span class="error" id="password-error"></span>
+                    </div>
+                    <div class="button-group">
+                        <button type="button" class="btn btn-secondary" onclick="prevStep(4)">Back</button>
+                        <button type="button" class="btn btn-primary" onclick="nextStep(4)">Next Step</button>
+                    </div>
+                </div>
+
+                <!-- Step 5: Confirm Password -->
+                <div class="form-step" id="step5">
+                    <h2>Confirm Password</h2>
+                    <div class="form-group">
+                        <label for="confirmPassword">Re-enter Password</label>
+                        <input type="password" id="confirmPassword" name="confirmPassword" required
+                            placeholder="Repeat password">
+                        <span class="error" id="confirmPassword-error"></span>
+                    </div>
+                    <div class="button-group">
+                        <button type="button" class="btn btn-secondary" onclick="prevStep(5)">Back</button>
+                        <button type="button" class="btn btn-primary" onclick="nextStep(5)">Next Step</button>
+                    </div>
+                </div>
+
+                <!-- Step 6: Role Selection -->
+                <div class="form-step" id="step6">
+                    <h2>Final Details</h2>
+                    <div class="form-group">
+                        <label>I want to join as a:</label>
+                        <div class="role-options">
+                            <div class="role-option">
+                                <input type="radio" id="worker" name="role" value="worker" required
+                                    onchange="onRoleChange()">
+                                <label for="worker">
+                                    <i class="fas fa-briefcase"></i>
+                                    Worker
+                                </label>
+                            </div>
+                            <div class="role-option">
+                                <input type="radio" id="customer" name="role" value="customer" required
+                                    onchange="onRoleChange()">
+                                <label for="customer">
+                                    <i class="fas fa-user"></i>
+                                    Customer
+                                </label>
+                            </div>
+                        </div>
+                        <span class="error" id="role-error"></span>
+                    </div>
+
+                    <!-- Worker-only fields -->
+                    <div id="workerFields" style="display:none;">
+                        <div class="form-group">
+                            <label for="aadhaarNumber">Aadhaar Number (Optional)</label>
+                            <input type="text" id="aadhaarNumber" name="aadhaarNumber" pattern="\d{12}" maxlength="12"
+                                placeholder="12-digit Aadhaar">
+                            <button type="button" class="btn btn-success" onclick="startDigiLockerFlow()">
+                                <i class="fas fa-id-card me-2"></i> Verify with DigiLocker
+                            </button>
+                            <small style="display:block;margin-top:6px;">
+                                Your Aadhaar is verified via DigiLocker and not stored directly.
+                            </small>
+                            <span class="error" id="aadhaar-error"></span>
+                        </div>
+                        <div class="form-group">
+                            <label for="profileImage">Profile Image</label>
+                            <input type="file" id="profileImage" name="profileImage" accept="image/*">
+                        </div>
+                        <div class="form-group">
+                            <label>Address Details</label>
+                            <input type="text" id="street" placeholder="Street" style="margin-bottom: 10px;">
+                            <input type="text" id="city" placeholder="City" style="margin-bottom: 10px;">
+                            <input type="text" id="state" placeholder="State" style="margin-bottom: 10px;">
+                            <input type="text" id="pincode" placeholder="Pincode">
+                        </div>
+                        <div class="form-group">
+                            <label>Location (Google Maps)</label>
+                            <input type="url" id="locationLink" placeholder="Google Maps Link">
+                            <small style="display: block; margin-top: 5px;">Drag marker on map or paste link</small>
+                            <div id="map" style="height: 250px; margin-top: 10px; border-radius: 12px;"></div>
+                        </div>
+                    </div>
+
+                    <!-- Customer-only fields -->
+                    <div id="customerFields" style="display:none;">
+                        <div class="form-group">
+                            <label for="customerProfileImage">Profile Image</label>
+                            <input type="file" id="customerProfileImage" name="customerProfileImage" accept="image/*">
+                        </div>
+                        <div class="form-group">
+                            <label>Address Details</label>
+                            <input type="text" id="customerStreet" placeholder="Street" style="margin-bottom: 10px;">
+                            <input type="text" id="customerCity" placeholder="City" style="margin-bottom: 10px;">
+                            <input type="text" id="customerState" placeholder="State" style="margin-bottom: 10px;">
+                            <input type="text" id="customerPincode" placeholder="Pincode">
+                        </div>
+                        <div class="form-group">
+                            <label>Location (Google Maps)</label>
+                            <input type="url" id="customerLocationLink" placeholder="Google Maps Link">
+                            <small style="display: block; margin-top: 5px;">Drag marker on map or paste link</small>
+                            <div id="customerMap" style="height: 250px; margin-top: 10px; border-radius: 12px;"></div>
+                        </div>
+                    </div>
+
+                    <div class="button-group">
+                        <button type="button" class="btn btn-secondary" onclick="prevStep(6)">Back</button>
+                        <button type="button" class="btn btn-primary" id="registerBtn"
+                            onclick="onRegisterClick()">Create Account</button>
+                    </div>
+                </div>
+
+            </form>
+
+            <div class="form-footer">
+                <p>Already have an account? <a href="login.html">Sign In</a></p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Leaflet Local Search (Alternative to Google Maps) -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <script>
+        // Map initialization logic mirroring the previous implementation
+        let workerMap, workerMarker, customerMap, customerMarker;
+
+        function initMaps() {
+            initWorkerMap();
+            initCustomerMap();
+        }
+
+        function initWorkerMap() {
+            const mapEl = document.getElementById('map');
+            if (!mapEl) return;
+
+            let lat = 20.5937;
+            let lng = 78.9629;
+            workerMap = L.map('map').setView([lat, lng], 5);
+
+            L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+            }).addTo(workerMap);
+
+            workerMarker = L.marker([lat, lng], { draggable: true }).addTo(workerMap);
+
+            workerMarker.on('dragend', (e) => {
+                const pos = workerMarker.getLatLng();
+                updateWorkerLoc({ latlng: pos });
+            });
+
+            workerMap.on('click', (e) => {
+                workerMarker.setLatLng(e.latlng);
+                updateWorkerLoc(e);
+            });
+
+            document.getElementById('locationLink').addEventListener('change', function () {
+                parseLink(this.value, workerMap, workerMarker);
+            });
+        }
+
+        function updateWorkerLoc(e) {
+            const lat = e.latlng.lat.toFixed(6);
+            const lng = e.latlng.lng.toFixed(6);
+            document.getElementById('locationLink').value = `https://maps.google.com/?q=${lat},${lng}`;
+        }
+
+        function initCustomerMap() {
+            const mapEl = document.getElementById('customerMap');
+            if (!mapEl) return;
+
+            let lat = 20.5937;
+            let lng = 78.9629;
+            customerMap = L.map('customerMap').setView([lat, lng], 5);
+
+            L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+            }).addTo(customerMap);
+
+            customerMarker = L.marker([lat, lng], { draggable: true }).addTo(customerMap);
+
+            customerMarker.on('dragend', (e) => {
+                const pos = customerMarker.getLatLng();
+                updateCustomerLoc({ latlng: pos });
+            });
+
+            customerMap.on('click', (e) => {
+                customerMarker.setLatLng(e.latlng);
+                updateCustomerLoc(e);
+            });
+
+            document.getElementById('customerLocationLink').addEventListener('change', function () {
+                parseLink(this.value, customerMap, customerMarker);
+            });
+        }
+
+        function updateCustomerLoc(e) {
+            const lat = e.latlng.lat.toFixed(6);
+            const lng = e.latlng.lng.toFixed(6);
+            document.getElementById('customerLocationLink').value = `https://maps.google.com/?q=${lat},${lng}`;
+        }
+
+        function parseLink(link, map, marker) {
+            if (link) {
+                const match = link.match(/[?&]q=([^&]+)/);
+                if (match) {
+                    const coords = match[1].split(',');
+                    if (coords.length === 2) {
+                        const lat = parseFloat(coords[0]);
+                        const lng = parseFloat(coords[1]);
+                        if (!isNaN(lat) && !isNaN(lng)) {
+                            marker.setLatLng([lat, lng]);
+                            map.setView([lat, lng], 15);
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <script src="register.js"></script>
+</body>
+
+</html>

@@ -1,0 +1,38 @@
+{
+    "version": 2,
+    "builds": [
+        {
+            "src": "server.js",
+            "use": "@vercel/node",
+            "config": {
+                "includeFiles": [
+                    "public/**",
+                    "database.json",
+                    "models.js"
+                ]
+            }
+        }
+    ],
+    "routes": [
+        {
+            "src": "/api/(.*)",
+            "dest": "/server.js",
+            "headers": {
+                "cache-control": "no-store, no-cache, must-revalidate, proxy-revalidate",
+                "Access-Control-Allow-Origin": "*"
+            }
+        },
+        {
+            "src": "/(.*\\.(html|css|js|png|jpg|jpeg|svg|ico|webp|json))",
+            "dest": "/public/$1",
+            "continue": true
+        },
+        {
+            "src": "/(.*)",
+            "dest": "/server.js"
+        }
+    ],
+    "env": {
+        "NODE_ENV": "production"
+    }
+}

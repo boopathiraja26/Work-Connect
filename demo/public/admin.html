@@ -1,0 +1,833 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard - WorkConnect</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&display=swap');
+
+        * { 
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Outfit', sans-serif;
+            background: radial-gradient(circle at top, #0f172a, #020617);
+            min-height: 100vh;
+            color: #f1f5f9;
+        }
+
+        /* Oceanic wave animation background */
+        body::before,
+        body::after {
+            content: '';
+            position: fixed;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            height: 32vh;
+            background-repeat: repeat-x;
+            background-size: 2000px 100%;
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        body::before {
+            opacity: 0.3;
+            animation: waveSlide1 24s linear infinite;
+            background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1200 200' preserveAspectRatio='none'><path d='M0,120 C150,200 350,0 600,120 C850,240 1050,40 1200,120 L1200,200 L0,200 Z' fill='%2338bdf8' fill-opacity='0.25'/></svg>");
+        }
+
+        body::after {
+            height: 38vh;
+            opacity: 0.5;
+            animation: waveSlide2 36s linear infinite;
+            background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1200 200' preserveAspectRatio='none'><path d='M0,140 C200,60 400,220 600,110 C800,0 1000,180 1200,100 L1200,200 L0,200 Z' fill='%236366f1' fill-opacity='0.15'/></svg>");
+        }
+
+        @keyframes waveSlide1 {
+            0% {
+                background-position-x: 0;
+            }
+
+            100% {
+                background-position-x: 2000px;
+            }
+        }
+
+        @keyframes waveSlide2 {
+            0% {
+                background-position-x: 0;
+            }
+
+            100% {
+                background-position-x: -2000px;
+            }
+        }
+
+        body>* {
+            position: relative;
+            z-index: 1;
+        }
+
+        /* Navbar - refined */
+        .navbar {
+            backdrop-filter: blur(20px);
+            background: rgba(8, 21, 38, 0.85) !important;
+            border-bottom: 1px solid rgba(56, 189, 248, 0.2) !important;
+            padding: 0.75rem 2rem !important;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            height: 70px;
+        }
+
+        .navbar-logo {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            height: 42px;
+        }
+
+        .navbar-stats {
+            display: flex;
+            gap: 2.5rem;
+            align-items: center;
+            height: 42px;
+        }
+
+        .stat-item-nav {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            height: 100%;
+        }
+
+        .navbar-actions {
+            display: flex;
+            gap: 1rem;
+            align-items: center;
+            height: 42px;
+        }
+
+        .nav-btn {
+            padding: 0.6rem 1.2rem;
+            border: none;
+            border-radius: 12px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 0.95rem;
+        }
+
+        .help-btn {
+            background: rgba(255, 255, 255, 0.06);
+            color: #b0c4de;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .help-btn:hover {
+            background: rgba(255, 255, 255, 0.15);
+            color: white;
+            transform: translateY(-2px);
+        }
+
+        .logout-btn {
+            background: rgba(239, 68, 68, 0.15);
+            color: #fca5a5;
+            border: 1px solid rgba(239, 68, 68, 0.2);
+        }
+
+        .logout-btn:hover {
+            background: rgba(239, 68, 68, 0.3);
+            color: white;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(239, 68, 68, 0.3);
+        }
+
+        /* Main Container */
+        .admin-container {
+            max-width: 1400px;
+            margin: 2rem auto;
+            padding: 0 2rem;
+            position: relative;
+            z-index: 1;
+        }
+
+        /* Login Section - deeper, matching dark theme */
+        .login-section {
+            max-width: 450px;
+            margin: 4rem auto;
+            background: rgba(18, 28, 45, 0.8);
+            backdrop-filter: blur(20px);
+            border-radius: 28px;
+            padding: 3rem;
+            border: 1px solid rgba(56, 189, 248, 0.25);
+            box-shadow: 0 20px 40px -12px rgba(0, 0, 0, 0.6), 0 0 0 1px rgba(255, 255, 255, 0.05) inset;
+            animation: fadeInUp 0.6s ease;
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .login-header {
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+
+        .login-icon {
+            font-size: 4rem;
+            margin-bottom: 0.5rem;
+            filter: drop-shadow(0 0 10px #38bdf8);
+        }
+
+        .login-title {
+            font-size: 2rem;
+            font-weight: 700;
+            background: linear-gradient(to right, #e2e8f0, #b9d5ff);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            margin-bottom: 0.5rem;
+        }
+
+        .login-subtitle {
+            color: #a0b8d1;
+            font-size: 0.95rem;
+        }
+
+        .login-form {
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem;
+        }
+
+        .form-group input {
+            width: 100%;
+            padding: 1rem 1.2rem;
+            background: rgba(255, 255, 255, 0.92);
+            border: 2px solid transparent;
+            border-radius: 16px;
+            font-size: 1rem;
+            font-family: 'Inter', sans-serif;
+            transition: all 0.3s ease;
+            color: #0b1e33;
+            font-weight: 500;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+        }
+
+        .form-group input:focus {
+            outline: none;
+            border-color: #38bdf8;
+            background: white;
+            box-shadow: 0 0 0 4px rgba(56, 189, 248, 0.25);
+        }
+
+        .login-btn {
+            padding: 1rem;
+            background: linear-gradient(135deg, #2563eb, #1e40af);
+            color: white;
+            border: none;
+            border-radius: 18px;
+            font-size: 1.1rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-top: 0.5rem;
+            box-shadow: 0 10px 20px -8px #1e3a8a;
+        }
+
+        .login-btn:hover {
+            transform: translateY(-3px);
+            background: linear-gradient(135deg, #3b82f6, #2563eb);
+            box-shadow: 0 16px 24px -8px #1e3a8a;
+        }
+
+        .login-error {
+            background: rgba(220, 38, 38, 0.85);
+            color: white;
+            padding: 0.8rem;
+            border-radius: 30px;
+            text-align: center;
+            font-size: 0.9rem;
+            margin-top: 1rem;
+            display: none;
+            border: 1px solid rgba(255, 180, 180, 0.3);
+        }
+
+        .login-error.show {
+            display: block;
+            animation: shake 0.5s ease;
+        }
+
+        @keyframes shake {
+
+            0%,
+            100% {
+                transform: translateX(0);
+            }
+
+            25% {
+                transform: translateX(-8px);
+            }
+
+            75% {
+                transform: translateX(8px);
+            }
+        }
+
+        /* Dashboard Section */
+        .dashboard-section {
+            animation: fadeInUp 0.6s ease;
+        }
+
+        .dashboard-header {
+            background: rgba(12, 25, 45, 0.7);
+            backdrop-filter: blur(16px);
+            border-radius: 30px;
+            padding: 2rem;
+            margin-bottom: 2rem;
+            border: 1px solid rgba(56, 189, 248, 0.2);
+            text-align: center;
+            box-shadow: 0 18px 30px -12px #020617;
+        }
+
+        .dashboard-title {
+            font-size: 2.5rem;
+            font-weight: 800;
+            background: linear-gradient(to right, #f0f9ff, #7ab7ff);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            margin-bottom: 0.5rem;
+        }
+
+        .dashboard-subtitle {
+            color: #a5c4e2;
+            font-size: 1.1rem;
+        }
+
+        /* Tabs - updated */
+        .admin-tabs {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 2rem;
+            background: rgba(8, 25, 45, 0.6);
+            padding: 0.6rem;
+            border-radius: 40px;
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(56, 189, 248, 0.15);
+            width: fit-content;
+        }
+
+        .tab-btn {
+            padding: 0.8rem 2rem;
+            border: none;
+            background: transparent;
+            color: #cbd5e1;
+            font-weight: 600;
+            cursor: pointer;
+            border-radius: 30px;
+            transition: all 0.2s ease;
+            font-size: 1rem;
+        }
+
+        .tab-btn.active {
+            background: #2563eb;
+            color: white;
+            box-shadow: 0 6px 16px #2563eb60;
+        }
+
+        /* Stats cards - now deep navy with soft glow */
+        .stats-overview {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .stat-card-detailed {
+            background: rgba(18, 30, 48, 0.85);
+            backdrop-filter: blur(8px);
+            padding: 1.5rem 1.2rem;
+            border-radius: 26px;
+            box-shadow: 0 16px 28px -12px #010514, 0 0 0 1px rgba(56, 189, 248, 0.2) inset;
+            display: flex;
+            align-items: center;
+            gap: 1.2rem;
+            border: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        .stat-icon-circle {
+            width: 54px;
+            height: 54px;
+            border-radius: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.7rem;
+            background: rgba(30, 58, 138, 0.6);
+            color: #90d2ff;
+            box-shadow: 0 6px 14px rgba(0, 30, 70, 0.6);
+        }
+
+        .stat-info h4 {
+            font-size: 0.9rem;
+            color: #9fb3d1;
+            margin-bottom: 0.2rem;
+            font-weight: 500;
+            letter-spacing: 0.3px;
+        }
+
+        .stat-info .stat-val {
+            font-size: 1.8rem;
+            font-weight: 800;
+            color: #e2ecff;
+            line-height: 1.2;
+        }
+
+        /* Charts - dark glass */
+        .charts-row {
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: 2rem;
+            margin-bottom: 2rem;
+        }
+
+        .chart-box {
+            background: rgba(18, 30, 48, 0.85);
+            backdrop-filter: blur(6px);
+            padding: 2rem;
+            border-radius: 32px;
+            box-shadow: 0 18px 30px -12px #020617;
+            border: 1px solid rgba(56, 189, 248, 0.2);
+        }
+
+        .chart-title {
+            font-weight: 700;
+            color: #d5e6ff;
+            margin-bottom: 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 1.1rem;
+        }
+
+        /* Workers Grid - cards now dark */
+        .workers-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+            gap: 2rem;
+            margin-top: 1rem;
+        }
+
+        .worker-card {
+            background: rgba(18, 30, 48, 0.85);
+            backdrop-filter: blur(12px);
+            border-radius: 28px;
+            padding: 1.5rem;
+            border: 1px solid rgba(56, 189, 248, 0.2);
+            box-shadow: 0 16px 28px -12px #020617;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .worker-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 6px;
+            background: linear-gradient(90deg, #2563eb, #38bdf8);
+            opacity: 0.8;
+        }
+
+        .worker-card:hover {
+            transform: translateY(-6px);
+            background: rgba(24, 40, 62, 0.9);
+            border-color: rgba(56, 189, 248, 0.4);
+            box-shadow: 0 22px 34px -10px #0b1e33;
+        }
+
+        .worker-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 1.2rem;
+            padding-bottom: 1rem;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+        }
+
+        .worker-profile {
+            display: flex;
+            gap: 1rem;
+            align-items: center;
+        }
+
+        .worker-avatar {
+            width: 52px;
+            height: 52px;
+            background: linear-gradient(135deg, #1e3a8a, #312e81);
+            color: #b3d9ff;
+            border-radius: 18px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.6rem;
+            font-weight: 600;
+            box-shadow: 0 6px 14px #0b1f46;
+        }
+
+        .worker-identity h3 {
+            font-size: 1.1rem;
+            font-weight: 700;
+            color: #e1edff;
+            margin-bottom: 0.2rem;
+        }
+
+        .worker-identity p {
+            font-size: 0.85rem;
+            color: #9eb9d6;
+            font-weight: 400;
+        }
+
+        .worker-body {
+            display: flex;
+            flex-direction: column;
+            gap: 0.8rem;
+            margin-bottom: 1.2rem;
+            flex-grow: 1;
+        }
+
+        .info-item {
+            display: flex;
+            align-items: center;
+            gap: 0.8rem;
+            padding: 0.7rem;
+            background: rgba(15, 30, 50, 0.7);
+            border-radius: 16px;
+            font-size: 0.9rem;
+            color: #c7defa;
+            border: 1px solid rgba(255, 255, 255, 0.04);
+        }
+
+        .info-icon {
+            font-size: 1.1rem;
+            width: 24px;
+            text-align: center;
+            color: #60a5fa;
+        }
+
+        .worker-actions {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 0.8rem;
+            margin-top: auto;
+        }
+
+        .status-badge-card {
+            padding: 0.3rem 1.2rem;
+            border-radius: 50px;
+            font-size: 0.7rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            background: #1e293b;
+            color: #b9d5ff;
+            border: 1px solid #3b82f6;
+        }
+
+        .action-btn {
+            padding: 0.7rem 1rem;
+            border-radius: 20px;
+            font-weight: 700;
+            font-size: 0.8rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border: none;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+            text-transform: uppercase;
+        }
+
+        .approve-btn {
+            background: #14532d;
+            color: #bbf7d0;
+            border: 1px solid #22c55e;
+        }
+
+        .approve-btn:hover:not(:disabled) {
+            background: #166534;
+            color: white;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 18px #14532daa;
+        }
+
+        .reject-btn {
+            background: #7f1d1d;
+            color: #fecaca;
+            border: 1px solid #ef4444;
+        }
+
+        .reject-btn:hover:not(:disabled) {
+            background: #991b1b;
+            color: white;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 18px #7f1d1daa;
+        }
+
+        /* Orders Table - dark */
+        .orders-table-wrapper {
+            background: rgba(18, 30, 48, 0.85);
+            backdrop-filter: blur(8px);
+            border-radius: 32px;
+            padding: 1.8rem;
+            box-shadow: 0 18px 30px -12px #020617;
+            border: 1px solid rgba(56, 189, 248, 0.2);
+            overflow-x: auto;
+        }
+
+        .admin-table {
+            width: 100%;
+            border-collapse: collapse;
+            color: #deecff;
+        }
+
+        .admin-table th {
+            text-align: left;
+            padding: 1rem 0.8rem;
+            background: rgba(15, 30, 50, 0.8);
+            color: #b3d6ff;
+            font-weight: 600;
+            font-size: 0.9rem;
+            border-bottom: 1px solid #2d4b74;
+        }
+
+        .admin-table td {
+            padding: 1rem 0.8rem;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+            font-size: 0.9rem;
+            vertical-align: middle;
+            color: #d0e2ff;
+        }
+
+        .order-badge {
+            padding: 0.3rem 1.2rem;
+            border-radius: 50px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            display: inline-block;
+        }
+
+        .badge-pending {
+            background: #854d0e;
+            color: #fde68a;
+            border: 1px solid #eab308;
+        }
+
+        .badge-accepted {
+            background: #14532d;
+            color: #bbf7d0;
+            border: 1px solid #22c55e;
+        }
+
+        .badge-completed {
+            background: #1e3a8a;
+            color: #bfdbfe;
+            border: 1px solid #3b82f6;
+        }
+
+        .badge-cancelled {
+            background: #7f1d1d;
+            color: #fecaca;
+            border: 1px solid #ef4444;
+        }
+
+        .loading {
+            color: #b0c9f0;
+            font-size: 1.2rem;
+            text-align: center;
+            padding: 3rem;
+            background: rgba(0, 0, 0, 0.2);
+            border-radius: 40px;
+        }
+
+        @media (max-width: 992px) {
+            .charts-row {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+    <script src="config.js"></script>
+</head>
+
+<body class="not-logged-in">
+    <!-- Navigation -->
+    <nav class="navbar sticky-top">
+        <div class="navbar-logo">
+            <div
+                style="width: 42px; height: 42px; background: linear-gradient(145deg, #2563eb, #38bdf8); border-radius: 14px; display: flex; align-items: center; justify-content: center; box-shadow: 0 8px 18px -4px #2563eb;">
+                <i class="fas fa-shield-alt" style="color:white;"></i>
+            </div>
+            <h1
+                style="font-size: 1.6rem; font-weight: 700; background: linear-gradient(to right, #b3d9ff, white); -webkit-background-clip: text; background-clip: text; color: transparent; margin:0;">
+                Admin Panel</h1>
+        </div>
+        <div class="navbar-stats">
+            <div class="stat-item-nav" style="text-align:center;">
+                <p id="totalWorkers" style="font-size:1.3rem; font-weight:800; color:#7aa9ff; margin:0;">0</p>
+                <p style="font-size:0.7rem; color:#90a9c2; text-transform:uppercase;">Total Workers</p>
+            </div>
+            <div class="stat-item-nav" style="text-align:center;">
+                <p id="pendingApprovals" style="font-size:1.3rem; font-weight:800; color:#fcd34d; margin:0;">0</p>
+                <p style="font-size:0.7rem; color:#90a9c2; text-transform:uppercase;">Pending</p>
+            </div>
+        </div>
+        <div class="navbar-actions">
+            <a href="admin-helpcenter.html" class="nav-btn help-btn"><i class="fas fa-headset"></i> Help Center</a>
+            <button onclick="logout()" class="nav-btn logout-btn"><i class="fas fa-sign-out-alt"></i> Logout</button>
+        </div>
+    </nav>
+
+    <div class="admin-container">
+        <!-- Login Section -->
+        <div id="loginSection" class="login-section">
+            <div class="login-header">
+                <div class="login-icon">🔐</div>
+                <h1 class="login-title">Admin Login</h1>
+                <p class="login-subtitle">Enter your credentials</p>
+            </div>
+            <form id="adminLoginForm" class="login-form">
+                <div class="form-group"><input type="text" id="adminUsername" placeholder="Username" required
+                        autocomplete="username"></div>
+                <div class="form-group"><input type="password" id="adminPassword" placeholder="Password" required
+                        autocomplete="current-password"></div>
+                <button type="submit" class="login-btn"><i class="fas fa-arrow-right-to-bracket"></i> Login to
+                    Dashboard</button>
+            </form>
+            <div id="loginError" class="login-error"></div>
+        </div>
+
+        <!-- Dashboard Section -->
+        <div id="dashboardSection" class="dashboard-section" style="display:none;">
+            <div class="dashboard-header">
+                <h1 class="dashboard-title">System Insights</h1>
+                <p class="dashboard-subtitle">real‑time metrics · deep control</p>
+            </div>
+            <div class="admin-tabs">
+                <button class="tab-btn active" onclick="switchTab('overview')">📊 Overview</button>
+                <button class="tab-btn" onclick="switchTab('workers')">🧑‍🔧 Workers</button>
+                <button class="tab-btn" onclick="switchTab('orders')">📋 All Orders</button>
+            </div>
+
+            <!-- overview tab -->
+            <div id="overviewTab" class="tab-content">
+                <div class="stats-overview">
+                    <div class="stat-card-detailed">
+                        <div class="stat-icon-circle"><i class="fas fa-coins"></i></div>
+                        <div class="stat-info">
+                            <h4>Total Revenue</h4>
+                            <div class="stat-val" id="totalRevenue">₹0</div>
+                        </div>
+                    </div>
+                    <div class="stat-card-detailed">
+                        <div class="stat-icon-circle"><i class="fas fa-shopping-bag"></i></div>
+                        <div class="stat-info">
+                            <h4>Total Orders</h4>
+                            <div class="stat-val" id="totalOrdersCount">0</div>
+                        </div>
+                    </div>
+                    <div class="stat-card-detailed">
+                        <div class="stat-icon-circle"><i class="fas fa-users"></i></div>
+                        <div class="stat-info">
+                            <h4>Active Users</h4>
+                            <div class="stat-val" id="activeUsersCount">0</div>
+                        </div>
+                    </div>
+                    <div class="stat-card-detailed">
+                        <div class="stat-icon-circle"><i class="fas fa-star"></i></div>
+                        <div class="stat-info">
+                            <h4>Avg. Rating</h4>
+                            <div class="stat-val" id="avgSystemRating">4.8</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="charts-row">
+                    <div class="chart-box">
+                        <div class="chart-title"><i class="fas fa-chart-line"></i> Revenue Trend (7d)</div><canvas
+                            id="revenueChart" height="100"></canvas>
+                    </div>
+                    <div class="chart-box">
+                        <div class="chart-title"><i class="fas fa-chart-pie"></i> Service Split</div><canvas
+                            id="categoryChart"></canvas>
+                    </div>
+                </div>
+            </div>
+
+            <!-- workers tab (dark cards) -->
+            <div id="workersTab" class="tab-content" style="display:none;">
+                <div id="workersGrid" class="workers-grid">
+                    <div class="loading">Loading workers...</div>
+                </div>
+            </div>
+
+            <!-- orders tab -->
+            <div id="ordersTab" class="tab-content" style="display:none;">
+                <div class="orders-table-wrapper">
+                    <table class="admin-table">
+                        <thead>
+                            <tr>
+                                <th>Order ID</th>
+                                <th>Service</th>
+                                <th>Customer</th>
+                                <th>Worker</th>
+                                <th>Amount</th>
+                                <th>Status</th>
+                                <th>Date</th>
+                            </tr>
+                        </thead>
+                        <tbody id="allOrdersList">
+                            <tr>
+                                <td colspan="7" style="text-align:center; color:#b0cdf0;">No orders available</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="admin.js"></script>
+    <!-- inline demo data to preview dark scheme (no API change) -->
+    <!-- Removed hardcoded preview script to ensure real API data is used -->
+</body>
+
+</html>

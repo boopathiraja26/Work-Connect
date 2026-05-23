@@ -1,0 +1,1057 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0">
+    <title>WorkConnect · Worker Profile (Live API)</title>
+    <!-- Tailwind + Font Awesome + Google Fonts (no mock data, all real API calls) -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&display=swap"
+        rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Outfit', sans-serif;
+            background: radial-gradient(circle at top right, #1e293b, #0f172a, #020617);
+            min-height: 100vh;
+        }
+
+        /* glassmorphism base */
+        .glass-card {
+            background: rgba(15, 23, 42, 0.6);
+            backdrop-filter: blur(12px) saturate(180%);
+            -webkit-backdrop-filter: blur(12px) saturate(180%);
+            border: 1px solid rgba(148, 163, 184, 0.15);
+            transition: all 0.25s ease;
+        }
+
+        .glass-card:hover {
+            background: rgba(30, 41, 59, 0.8);
+            border-color: rgba(56, 189, 248, 0.4);
+            transform: translateY(-3px);
+            box-shadow: 0 20px 30px -10px rgba(0, 0, 0, 0.5), 0 0 0 1px rgba(56, 189, 248, 0.2);
+        }
+
+        /* notification dropdown */
+        .notif-dropdown {
+            display: none;
+            position: absolute;
+            top: calc(100% + 8px);
+            right: 0;
+            width: 320px;
+            background: #1e293b;
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(148, 163, 184, 0.2);
+            border-radius: 24px;
+            box-shadow: 0 20px 40px -15px black;
+            z-index: 50;
+        }
+
+        .notif-dropdown.show {
+            display: block;
+        }
+
+        /* skill tags */
+        .skill-tag {
+            background: rgba(56, 189, 248, 0.1);
+            border: 1px solid rgba(56, 189, 248, 0.3);
+            padding: 0.3rem 0.9rem;
+            border-radius: 9999px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            color: #38bdf8;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .remove-skill {
+            cursor: pointer;
+            width: 18px;
+            height: 18px;
+            background: rgba(239, 68, 68, 0.1);
+            border-radius: 50%;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            color: #ef4444;
+            font-size: 12px;
+            transition: 0.2s;
+        }
+
+        .remove-skill:hover {
+            background: #ef4444;
+            color: white;
+        }
+
+        /* floating help button */
+        .floating-help {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            width: 60px;
+            height: 60px;
+            background: linear-gradient(145deg, #38bdf8, #818cf8);
+            border-radius: 9999px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 26px;
+            box-shadow: 0 12px 24px -8px rgba(56, 189, 248, 0.5);
+            transition: all 0.25s;
+            z-index: 1000;
+        }
+
+        .floating-help:hover {
+            transform: scale(1.1) rotate(5deg);
+            background: linear-gradient(145deg, #38bdf8, #a78bfa);
+            box-shadow: 0 20px 30px -5px #38bdf8;
+        }
+
+        /* order items */
+        .order-item {
+            background: rgba(15, 23, 42, 0.5);
+            backdrop-filter: blur(8px);
+            border: 1px solid rgba(148, 163, 184, 0.1);
+            border-radius: 24px;
+            padding: 1.5rem;
+            transition: all 0.25s;
+        }
+
+        .order-item:hover {
+            border-color: #38bdf8;
+            background: rgba(15, 23, 42, 0.8);
+            box-shadow: 0 20px 30px -15px black;
+        }
+
+        .review-item {
+            background: rgba(15, 23, 42, 0.4);
+            border-left: 4px solid #38bdf8;
+            border-radius: 16px;
+            padding: 1rem;
+        }
+
+        /* Welcome Animation Overlay */
+        #welcomeOverlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: #020617;
+            z-index: 10000;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            transition: opacity 1s ease-out, visibility 1s;
+        }
+
+        .welcome-video-container {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+            z-index: -1;
+        }
+
+        .welcome-video {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            opacity: 0.5;
+            filter: grayscale(30%) contrast(110%);
+        }
+
+        .welcome-content {
+            text-align: center;
+            animation: welcomeTitleScale 1.5s ease-out forwards;
+        }
+
+        @keyframes welcomeTitleScale {
+            0% {
+                transform: scale(0.8);
+                opacity: 0;
+                filter: blur(10px);
+            }
+
+            100% {
+                transform: scale(1);
+                opacity: 1;
+                filter: blur(0);
+            }
+        }
+
+        .welcome-title {
+            font-size: 4rem;
+            font-weight: 800;
+            margin-bottom: 1rem;
+            background: linear-gradient(to right, #38bdf8, #818cf8);
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+            letter-spacing: -2px;
+        }
+
+        .welcome-subtitle {
+            font-size: 1.5rem;
+            color: #94a3b8;
+            font-weight: 400;
+        }
+
+        .welcome-logo {
+            font-size: 1.25rem;
+            color: #38bdf8;
+            margin-top: 2rem;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            justify-content: center;
+            opacity: 0.8;
+        }
+    </style>
+    <script src="config.js"></script>
+</head>
+
+<body class="text-[#f1f5f9] antialiased overflow-hidden">
+    <!-- Welcome Animation Overlay -->
+    <div id="welcomeOverlay">
+        <div class="welcome-video-container">
+            <video class="welcome-video" autoplay muted playsinline id="welcomeVideo">
+                <source
+                    src="https://assets.mixkit.co/videos/preview/mixkit-software-developer-working-on-code-screen-close-up-34395-large.mp4"
+                    type="video/mp4">
+            </video>
+        </div>
+        <div class="welcome-content">
+            <h1 class="welcome-title" id="welcomeUserTitle">Welcome back</h1>
+            <p class="welcome-subtitle">Your professional dashboard is ready.</p>
+            <div class="welcome-logo">
+                <i class="fas fa-tools"></i>
+                <span>WorkConnect Business Premium</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- FULL WIDTH NAVBAR (real data, no mock) -->
+    <nav
+        class="w-full bg-[#0f172a]/80 backdrop-blur-md border-b border-white/10 sticky top-0 z-[100] px-4 sm:px-6 lg:px-8 py-2">
+        <div class="max-w-7xl mx-auto flex items-center justify-between flex-wrap">
+            <!-- logo -->
+            <a href="worker-profile.html"
+                class="flex items-center gap-2 text-2xl font-extrabold bg-gradient-to-r from-[#38bdf8] to-[#a78bfa] bg-clip-text text-transparent hover:scale-105 transition">
+                <i class="fas fa-tools text-[#38bdf8]"></i> WorkConnect
+            </a>
+
+            <!-- mobile toggle -->
+            <div class="block lg:hidden">
+                <button id="mobileMenuBtn" class="text-white p-2 focus:outline-none">
+                    <i class="fas fa-bars text-2xl"></i>
+                </button>
+            </div>
+
+            <!-- nav links (hidden on mobile, toggle with js) -->
+            <div id="navLinks" class="hidden lg:flex lg:items-center lg:gap-1 w-full lg:w-auto mt-4 lg:mt-0">
+                <div class="flex flex-col lg:flex-row items-stretch lg:items-center gap-1">
+                    <a href="worker-profile.html"
+                        class="nav-link text-[#94a3b8] hover:text-white px-4 py-2 rounded-full hover:bg-white/5 transition flex items-center gap-2"><i
+                            class="fas fa-id-card"></i> Profile</a>
+                    <a href="worker-orders.html"
+                        class="nav-link text-[#94a3b8] hover:text-white px-4 py-2 rounded-full hover:bg-white/5 transition flex items-center gap-2"><i
+                            class="fas fa-clipboard-list"></i> Orders</a>
+                    <a href="worker-payments.html"
+                        class="nav-link text-[#94a3b8] hover:text-white px-4 py-2 rounded-full hover:bg-white/5 transition flex items-center gap-2"><i
+                            class="fas fa-credit-card"></i> Payments</a>
+                    <a href="worker-help.html"
+                        class="nav-link text-[#94a3b8] hover:text-white px-4 py-2 rounded-full hover:bg-white/5 transition flex items-center gap-2"><i
+                            class="fas fa-headset"></i> Help</a>
+
+                    <!-- notifications dropdown (real data) -->
+                    <div class="relative inline-block">
+                        <button id="notifToggle"
+                            class="relative text-[#94a3b8] hover:text-white px-3 py-2 rounded-full hover:bg-white/5 transition">
+                            <i class="fas fa-bell text-xl"></i>
+                            <span id="notifBadge"
+                                class="absolute -top-1 -right-1 bg-red-500 text-white text-xs rounded-full min-w-[18px] h-[18px] flex items-center justify-center px-1 hidden">0</span>
+                        </button>
+                        <div id="notifDropdown" class="notif-dropdown">
+                            <div class="p-3 border-b border-white/10 flex justify-between items-center">
+                                <span class="font-semibold">Notifications</span>
+                            </div>
+                            <div id="notifList" class="max-h-80 overflow-y-auto">
+                                <!-- loaded from API -->
+                                <div class="p-4 text-sm text-[#94a3b8] text-center">Loading...</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- worker name from live user -->
+                    <a href="#"
+                        class="flex items-center gap-2 text-[#94a3b8] hover:text-white px-3 py-2 rounded-full hover:bg-white/5 transition">
+                        <i class="fas fa-user-hard-hat text-[#38bdf8]"></i>
+                        <span id="navWorkerName">Worker</span>
+                    </a>
+
+                    <!-- logout button (real) -->
+                    <button onclick="logout()"
+                        class="ml-2 flex items-center gap-2 bg-red-500/10 hover:bg-red-500 text-red-400 hover:text-white border border-red-500/20 rounded-full px-4 py-2 text-sm font-medium transition">
+                        <i class="fas fa-sign-out-alt"></i> Logout
+                    </button>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- MAIN CONTENT (all data from API, no mock) -->
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 md:py-12">
+        <!-- header -->
+        <div class="text-center mb-10 md:mb-14">
+            <h1
+                class="text-4xl md:text-5xl font-extrabold bg-gradient-to-r from-[#f1f5f9] to-[#94a3b8] bg-clip-text text-transparent">
+                Worker Profile</h1>
+            <p class="text-[#94a3b8] max-w-2xl mx-auto mt-4 text-base md:text-lg">Manage your professional info and get
+                more orders.</p>
+        </div>
+
+        <!-- responsive grid -->
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6 lg:gap-8">
+            <!-- LEFT COL (2/3) - main form -->
+            <div class="md:col-span-2 space-y-6">
+                <!-- Personal Information Card (live data) -->
+                <div class="glass-card rounded-3xl p-6 md:p-8">
+                    <h2 class="text-2xl font-bold mb-6 flex items-center gap-3"><i
+                            class="fas fa-user-circle text-[#38bdf8]"></i> Personal Information</h2>
+                    <form id="profileForm" class="space-y-5">
+                        <div>
+                            <label class="block text-sm font-semibold text-[#94a3b8] mb-1">Full Name</label>
+                            <input type="text" id="name" name="name" placeholder="Enter your full name" required
+                                class="w-full bg-[#0f172a]/60 border border-white/10 rounded-xl px-4 py-3 text-white focus:ring-2 focus:ring-[#38bdf8]/50 outline-none transition">
+                        </div>
+
+                        <div>
+                            <label class="block text-sm font-semibold text-[#94a3b8] mb-1">Profile Image</label>
+                            <div id="profileImagePreview" class="mb-3 flex items-center gap-3 flex-wrap"></div>
+                            <input type="file" id="profileImage" name="profileImage" accept="image/*"
+                                class="w-full text-sm bg-[#0f172a]/60 border border-white/10 rounded-xl py-2 px-3 file:mr-3 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-[#38bdf8]/20 file:text-[#38bdf8] hover:file:bg-[#38bdf8]/30">
+                        </div>
+
+                        <!-- address fields -->
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                            <input type="text" id="street" placeholder="Street"
+                                class="bg-[#0f172a]/60 border border-white/10 rounded-xl px-4 py-3">
+                            <input type="text" id="city" placeholder="City"
+                                class="bg-[#0f172a]/60 border border-white/10 rounded-xl px-4 py-3">
+                            <input type="text" id="state" placeholder="State"
+                                class="bg-[#0f172a]/60 border border-white/10 rounded-xl px-4 py-3">
+                            <input type="text" id="pincode" placeholder="Pincode"
+                                class="bg-[#0f172a]/60 border border-white/10 rounded-xl px-4 py-3">
+                        </div>
+
+                        <!-- location with map -->
+                        <div>
+                            <label class="block text-sm font-semibold text-[#94a3b8] mb-1">Location (Google Maps
+                                link)</label>
+                            <input type="url" id="locationLink" name="locationLink"
+                                placeholder="https://maps.google.com/?q=lat,lng"
+                                class="w-full bg-[#0f172a]/60 border border-white/10 rounded-xl px-4 py-3">
+                            <p class="text-xs text-[#94a3b8] mt-1">Drag marker or click map to update</p>
+                            <div id="map"
+                                class="w-full h-56 md:h-64 mt-3 rounded-2xl border border-white/10 bg-[#0f1a2f]"></div>
+                        </div>
+
+                        <!-- UPI ID -->
+                        <div>
+                            <label class="block text-sm font-semibold text-[#94a3b8] mb-1">UPI ID (payments)</label>
+                            <input type="text" id="upiId" name="upiId" placeholder="yourname@upi"
+                                class="w-full bg-[#0f172a]/60 border border-white/10 rounded-xl px-4 py-3">
+                        </div>
+
+                        <!-- Skills -->
+                        <div>
+                            <label class="block text-sm font-semibold text-[#94a3b8] mb-2">Skills</label>
+                            <div id="skillsContainer" class="flex flex-wrap gap-2 mb-3"></div>
+                            <div class="flex gap-2">
+                                <input type="text" id="skillInput" placeholder="e.g., Plumbing"
+                                    class="flex-1 bg-[#0f172a]/60 border border-white/10 rounded-xl px-4 py-2">
+                                <button type="button" onclick="addSkill()"
+                                    class="bg-[#38bdf8]/20 hover:bg-[#38bdf8] text-[#38bdf8] hover:text-white px-5 py-2 rounded-xl font-medium transition border border-[#38bdf8]/30">Add</button>
+                            </div>
+                        </div>
+
+                        <!-- experience, rate -->
+                        <div class="grid grid-cols-2 gap-4">
+                            <div><label class="text-sm text-[#94a3b8]">Experience (years)</label><input type="number"
+                                    id="experience" name="experience" min="0"
+                                    class="w-full bg-[#0f172a]/60 border rounded-xl px-4 py-3 mt-1"></div>
+                            <div><label class="text-sm text-[#94a3b8]">Hourly rate ($)</label><input type="number"
+                                    step="0.01" id="hourlyRate" name="hourlyRate"
+                                    class="w-full bg-[#0f172a]/60 border rounded-xl px-4 py-3 mt-1"></div>
+                        </div>
+
+                        <!-- availability -->
+                        <div>
+                            <label class="text-sm text-[#94a3b8]">Availability</label>
+                            <select id="availability" name="availability"
+                                class="w-full bg-[#0f172a]/60 border rounded-xl px-4 py-3 mt-1">
+                                <option value="Available">Available</option>
+                                <option value="Busy">Busy</option>
+                                <option value="Unavailable">Unavailable</option>
+                            </select>
+                        </div>
+
+                        <!-- description -->
+                        <div>
+                            <label class="text-sm text-[#94a3b8]">Description</label>
+                            <textarea id="description" name="description" rows="4"
+                                class="w-full bg-[#0f172a]/60 border rounded-xl px-4 py-3"
+                                placeholder="Describe your services..."></textarea>
+                        </div>
+
+                        <button type="submit"
+                            class="w-full bg-gradient-to-r from-[#38bdf8] to-[#3b82f6] hover:from-[#38bdf8] hover:to-[#4f46e5] text-white font-bold py-4 rounded-xl shadow-lg hover:shadow-[#38bdf8]/40 transition-all transform hover:scale-[1.01]">Save
+                            Profile</button>
+                    </form>
+                </div>
+
+                <!-- Work Portfolio -->
+                <div class="glass-card rounded-3xl p-6 md:p-8">
+                    <h2 class="text-2xl font-bold mb-6 flex items-center gap-3">
+                        <i class="fas fa-images text-[#38bdf8]"></i> Work Portfolio
+                    </h2>
+                    <div id="portfolioGrid" class="grid grid-cols-1 sm:grid-cols-3 gap-6 mb-8">
+                        <!-- Portfolio items will be loaded here -->
+                        <div id="portfolioEmptyState"
+                            class="text-[#94a3b8] col-span-full py-12 text-center bg-[#0f172a]/40 rounded-3xl border border-white/5">
+                            <i class="fas fa-spinner fa-spin text-4xl mb-3 block opacity-20"></i>
+                            Loading your portfolio...
+                        </div>
+                    </div>
+
+                    <!-- Portfolio Pagination -->
+                    <div id="portfolioPagination" class="flex justify-center items-center gap-4 mb-8 hidden">
+                        <button onclick="changePortfolioPage(-1)" id="prevPortfolioBtn"
+                            class="w-10 h-10 rounded-full bg-white/5 border border-white/10 flex items-center justify-center hover:bg-[#38bdf8] hover:border-[#38bdf8] transition-all disabled:opacity-20 disabled:pointer-events-none">
+                            <i class="fas fa-chevron-left text-sm"></i>
+                        </button>
+                        <span id="portfolioPageInfo" class="text-sm font-medium text-[#94a3b8]">Page 1 of 1</span>
+                        <button onclick="changePortfolioPage(1)" id="nextPortfolioBtn"
+                            class="w-10 h-10 rounded-full bg-white/5 border border-white/10 flex items-center justify-center hover:bg-[#38bdf8] hover:border-[#38bdf8] transition-all disabled:opacity-20 disabled:pointer-events-none">
+                            <i class="fas fa-chevron-right text-sm"></i>
+                        </button>
+                    </div>
+
+                    <div class="pt-6 border-t border-white/5">
+                        <label class="block text-sm font-semibold text-[#94a3b8] mb-2 text-center">Add Project
+                            Photo</label>
+                        <div class="flex justify-center">
+                            <label
+                                class="cursor-pointer bg-[#38bdf8]/10 hover:bg-[#38bdf8]/20 text-[#38bdf8] border border-dashed border-[#38bdf8]/40 rounded-2xl px-8 py-6 transition flex flex-col items-center gap-2 w-full max-w-sm">
+                                <i class="fas fa-cloud-upload-alt text-2xl"></i>
+                                <span class="font-medium">Choose a photo</span>
+                                <input type="file" class="hidden" accept="image/*"
+                                    onchange="uploadPortfolioPhoto(this)">
+                            </label>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Work History (real orders) -->
+                <div class="glass-card rounded-3xl p-6 md:p-8">
+                    <h2 class="text-2xl font-bold mb-5 flex items-center gap-2"><i
+                            class="fas fa-briefcase text-[#38bdf8]"></i> Work History</h2>
+                    <div id="ordersList" class="space-y-4">
+                        <!-- dynamic from API -->
+                        <div class="text-center py-8 text-[#94a3b8]">Loading orders...</div>
+                    </div>
+                    <div class="mt-6 text-center">
+                        <a href="worker-orders.html" id="viewAllOrdersBtn"
+                            class="inline-flex items-center gap-2 text-[#38bdf8] hover:text-white font-medium transition-colors"
+                            style="display:none;">
+                            <span>View All Orders</span> <i class="fas fa-arrow-right"></i>
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- RIGHT COL (1/3) - account, reviews, help -->
+            <div class="space-y-6">
+                <!-- Account Info (live) -->
+                <div class="glass-card rounded-3xl p-6">
+                    <h2 class="text-xl font-bold mb-4 flex items-center gap-2"><i
+                            class="fas fa-shield-alt text-[#38bdf8]"></i> Account</h2>
+                    <div id="accountInfo" class="space-y-3 text-sm">
+                        <!-- filled by API -->
+                        <div class="text-[#94a3b8]">Loading...</div>
+                    </div>
+                </div>
+
+                <!-- Ratings & Reviews (live) -->
+                <div class="glass-card rounded-3xl p-6">
+                    <h2 class="text-xl font-bold mb-4 flex items-center gap-2"><i
+                            class="fas fa-star text-yellow-400"></i> Reviews</h2>
+                    <div id="averageRating" class="mb-3"></div>
+                    <div id="reviewsList" class="space-y-3 max-h-80 overflow-auto pr-1">
+                        <!-- from API -->
+                    </div>
+                </div>
+
+                <!-- Help Center snippet (static, but links to real help) -->
+                <div class="glass-card rounded-3xl p-6 bg-gradient-to-br from-[#1e293b]/80 to-[#0f172a]/80">
+                    <h3 class="font-bold flex items-center gap-2"><i class="fas fa-circle-info text-[#38bdf8]"></i>
+                        Quick tips</h3>
+                    <ul class="mt-3 space-y-2 text-sm text-[#94a3b8]">
+                        <li class="flex gap-2"><i class="fas fa-check-circle text-[#10b981] mt-1"></i> Set availability
+                            to "Available" to get orders</li>
+                        <li class="flex gap-2"><i class="fas fa-check-circle text-[#10b981] mt-1"></i> Add your UPI ID
+                            to receive payments</li>
+                        <li class="flex gap-2"><i class="fas fa-check-circle text-[#10b981] mt-1"></i> Update skills to
+                            appear in more searches</li>
+                    </ul>
+                    <div class="mt-5">
+                        <a href="https://wa.me/919524785164" target="_blank"
+                            class="flex items-center justify-center gap-2 bg-emerald-600/80 hover:bg-emerald-600 text-white rounded-full py-3 transition"><i
+                                class="fab fa-whatsapp"></i> WhatsApp support</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- bottom logout (optional) -->
+        <div class="text-center mt-12">
+            <button onclick="logout()"
+                class="bg-red-500/10 hover:bg-red-500 text-red-400 hover:text-white border border-red-500/20 rounded-full px-8 py-3 font-medium transition inline-flex items-center gap-2"><i
+                    class="fas fa-sign-out-alt"></i> Logout from WorkConnect</button>
+        </div>
+    </div>
+
+    <!-- Floating Help -->
+    <a href="worker-help.html" class="floating-help"><i class="fas fa-headset"></i></a>
+
+    <!-- Leaflet Local Search (Alternative to Google Maps) -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+
+    <script>
+        // ---------- REAL API INTEGRATION (NO MOCK DATA) ----------
+        let currentUser = null;
+        let skills = [];
+        let map, marker;
+        let liveLocationInterval = null;
+        let currentPortfolioPage = 1;
+        let allPortfolioItems = [];
+        const itemsPerPage = 3;
+
+        // Authentication check & load everything
+        document.addEventListener('DOMContentLoaded', async function () {
+            try {
+                const userStr = localStorage.getItem('user');
+                if (!userStr) throw new Error('No user');
+                currentUser = JSON.parse(userStr);
+                if (currentUser.role !== 'worker') window.location.href = 'dashboard.html';
+            } catch (e) {
+                window.location.href = 'login.html';
+                return;
+            }
+
+            // update navbar name
+            const firstName = (currentUser.name || currentUser.username).split(' ')[0];
+            const navName = document.getElementById('navWorkerName');
+            if (navName) navName.textContent = firstName;
+
+            // Personalize welcome animation
+            const welcomeTitle = document.getElementById('welcomeUserTitle');
+            if (welcomeTitle) {
+                welcomeTitle.textContent = `Welcome back, ${firstName}`;
+            }
+
+            // Hide welcome overlay after animation
+            const welcomeOverlay = document.getElementById('welcomeOverlay');
+            if (welcomeOverlay) {
+                setTimeout(() => {
+                    welcomeOverlay.style.opacity = '0';
+                    welcomeOverlay.style.visibility = 'hidden';
+                    document.body.style.overflow = 'auto'; // Restore scrolling
+                }, 3500);
+            }
+
+            // load all real data
+            await Promise.all([
+                loadProfile(),
+                loadOrders(),
+                loadNotifications(),
+                displayAccountInfo()
+            ]);
+
+            // init map after profile load
+            initMap();
+
+            // notification toggle
+            const notifBtn = document.getElementById('notifToggle');
+            const notifDrop = document.getElementById('notifDropdown');
+            if (notifBtn) {
+                notifBtn.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    notifDrop.classList.toggle('show');
+                });
+                document.addEventListener('click', () => notifDrop.classList.remove('show'));
+            }
+
+            // mobile menu toggle
+            document.getElementById('mobileMenuBtn')?.addEventListener('click', function () {
+                document.getElementById('navLinks').classList.toggle('hidden');
+            });
+
+            // refresh notifications every 10s (real)
+            setInterval(loadNotifications, 10000);
+        });
+
+        // Display account info from currentUser (real)
+        function displayAccountInfo() {
+            const acc = document.getElementById('accountInfo');
+            if (!acc || !currentUser) return;
+            acc.innerHTML = `
+                <div><span class="text-[#94a3b8]">Username:</span> <span class="text-white">${currentUser.username || ''}</span></div>
+                <div><span class="text-[#94a3b8]">Email:</span> ${currentUser.email || ''}</div>
+                <div><span class="text-[#94a3b8]">Phone:</span> ${currentUser.phone || ''}</div>
+                <div><span class="text-[#94a3b8]">Aadhaar:</span> ${currentUser.aadhaarNumber || '—'}</div>
+                <div><span class="text-[#94a3b8]">Member since:</span> ${currentUser.createdAt ? new Date(currentUser.createdAt).toLocaleDateString() : ''}</div>
+            `;
+        }
+
+        // Load worker profile from API (GET /api/worker/{id})
+        async function loadProfile() {
+            try {
+                const res = await fetch(getApiUrl(`/api/worker/${currentUser.id}`));
+                if (!res.ok) throw new Error('Failed to load profile');
+                const worker = await res.json();
+
+                // fill form fields
+                document.getElementById('name').value = worker.name || '';
+                document.getElementById('experience').value = worker.experience || '';
+                document.getElementById('hourlyRate').value = worker.hourlyRate || '';
+                document.getElementById('availability').value = worker.availability || 'Available';
+                document.getElementById('description').value = worker.description || '';
+                document.getElementById('upiId').value = worker.upiId || '';
+
+                // skills
+                skills = worker.skills || [];
+                displaySkills();
+
+                // profile image preview
+                const previewDiv = document.getElementById('profileImagePreview');
+                if (worker.profileImage) {
+                    previewDiv.innerHTML = `<img src="${worker.profileImage || 'https://placehold.co/100x100?text=Avatar'}" alt="Profile" class="w-16 h-16 rounded-full border-2 border-[#38bdf8]/50 object-cover">`;
+                } else {
+                    previewDiv.innerHTML = '<span class="text-[#6b7280] text-sm">No image</span>';
+                }
+
+                // address
+                if (worker.address) {
+                    document.getElementById('street').value = worker.address.street || '';
+                    document.getElementById('city').value = worker.address.city || '';
+                    document.getElementById('state').value = worker.address.state || '';
+                    document.getElementById('pincode').value = worker.address.pincode || '';
+                }
+
+                // location link & map marker
+                if (worker.location) {
+                    document.getElementById('locationLink').value = worker.location.link || '';
+                    if (worker.location.latitude && worker.location.longitude && map && marker) {
+                        const pos = [parseFloat(worker.location.latitude), parseFloat(worker.location.longitude)];
+                        marker.setLatLng(pos);
+                        map.setView(pos, 15);
+                    }
+                }
+
+                // average rating display
+                const avgRatingDiv = document.getElementById('averageRating');
+                if (worker.averageRating) {
+                    avgRatingDiv.innerHTML = `<div class="text-yellow-400 text-xl font-bold">★ ${worker.averageRating.toFixed(1)} <span class="text-sm text-[#94a3b8]">(${worker.reviewsCount || 0} reviews)</span></div>`;
+                } else {
+                    avgRatingDiv.innerHTML = '<div class="text-[#94a3b8]">No ratings yet</div>';
+                }
+
+                // load reviews
+                loadReviews(worker.id);
+
+                // portfolio
+                console.log('API Response Portfolio:', worker.portfolio);
+                displayPortfolio(worker.portfolio);
+            } catch (err) {
+                console.error('loadProfile error:', err);
+            }
+        }
+
+        function displayPortfolio(portfolio) {
+            if (portfolio && Array.isArray(portfolio)) {
+                allPortfolioItems = portfolio;
+            }
+            const grid = document.getElementById('portfolioGrid');
+            const pagination = document.getElementById('portfolioPagination');
+            if (!grid) return;
+
+            if (!allPortfolioItems || !Array.isArray(allPortfolioItems) || allPortfolioItems.length === 0) {
+                grid.innerHTML = `
+                    <div class="text-[#94a3b8] col-span-full py-12 text-center bg-[#0f172a]/40 rounded-3xl border border-white/5">
+                        <i class="fas fa-images text-4xl mb-3 block opacity-20"></i>
+                        No portfolio photos yet
+                    </div>`;
+                if (pagination) pagination.classList.add('hidden');
+                return;
+            }
+
+            // Pagination logic
+            const totalPages = Math.ceil(allPortfolioItems.length / itemsPerPage);
+            if (currentPortfolioPage > totalPages) currentPortfolioPage = totalPages || 1;
+            if (currentPortfolioPage < 1) currentPortfolioPage = 1;
+
+            const start = (currentPortfolioPage - 1) * itemsPerPage;
+            const end = start + itemsPerPage;
+
+            // Show newest items first
+            const recentItems = [...allPortfolioItems].reverse();
+            const paginatedItems = recentItems.slice(start, end);
+
+            grid.innerHTML = paginatedItems.map(url => `
+                <div class="relative group aspect-square rounded-2xl overflow-hidden glass-card border border-white/5 shadow-xl bg-[#0f172a]">
+                    <img src="${url}" class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110" 
+                         onerror="this.onerror=null; this.src='https://images.unsplash.com/photo-1595853035070-59a39fe84de1?auto=format&fit=crop&q=80&w=300'">
+                    <div class="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity"></div>
+                    <button onclick="deletePortfolioPhoto('${url}')" 
+                            class="absolute top-3 right-3 w-10 h-10 bg-red-500/20 backdrop-blur-md rounded-full flex items-center justify-center text-red-400 opacity-0 group-hover:opacity-100 transition-all hover:bg-red-500 hover:text-white border border-red-500/30">
+                        <i class="fas fa-trash-alt text-sm"></i>
+                    </button>
+                </div>
+            `).join('');
+
+            // Update pagination UI
+            if (allPortfolioItems.length > itemsPerPage) {
+                if (pagination) {
+                    pagination.classList.remove('hidden');
+                    document.getElementById('portfolioPageInfo').innerText = `Page ${currentPortfolioPage} of ${totalPages}`;
+                    document.getElementById('prevPortfolioBtn').disabled = currentPortfolioPage === 1;
+                    document.getElementById('nextPortfolioBtn').disabled = currentPortfolioPage === totalPages;
+                }
+            } else {
+                if (pagination) pagination.classList.add('hidden');
+            }
+        }
+
+        window.changePortfolioPage = function (delta) {
+            currentPortfolioPage += delta;
+            displayPortfolio();
+        };
+
+        async function deletePortfolioPhoto(url) {
+            if (!confirm('Are you sure you want to delete this photo?')) return;
+
+            try {
+                const response = await fetch(getApiUrl(`/api/worker-portfolio/${currentUser.id}`), {
+                    method: 'DELETE',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ photoUrl: url })
+                });
+
+                if (response.ok) {
+                    const data = await response.json();
+                    currentPortfolioPage = 1; // Reset to first page
+                    displayPortfolio(data.portfolio);
+                    alert('Photo removed from portfolio!');
+                } else {
+                    const err = await response.json();
+                    alert('Delete failed: ' + (err.message || 'Error occurred'));
+                }
+            } catch (error) {
+                console.error('Error deleting photo:', error);
+                alert('Error deleting photo');
+            }
+        }
+
+        async function uploadPortfolioPhoto(input) {
+            if (!input.files || !input.files[0]) return;
+            const formData = new FormData();
+            formData.append('photo', input.files[0]);
+
+            const btn = input.parentElement;
+            const originalHTML = btn.innerHTML;
+            btn.innerHTML = '<i class="fas fa-spinner fa-spin text-2xl"></i><span class="font-medium">Uploading...</span>';
+            btn.classList.add('opacity-50', 'pointer-events-none');
+
+            try {
+                const url = `/api/worker-portfolio/${currentUser.id}`;
+                const response = await fetch(url, {
+                    method: 'POST',
+                    body: formData
+                });
+
+                if (response.ok) {
+                    const data = await response.json();
+                    currentPortfolioPage = 1; // Reset to first page
+                    displayPortfolio(data.portfolio);
+                    alert('Photo added to portfolio!');
+                } else {
+                    let errorMessage = 'Upload failed';
+                    try {
+                        const err = await response.json();
+                        errorMessage = err.message || errorMessage;
+                    } catch (e) {
+                        errorMessage = `Server error (${response.status}): ${response.statusText}\nURL: ${url}`;
+                    }
+                    alert(errorMessage);
+                }
+            } catch (error) {
+                console.error('Error uploading photo:', error);
+                alert('Connection error. Please ensure the server is running.\nDetails: ' + error.message);
+            } finally {
+                btn.innerHTML = originalHTML;
+                btn.classList.remove('opacity-50', 'pointer-events-none');
+                input.value = ''; // clear input
+            }
+        }
+
+        // load reviews from API
+        async function loadReviews(workerId) {
+            try {
+                const res = await fetch(getApiUrl(`/api/worker/${workerId}/reviews`));
+                if (!res.ok) throw new Error();
+                const reviews = await res.json();
+                const reviewsList = document.getElementById('reviewsList');
+                if (!reviews || reviews.length === 0) {
+                    reviewsList.innerHTML = '<p class="text-[#6b7280] text-sm">No reviews yet.</p>';
+                    return;
+                }
+                reviewsList.innerHTML = reviews.map(r => `
+                    <div class="review-item">
+                        <div class="flex justify-between"><span class="text-yellow-400">${'★'.repeat(r.rating)}${'☆'.repeat(5 - r.rating)}</span><span class="text-xs text-[#94a3b8]">${new Date(r.createdAt).toLocaleDateString()}</span></div>
+                        ${r.comment ? `<p class="text-sm mt-1 italic">"${r.comment}"</p>` : ''}
+                        <div class="text-xs text-[#94a3b8] mt-2">— ${r.customerName || 'Customer'}</div>
+                    </div>
+                `).join('');
+            } catch {
+                document.getElementById('reviewsList').innerHTML = '<p class="text-[#6b7280]">Error loading reviews.</p>';
+            }
+        }
+
+        // load orders for this worker (GET /api/orders/{workerId})
+        async function loadOrders() {
+            try {
+                const res = await fetch(getApiUrl(`/api/orders/${currentUser.id}`));
+                if (!res.ok) throw new Error();
+                const orders = await res.json();
+
+                // sort by recent
+                const myOrders = orders
+                    .filter(o => o.workerId === currentUser.id)
+                    .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+
+                // show only top 5
+                displayOrders(myOrders.slice(0, 5));
+
+                // show view all button if needed
+                const btn = document.getElementById('viewAllOrdersBtn');
+                if (btn) btn.style.display = myOrders.length > 0 ? 'inline-flex' : 'none';
+
+            } catch {
+                document.getElementById('ordersList').innerHTML = '<div class="text-center py-8 text-[#94a3b8]">Could not load orders</div>';
+            }
+        }
+
+        function displayOrders(orders) {
+            const list = document.getElementById('ordersList');
+            if (!orders || orders.length === 0) {
+                list.innerHTML = '<div class="text-center py-8 text-[#94a3b8]"><i class="fas fa-box-open text-3xl mb-2"></i><p>No orders yet</p></div>';
+                return;
+            }
+            list.innerHTML = orders.map(o => `
+                <div class="order-item">
+                    <div class="flex justify-between items-start">
+                        <div><span class="font-bold">#${o.id.slice(-6)}</span> <span class="text-[#38bdf8] text-sm">${o.serviceType || 'Service'}</span></div>
+                        <span class="text-xs rounded-full px-3 py-1 ${o.status === 'completed' ? 'bg-green-500/20 text-green-300' : o.status === 'accepted' ? 'bg-blue-500/20 text-blue-300' : o.status === 'pending' ? 'bg-yellow-500/20 text-yellow-300' : 'bg-gray-500/20'}">${o.status}</span>
+                    </div>
+                    <div class="grid grid-cols-2 gap-2 mt-2 text-sm">
+                        <span>Amount: ₹${o.totalAmount || 0}</span>
+                        <span>${o.paymentStatus === 'paid' ? '✅ Paid' : '⏳ Unpaid'}</span>
+                    </div>
+                    ${o.description ? `<p class="text-xs text-[#94a3b8] mt-1">${o.description}</p>` : ''}
+                    <div class="flex gap-2 mt-3">
+                        ${o.status === 'pending' ? `<button class="bg-[#38bdf8]/30 hover:bg-[#38bdf8] text-white rounded-full px-4 py-1 text-sm w-full transition" onclick="updateOrderStatus('${o.id}','accepted')">Accept</button>` : ''}
+                        ${o.status === 'accepted' ? `<button class="bg-green-600/30 hover:bg-green-600 text-white rounded-full px-4 py-1 text-sm w-full" onclick="updateOrderStatus('${o.id}','completed')">Mark Completed</button>` : ''}
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        // update order status (PUT /api/orders/{id})
+        window.updateOrderStatus = async function (orderId, status) {
+            try {
+                const res = await fetch(getApiUrl(`/api/orders/${orderId}`), {
+                    method: 'PUT',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ status })
+                });
+                if (!res.ok) throw new Error();
+                if (status === 'accepted') startSharingLocation(orderId);
+                if (status === 'completed' && liveLocationInterval) clearInterval(liveLocationInterval);
+                loadOrders(); // refresh
+            } catch (err) {
+                alert('Error updating order');
+            }
+        };
+
+        // live location sharing (only when order accepted)
+        function startSharingLocation(orderId) {
+            if (!navigator.geolocation) return;
+            if (liveLocationInterval) clearInterval(liveLocationInterval);
+            liveLocationInterval = setInterval(() => {
+                navigator.geolocation.getCurrentPosition(async (pos) => {
+                    const { latitude, longitude } = pos.coords;
+                    try {
+                        await fetch(getApiUrl(`/api/orders/${orderId}/worker-location`), {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify({ latitude, longitude })
+                        });
+                    } catch (e) { }
+                }, () => { }, { enableHighAccuracy: true });
+            }, 10000);
+        }
+
+        // load real notifications
+        async function loadNotifications() {
+            if (!currentUser) return;
+            try {
+                const res = await fetch(getApiUrl(`/api/notifications/${currentUser.id}`));
+                if (!res.ok) throw new Error();
+                const notifs = await res.json();
+                renderNotifications(notifs);
+            } catch {
+                document.getElementById('notifList').innerHTML = '<div class="p-4 text-center text-[#94a3b8]">Unable to load</div>';
+            }
+        }
+
+        function renderNotifications(notifications) {
+            const list = document.getElementById('notifList');
+            const badge = document.getElementById('notifBadge');
+            const unread = notifications.filter(n => !n.read).length;
+            if (unread > 0) {
+                badge.classList.remove('hidden');
+                badge.innerText = unread > 9 ? '9+' : unread;
+            } else {
+                badge.classList.add('hidden');
+            }
+
+            if (!notifications.length) {
+                list.innerHTML = '<div class="p-4 text-center text-[#94a3b8]">No notifications</div>';
+                return;
+            }
+
+            list.innerHTML = notifications.map(n => `
+                <div class="p-3 border-b border-white/5 hover:bg-white/5 cursor-pointer ${n.read ? '' : 'bg-[#38bdf8]/5'}" onclick="markAsRead('${n._id || n.id}','${n.link || ''}')">
+                    <div class="text-sm">${n.message}</div>
+                    <div class="text-xs text-[#94a3b8]">${new Date(n.createdAt).toLocaleString()}</div>
+                </div>
+            `).join('');
+        }
+
+        window.markAsRead = async function (id, link) {
+            try { await fetch(getApiUrl(`/api/notifications/${id}/read`), { method: 'PUT' }); } catch (e) { }
+            if (link && link !== 'null') window.location.href = link;
+            else loadNotifications();
+        };
+
+        // skills management
+        function displaySkills() {
+            const container = document.getElementById('skillsContainer');
+            container.innerHTML = skills.map(s => `<span class="skill-tag">${s} <span class="remove-skill" onclick="removeSkill('${s}')">✕</span></span>`).join('');
+        }
+        window.addSkill = function () {
+            const inp = document.getElementById('skillInput');
+            if (inp.value.trim() && !skills.includes(inp.value.trim())) {
+                skills.push(inp.value.trim());
+                displaySkills();
+                inp.value = '';
+            }
+        };
+        window.removeSkill = function (s) { skills = skills.filter(v => v !== s); displaySkills(); };
+
+        // profile form submit (PUT /api/worker/{id}) with FormData
+        document.getElementById('profileForm').addEventListener('submit', async function (e) {
+            e.preventDefault();
+            const formData = new FormData();
+            formData.append('name', document.getElementById('name').value);
+            formData.append('experience', document.getElementById('experience').value);
+            formData.append('hourlyRate', document.getElementById('hourlyRate').value);
+            formData.append('availability', document.getElementById('availability').value);
+            formData.append('description', document.getElementById('description').value);
+            formData.append('upiId', document.getElementById('upiId').value);
+            formData.append('skills', JSON.stringify(skills));
+
+            const imgFile = document.getElementById('profileImage').files[0];
+            if (imgFile) formData.append('profileImage', imgFile);
+
+            formData.append('address', JSON.stringify({
+                street: document.getElementById('street').value,
+                city: document.getElementById('city').value,
+                state: document.getElementById('state').value,
+                pincode: document.getElementById('pincode').value
+            }));
+
+            const locationLink = document.getElementById('locationLink').value;
+            let locationData = { link: locationLink };
+            if (locationLink) {
+                const match = locationLink.match(/[?&]q=([^&]+)/);
+                if (match && match[1].split(',').length === 2) {
+                    const [lat, lng] = match[1].split(',').map(Number);
+                    if (!isNaN(lat) && !isNaN(lng)) { locationData.latitude = lat; locationData.longitude = lng; }
+                }
+            }
+            formData.append('location', JSON.stringify(locationData));
+
+            try {
+                const res = await fetch(getApiUrl(`/api/worker/${currentUser.id}`), { method: 'PUT', body: formData });
+                if (res.ok) alert('Profile updated successfully');
+                else alert('Error updating profile');
+            } catch (err) { alert('Update failed'); }
+        });
+
+        // map initialization (Replaced Google Maps with Leaflet for zero-key reliability)
+        window.initMap = function () {
+            const mapContainer = document.getElementById('map');
+            if (!mapContainer) return;
+
+            // Clear previous map instance if any
+            if (map && map.remove) {
+                map.remove();
+            }
+
+            const defaultPos = [20.5937, 78.9629];
+            map = L.map('map').setView(defaultPos, 5);
+
+            L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+            }).addTo(map);
+
+            marker = L.marker(defaultPos, { draggable: true }).addTo(map);
+
+            marker.on('dragend', function (e) {
+                const pos = marker.getLatLng();
+                document.getElementById('locationLink').value = `https://maps.google.com/?q=${pos.lat.toFixed(6)},${pos.lng.toFixed(6)}`;
+            });
+
+            map.on('click', function (e) {
+                marker.setLatLng(e.latlng);
+                document.getElementById('locationLink').value = `https://maps.google.com/?q=${e.latlng.lat.toFixed(6)},${e.latlng.lng.toFixed(6)}`;
+            });
+        };
+
+        // logout
+        window.logout = function () { localStorage.removeItem('user'); window.location.href = 'login.html'; };
+    </script>
+</body>
+
+</html>

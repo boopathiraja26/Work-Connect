@@ -1,0 +1,66 @@
+name: Build Android APK
+
+on:
+  push:
+    branches: [ main, master ]
+  pull_request:
+    branches: [ main, master ]
+  workflow_dispatch: # Allows manual trigger from GitHub UI
+
+jobs:
+  build:
+    name: Build APK
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Source
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+
+      - name: Install Ionic CLI
+        run: npm install -g @ionic/cli
+
+      - name: Install Mobile App Dependencies
+        working-directory: ./mobile-app
+        run: npm install --legacy-peer-deps
+
+      - name: Build Web App
+        working-directory: ./mobile-app
+        run: npm run build
+
+      - name: Capacitor Sync
+        working-directory: ./mobile-app
+        run: npx cap sync android
+
+      - name: Setup Java
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'zulu'
+          java-version: '21'
+
+      - name: Setup Android SDK
+        uses: android-actions/setup-android@v3
+
+      - name: Grant Execute Permission to Gradlew
+        working-directory: ./mobile-app/android
+        run: chmod +x gradlew
+
+      - name: Build with Gradle
+        working-directory: ./mobile-app/android
+        run: ./gradlew assembleDebug --info --stacktrace
+
+      - name: List Files on Failure
+        if: failure()
+        run: |
+          ls -R
+          find . -name "*.log"
+
+      - name: Upload APK
+        uses: actions/upload-artifact@v4
+        with:
+          name: workconnect-debug-apk
+          path: mobile-app/android/app/build/outputs/apk/debug/app-debug.apk

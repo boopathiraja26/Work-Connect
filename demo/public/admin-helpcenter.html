@@ -1,0 +1,378 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Support Tickets - WorkConnect Admin</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+
+    <style>
+        body {
+            background: radial-gradient(circle at top, #0f172a, #020617);
+            min-height: 100vh;
+            position: relative;
+            overflow-x: hidden;
+        }
+
+        /* Oceanic wave animation background */
+        body::before,
+        body::after {
+            content: '';
+            position: fixed;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            height: 32vh;
+            background-repeat: repeat-x;
+            background-size: 2000px 100%;
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        body::before {
+            opacity: 0.2;
+            animation: waveSlide1 24s linear infinite;
+            background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1200 200' preserveAspectRatio='none'><path d='M0,120 C150,200 350,0 600,120 C850,240 1050,40 1200,120 L1200,200 L0,200 Z' fill='%2338bdf8' fill-opacity='0.25'/></svg>");
+        }
+
+        body::after {
+            height: 38vh;
+            opacity: 0.3;
+            animation: waveSlide2 36s linear infinite;
+            background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1200 200' preserveAspectRatio='none'><path d='M0,140 C200,60 400,220 600,110 C800,0 1000,180 1200,100 L1200,200 L0,200 Z' fill='%236366f1' fill-opacity='0.15'/></svg>");
+        }
+
+        @keyframes waveSlide1 {
+            0% {
+                background-position-x: 0;
+            }
+
+            100% {
+                background-position-x: 2000px;
+            }
+        }
+
+        @keyframes waveSlide2 {
+            0% {
+                background-position-x: 0;
+            }
+
+            100% {
+                background-position-x: -2000px;
+            }
+        }
+
+        body>* {
+            position: relative;
+            z-index: 1;
+        }
+
+        .glass {
+            backdrop-filter: blur(16px);
+            background: rgba(15, 23, 42, 0.88);
+            border: 1px solid rgba(56, 189, 248, 0.1);
+        }
+
+        .hover-lift {
+            transition: transform .3s ease, box-shadow .3s ease;
+        }
+
+        .hover-lift:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 15px 30px rgba(0, 0, 0, .4);
+        }
+
+        .fade-in {
+            animation: fadeIn .6s ease forwards;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(15px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .custom-scrollbar::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        .custom-scrollbar::-webkit-scrollbar-track {
+            background: transparent;
+        }
+
+        .custom-scrollbar::-webkit-scrollbar-thumb {
+            background: rgba(56, 189, 248, 0.2);
+            border-radius: 10px;
+        }
+
+        .filter-tab {
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .filter-tab.active {
+            background: rgba(56, 189, 248, 0.1);
+            border-color: rgba(56, 189, 248, 0.4);
+            color: #38bdf8;
+            box-shadow: 0 4px 15px rgba(56, 189, 248, 0.05);
+        }
+    </style>
+    <script src="config.js"></script>
+</head>
+
+<body class="text-slate-100 custom-scrollbar">
+
+    <!-- NAVBAR (Mirrored from admin.html) -->
+    <nav class="sticky top-0 z-50 glass border-b border-slate-700/50 px-6 py-4 flex justify-between items-center">
+        <div class="flex items-center gap-3">
+            <div
+                class="w-10 h-10 bg-gradient-to-tr from-sky-400 to-blue-600 rounded-xl flex items-center justify-center shadow-lg shadow-sky-500/20">
+                <i class="fas fa-shield-alt text-white"></i>
+            </div>
+            <h1 class="text-2xl font-bold bg-gradient-to-r from-sky-400 to-blue-500 bg-clip-text text-transparent">
+                Admin Panel
+            </h1>
+        </div>
+
+        <div class="hidden md:flex gap-8 items-center">
+            <a href="admin.html" class="text-slate-400 hover:text-sky-400 transition flex items-center gap-2">
+                <i class="fas fa-users"></i> Workers
+            </a>
+            <a href="admin-helpcenter.html"
+                class="text-sky-400 font-semibold flex items-center gap-2 underline underline-offset-8 decoration-2 decoration-sky-500/50">
+                <i class="fas fa-headset"></i> Help Center
+            </a>
+            <div class="h-8 w-px bg-slate-700 mx-2"></div>
+            <div class="text-right">
+                <p id="totalTickets" class="text-lg font-bold text-sky-400">0</p>
+                <p class="text-[10px] text-slate-500 uppercase tracking-widest font-bold">Total Tickets</p>
+            </div>
+            <div class="text-right">
+                <p id="openTickets" class="text-lg font-bold text-amber-400">0</p>
+                <p class="text-[10px] text-slate-500 uppercase tracking-widest font-bold">Open Items</p>
+            </div>
+            <button onclick="logout()"
+                class="ml-4 bg-rose-500/10 text-rose-400 border border-rose-500/20 px-4 py-2 rounded-lg hover:bg-rose-500/20 transition-all flex items-center gap-2">
+                <i class="fas fa-sign-out-alt"></i> Logout
+            </button>
+        </div>
+    </nav>
+
+    <!-- CONTENT -->
+    <div class="max-w-7xl mx-auto px-6 py-10 fade-in">
+        <div class="flex flex-col md:flex-row justify-between items-end gap-6 mb-10">
+            <div class="space-y-2">
+                <h2 class="text-4xl font-bold">Support Management</h2>
+                <p class="text-slate-400">Resolve inquiries and support tickets from users</p>
+            </div>
+
+            <!-- FILTERS -->
+            <div class="flex flex-wrap gap-2 glass p-1.5 rounded-2xl border border-slate-700/50">
+                <button onclick="filterTickets('all')"
+                    class="filter-tab active px-5 py-2.5 rounded-xl text-xs font-bold uppercase tracking-wider border border-transparent">
+                    All
+                </button>
+                <button onclick="filterTickets('open')"
+                    class="filter-tab px-5 py-2.5 rounded-xl text-xs font-bold uppercase tracking-wider border border-transparent">
+                    Open
+                </button>
+                <button onclick="filterTickets('resolved')"
+                    class="filter-tab px-5 py-2.5 rounded-xl text-xs font-bold uppercase tracking-wider border border-transparent">
+                    Resolved
+                </button>
+                <div class="w-px h-6 bg-slate-700 my-auto mx-1"></div>
+                <button onclick="filterTickets('worker')"
+                    class="filter-tab px-5 py-2.5 rounded-xl text-xs font-bold uppercase tracking-wider border border-transparent">
+                    Workers
+                </button>
+                <button onclick="filterTickets('customer')"
+                    class="filter-tab px-5 py-2.5 rounded-xl text-xs font-bold uppercase tracking-wider border border-transparent">
+                    Customers
+                </button>
+            </div>
+        </div>
+
+        <!-- TICKETS LIST -->
+        <div id="ticketsList" class="grid grid-cols-1 gap-6">
+            <!-- Tickets will be injected here as glass cards -->
+            <div class="col-span-full py-20 text-center text-slate-500 animate-pulse">
+                <i class="fas fa-spinner fa-spin text-3xl mb-4 text-sky-500/50"></i>
+                <p class="font-bold uppercase tracking-widest text-xs">Accessing Support Database...</p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let allTickets = [];
+
+        document.addEventListener('DOMContentLoaded', () => {
+            const adminStr = localStorage.getItem('admin');
+            if (!adminStr) {
+                window.location.href = 'admin.html';
+                return;
+            }
+            loadTickets();
+        });
+
+        async function loadTickets() {
+            try {
+                const res = await fetch(getApiUrl('/api/admin/support/tickets'));
+                if (!res.ok) throw new Error('Failed to load tickets');
+                allTickets = await res.json();
+                updateStats();
+                renderTickets(allTickets);
+            } catch (error) {
+                console.error(error);
+                document.getElementById('ticketsList').innerHTML = `
+                    <div class="col-span-full glass p-12 rounded-[2rem] text-center border-red-500/20">
+                        <i class="fas fa-exclamation-triangle text-red-500 text-4xl mb-4"></i>
+                        <p class="text-red-400 font-bold">Administrative Error: Failed to synchronize tickets.</p>
+                    </div>
+                `;
+            }
+        }
+
+        function updateStats() {
+            const total = allTickets.length;
+            const open = allTickets.filter(t => t.status === 'open').length;
+            document.getElementById('totalTickets').textContent = total;
+            document.getElementById('openTickets').textContent = open;
+        }
+
+        function renderTickets(tickets) {
+            const listEl = document.getElementById('ticketsList');
+
+            if (tickets.length === 0) {
+                listEl.innerHTML = `
+                    <div class="col-span-full glass p-20 rounded-[2rem] text-center">
+                        <div class="w-20 h-20 bg-slate-800 rounded-3xl flex items-center justify-center mx-auto mb-6 border border-slate-700">
+                            <i class="fas fa-check-double text-emerald-400 text-2xl"></i>
+                        </div>
+                        <h3 class="text-xl font-bold text-slate-200 mb-2">No Passive Tickets</h3>
+                        <p class="text-slate-500">All support inquiries have been cleared from this view.</p>
+                    </div>
+                `;
+                return;
+            }
+
+            listEl.innerHTML = tickets
+                .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))
+                .map(ticket => {
+                    const date = new Date(ticket.createdAt).toLocaleString('en-IN', {
+                        day: '2-digit', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit'
+                    });
+                    const isOpen = ticket.status === 'open';
+                    const isWorker = ticket.role === 'worker';
+
+                    return `
+                        <div class="glass p-8 rounded-[2rem] hover-lift border border-slate-700/30 flex flex-col md:flex-row gap-8 relative overflow-hidden group">
+                            <div class="absolute top-0 left-0 w-2 h-full ${isOpen ? 'bg-amber-500' : 'bg-emerald-500'} opacity-50"></div>
+                            
+                            <div class="flex-1 space-y-6">
+                                <div class="flex flex-wrap items-center gap-3">
+                                    <span class="px-4 py-1.5 rounded-full text-[10px] font-bold uppercase tracking-widest ${isOpen ? 'bg-amber-500/10 text-amber-500 border border-amber-500/20' : 'bg-emerald-500/10 text-emerald-500 border border-emerald-500/20'}">
+                                        ${ticket.status}
+                                    </span>
+                                    <span class="px-4 py-1.5 rounded-full text-[10px] font-bold uppercase tracking-widest bg-sky-500/10 text-sky-400 border border-sky-500/20">
+                                        <i class="fas fa-${isWorker ? 'hard-hat' : 'user'} mr-2"></i> ${ticket.role}
+                                    </span>
+                                    <span class="text-slate-500 text-xs font-bold ml-auto">${date}</span>
+                                </div>
+
+                                <div class="space-y-2">
+                                    <h4 class="text-2xl font-bold text-slate-100 group-hover:text-sky-400 transition-colors">${ticket.subject}</h4>
+                                    <p class="text-slate-400 leading-relaxed max-w-4xl">${ticket.message}</p>
+                                </div>
+
+                                <div class="grid grid-cols-1 md:grid-cols-3 gap-6 pt-6 border-t border-slate-800/50">
+                                    <div>
+                                        <p class="text-[10px] font-bold text-slate-500 uppercase tracking-widest mb-1">Requester</p>
+                                        <p class="text-sm font-bold text-slate-200">${ticket.userInfo?.name || 'Anonymous'}</p>
+                                    </div>
+                                    <div>
+                                        <p class="text-[10px] font-bold text-slate-500 uppercase tracking-widest mb-1">Contact Email</p>
+                                        <p class="text-sm font-medium text-sky-400/80">${ticket.userInfo?.email || 'N/A'}</p>
+                                    </div>
+                                    <div>
+                                        <p class="text-[10px] font-bold text-slate-500 uppercase tracking-widest mb-1">Phone</p>
+                                        <p class="text-sm font-bold text-slate-200">${ticket.userInfo?.phone || 'N/A'}</p>
+                                    </div>
+                                </div>
+
+                                ${ticket.adminReply ? `
+                                    <div class="mt-4 p-4 rounded-xl bg-slate-800/50 border border-slate-700/50">
+                                        <p class="text-[10px] font-bold text-emerald-400 uppercase tracking-widest mb-1">Admin Resolution</p>
+                                        <p class="text-sm text-slate-300 italic">"${ticket.adminReply}"</p>
+                                    </div>
+                                ` : ''}
+                            </div>
+
+                            <div class="md:w-48 flex items-center justify-center border-t md:border-t-0 md:border-l border-slate-800/50 pt-6 md:pt-0">
+                                ${isOpen ? `
+                                    <button onclick="resolveTicket('${ticket.id}')" class="w-full md:w-auto px-8 py-4 rounded-2xl bg-gradient-to-tr from-emerald-500 to-teal-600 text-white font-bold hover:shadow-lg hover:shadow-emerald-500/20 transition-all active:scale-95 flex items-center justify-center gap-2">
+                                        <i class="fas fa-check-circle"></i> Resolve
+                                    </button>
+                                ` : `
+                                    <div class="text-emerald-400/50 font-black uppercase tracking-tighter text-4xl rotate-12 select-none opacity-20">
+                                        RESOLVED
+                                    </div>
+                                `}
+                            </div>
+                        </div>
+                    `;
+                }).join('');
+        }
+
+        async function resolveTicket(ticketId) {
+            const reply = prompt('Enter resolution message for the user:', 'Issue verified and resolved.');
+            if (reply === null) return; // User cancelled
+
+            try {
+                const res = await fetch(getApiUrl(`/api/admin/support/tickets/${ticketId}/resolve`), {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ reply })
+                });
+
+                if (res.ok) {
+                    // Update stats directly or reload
+                    loadTickets();
+                } else {
+                    alert('Failed to resolve ticket');
+                }
+            } catch (error) {
+                alert('Connection failure.');
+            }
+        }
+
+        function filterTickets(type) {
+            document.querySelectorAll('.filter-tab').forEach(btn => {
+                btn.classList.remove('active');
+                if (btn.textContent.trim().toLowerCase() === type) btn.classList.add('active');
+                if (type === 'all' && btn.textContent.trim() === 'All') btn.classList.add('active');
+            });
+
+            let filtered = [...allTickets];
+            if (type === 'open') filtered = allTickets.filter(t => t.status === 'open');
+            else if (type === 'resolved') filtered = allTickets.filter(t => t.status === 'resolved');
+            else if (type === 'worker') filtered = allTickets.filter(t => t.role === 'worker');
+            else if (type === 'customer') filtered = allTickets.filter(t => t.role === 'customer');
+
+            renderTickets(filtered);
+        }
+
+        function logout() {
+            localStorage.removeItem('admin');
+            window.location.href = 'login.html'; // Fixed redirect to login.html
+        }
+    </script>
+</body>
+
+</html>

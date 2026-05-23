@@ -1,0 +1,121 @@
+.booking-bg {
+    --background: #020617;
+}
+
+.booking-container {
+    padding: 20px;
+}
+
+.worker-summary {
+    background: rgba(255, 255, 255, 0.05);
+    padding: 16px;
+    border-radius: 20px;
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    margin-bottom: 24px;
+    border: 1px solid rgba(255, 255, 255, 0.05);
+
+    img {
+        width: 70px;
+        height: 70px;
+        border-radius: 12px;
+        object-fit: cover;
+        border: 2px solid #3b82f6;
+    }
+
+    .info {
+        h3 {
+            margin: 0;
+            color: white;
+            font-size: 18px;
+        }
+
+        p {
+            margin: 4px 0;
+            color: #94a3b8;
+            font-size: 14px;
+        }
+
+        .rate {
+            color: #3b82f6;
+            font-weight: 700;
+            font-size: 15px;
+        }
+    }
+}
+
+.section-title {
+    color: #3b82f6;
+    font-size: 14px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    margin: 24px 0 12px;
+}
+
+.custom-input {
+    --background: rgba(255, 255, 255, 0.05);
+    margin-bottom: 12px;
+    border-radius: 12px;
+    color: white;
+}
+
+.duration-label {
+    text-align: center;
+    color: #94a3b8;
+    font-size: 14px;
+    margin-top: -8px;
+    margin-bottom: 16px;
+}
+
+.billing-summary {
+    background: rgba(59, 130, 246, 0.05);
+    margin-top: 32px;
+    padding: 20px;
+    border-radius: 20px;
+    border: 1px solid rgba(59, 130, 246, 0.1);
+
+    .bill-row {
+        display: flex;
+        justify-content: space-between;
+        margin-bottom: 12px;
+        color: #94a3b8;
+
+        &.total {
+            margin-top: 16px;
+            padding-top: 16px;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            color: white;
+            font-size: 20px;
+            font-weight: 800;
+
+            span:last-child {
+                color: #3b82f6;
+            }
+        }
+    }
+}
+
+.disclaimer {
+    color: #64748b;
+    font-size: 12px;
+    text-align: center;
+    margin-top: 16px;
+    font-style: italic;
+}
+
+.confirm-btn {
+    --border-radius: 12px;
+    margin-top: 32px;
+    height: 54px;
+    font-weight: 700;
+    font-size: 16px;
+}
+
+.loading-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 50vh;
+}

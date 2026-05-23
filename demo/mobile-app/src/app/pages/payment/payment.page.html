@@ -1,0 +1,94 @@
+<ion-header [translucent]="true">
+  <ion-toolbar color="primary">
+    <ion-buttons slot="start">
+      <ion-back-button defaultHref="/booking"></ion-back-button>
+    </ion-buttons>
+    <ion-title>Payment</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content [fullscreen]="true" class="payment-bg">
+  <div class="payment-container">
+    <div class="summary-card">
+      <div class="total-label">Total to Pay</div>
+      <div class="amount">${{booking?.totalAmount}}</div>
+      <div class="divider"></div>
+      <div class="details">
+        <p>Service: {{booking?.serviceType}}</p>
+        <p>Worker: {{booking?.workerName}}</p>
+      </div>
+    </div>
+
+    <div class="payment-methods">
+      <div class="section-title">Select Payment Method</div>
+
+      <ion-radio-group [(ngModel)]="paymentMethod">
+        <div class="method-card" [class.selected]="paymentMethod === 'upi'" (click)="paymentMethod = 'upi'">
+          <ion-radio value="upi" labelPlacement="end">
+            <div class="method-info">
+              <ion-icon name="phone-portrait-outline"></ion-icon>
+              <span>UPI (Google Pay, PhonePe)</span>
+            </div>
+          </ion-radio>
+        </div>
+
+        <div class="method-card" [class.selected]="paymentMethod === 'card'" (click)="paymentMethod = 'card'">
+          <ion-radio value="card" labelPlacement="end">
+            <div class="method-info">
+              <ion-icon name="card-outline"></ion-icon>
+              <span>Credit / Debit Card</span>
+            </div>
+          </ion-radio>
+        </div>
+
+        <div class="method-card" [class.selected]="paymentMethod === 'cash'" (click)="paymentMethod = 'cash'">
+          <ion-radio value="cash" labelPlacement="end">
+            <div class="method-info">
+              <ion-icon name="cash-outline"></ion-icon>
+              <span>Cash After Service</span>
+            </div>
+          </ion-radio>
+        </div>
+      </ion-radio-group>
+    </div>
+
+    <div *ngIf="paymentMethod === 'card'" class="card-entry anim-fade">
+      <div class="razorpay-notice" *ngIf="razorpayKey">
+        <ion-icon name="shield-checkmark-outline"></ion-icon>
+        <p>Secured by <strong>Razorpay</strong>. You will be redirected to the payment gateway after clicking Pay Now.
+        </p>
+      </div>
+
+      <ion-list lines="none" *ngIf="!razorpayKey">
+        <ion-item class="custom-input">
+          <ion-input label="Card Number" labelPlacement="floating" placeholder="1234 5678 9123 0000"></ion-input>
+        </ion-item>
+        <div class="row">
+          <ion-item class="custom-input half">
+            <ion-input label="Expiry" labelPlacement="floating" placeholder="MM/YY"></ion-input>
+          </ion-item>
+          <ion-item class="custom-input half">
+            <ion-input label="CVV" labelPlacement="floating" type="password" placeholder="***"></ion-input>
+          </ion-item>
+        </div>
+      </ion-list>
+    </div>
+
+    <div *ngIf="paymentMethod === 'upi'" class="upi-entry anim-fade">
+      <ion-list lines="none">
+        <ion-item class="custom-input">
+          <ion-input label="UPI ID" labelPlacement="floating" placeholder="username@okaxis"></ion-input>
+        </ion-item>
+      </ion-list>
+    </div>
+  </div>
+
+  <ion-footer collapse="fade">
+    <ion-toolbar color="primary">
+      <ion-button expand="block" (click)="processPayment()" class="pay-btn" [disabled]="processing">
+        <ion-spinner *ngIf="processing" name="crescent"></ion-spinner>
+        <span *ngIf="!processing">Pay Now</span>
+      </ion-button>
+    </ion-toolbar>
+  </ion-footer>
+</ion-content>
