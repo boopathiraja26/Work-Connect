@@ -10,8 +10,8 @@
 
 ## 🔐 Admin Credentials
 
-- **Username**: `udhaya111`
-- **Password**: `Udhaya111@`
+- **Username**: `boopathi26`
+- **Password**: `Boopathi26@`
 
 ---
 

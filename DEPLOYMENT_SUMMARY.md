@@ -10,8 +10,8 @@
 
 ## 🔐 Admin Credentials
 
-- **Username**: `udhaya111`
-- **Password**: `Udhaya111@`
+- **Username**: `boopathi26`
+- **Password**: `Boopathi26@`
 
 ---
 
@@ -115,8 +115,8 @@ SMTP_USER=your-email@gmail.com
 SMTP_PASS=your-app-password
 
 # Admin Credentials (Optional - defaults set in code)
-ADMIN_USERNAME=udhaya111
-ADMIN_PASSWORD=Udhaya111@
+ADMIN_USERNAME=boopathi26
+ADMIN_PASSWORD=Boopathi26@
 
 # Base URL (for email links)
 BASE_URL=https://workconnect-neon.vercel.app

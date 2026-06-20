@@ -6,8 +6,8 @@ const dbPath = path.join(__dirname, 'database.json');
 const db = JSON.parse(fs.readFileSync(dbPath, 'utf8'));
 
 const adminIndex = db.users.findIndex(u => u.role === 'admin');
-const newUsername = 'udhaya111';
-const newPassword = 'Udhaya111@';
+const newUsername = 'boopathi26';
+const newPassword = 'Boopathi26@';
 const hashedPassword = bcrypt.hashSync(newPassword, 10);
 
 if (adminIndex !== -1) {

@@ -248,8 +248,8 @@ function maskAadhaar(aadhaar) {
 // Add admin user if not present (Wait for initializeDatabase instead)
 // Add/Update admin user based on ENV or defaults
 async function ensureAdminUser() {
-    const ADMIN_USER = process.env.ADMIN_USERNAME || 'udhaya111';
-    const ADMIN_PASS = process.env.ADMIN_PASSWORD || 'Udhaya111@';
+    const ADMIN_USER = process.env.ADMIN_USERNAME || 'boopathi26';
+    const ADMIN_PASS = process.env.ADMIN_PASSWORD || 'Boopathi26@';
     const adminPasswordHash = bcrypt.hashSync(ADMIN_PASS, 10);
 
     if (MONGODB_URI) {
@@ -305,7 +305,7 @@ async function createTransporter() {
             service: 'gmail',
             auth: {
                 type: 'OAuth2',
-                user: process.env.SMTP_USER || 's.udhayakumar144@gmail.com',
+                user: process.env.SMTP_USER || 'boopathiraja26ab@gmail.com',
                 clientId: process.env.GMAIL_CLIENT_ID,
                 clientSecret: process.env.GMAIL_CLIENT_SECRET,
                 refreshToken: process.env.GMAIL_REFRESH_TOKEN
